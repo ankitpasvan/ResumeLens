@@ -320,8 +320,14 @@ async function invokeGeminiAi() {
   console.log(response.text);
 }
 
+async function generateResumePdf({ resume, jobDescription, selfDescription }) {
+  const content = `%PDF-1.4\n1 0 obj\n<< /Title (Interview Strategy Resume) >>\nendobj\ntrailer\n<< >>\n%%EOF`;
+  return Buffer.from(content, "utf-8");
+}
+
 module.exports = {
   generateInterviewReport,
   invokeGeminiAi,
   generateInterview,
+  generateResumePdf,
 };

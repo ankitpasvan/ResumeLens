@@ -6,7 +6,8 @@ const jwt = require("jsonwebtoken");
 
 async function registerUser(req, res) {
   try {
-    const { username, email, password } = req.body;
+    const username = req.body.username || req.body.name;
+    const { email, password } = req.body;
 
     if (!username || !email || !password) {
       return res
@@ -29,7 +30,7 @@ async function registerUser(req, res) {
     });
 
     const token = jwt.sign(
-      { userId: user._id, email: user.email },
+      { id: user._id, userId: user._id, email: user.email },
       process.env.JWT_SECRET,
       { expiresIn: "1d" },
     );
@@ -77,7 +78,7 @@ async function loginUser(req, res) {
     }
 
     const token = jwt.sign(
-      { userId: user._id, email: user.email },
+      { id: user._id, userId: user._id, email: user.email },
       process.env.JWT_SECRET,
       { expiresIn: "1d" },
     );
@@ -128,7 +129,7 @@ async function getUser(req, res) {
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-    const user = await userModel.findById(decoded.userId).select("-password");
+    const user = await userModel.findById(decoded.userId || decoded.id).select("-password");
 
     if (!user) {
       return res.status(404).json({

@@ -23,12 +23,17 @@ function authMiddleware(req, res, next) {
 }
 
 function validateUser(req, res, next) {
-  const { name, email, password } = req.body;
+  const username = req.body.username || req.body.name;
+  const { email, password } = req.body;
 
-  if (!name || !email || !password) {
+  if (!username || !email || !password) {
     return res.status(400).json({
-      error: "Name, email and password are required",
+      error: "Username, email and password are required",
     });
+  }
+
+  if (!req.body.username && req.body.name) {
+    req.body.username = req.body.name;
   }
 
   next();

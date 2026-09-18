@@ -67,8 +67,8 @@ const preparationPlanSchema = new mongoose.Schema({
     required: [true, "Focus is required"],
   },
   tasks: {
-    type: String,
-    reequired: [true, "Task is required"],
+    type: mongoose.Schema.Types.Mixed,
+    required: [true, "Task is required"],
   },
 });
 
@@ -92,7 +92,9 @@ const interviewReportSchema = new mongoose.Schema(
     technicalQuestions: [technicalQuestionSchema],
     behavioralQuestions: [behavioralQuestionSchema],
     skillgaps: [skillgapSchema],
+    skillGaps: [skillgapSchema],
     preparationPlans: [preparationPlanSchema],
+    preparationPlan: [preparationPlanSchema],
     user: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "users",

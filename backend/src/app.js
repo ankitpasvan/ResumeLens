@@ -18,6 +18,8 @@ dotenv.config();
 
 connectDB();
 
+const cookieParser = require("cookie-parser");
+app.use(cookieParser());
 app.use(express.json());
 
 // Define routes

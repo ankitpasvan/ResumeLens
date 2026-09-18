@@ -15,13 +15,20 @@ interviewRouter.post(
 interviewRouter.get(
   "/report/:interviewId",
   authMiddleware,
-  interviewController.getInterviewReportById,
+  interviewController.getInterviewReportByIdController,
 );
 
 interviewRouter.get(
   "/",
-  authMiddleware.authUser,
-  interviewController.getAllInterviewReports,
+  authMiddleware,
+  interviewController.getAllInterviewReportsController,
 );
 
-module.exports = { interviewRouter };
+interviewRouter.get(
+  "/resume/:interviewReportId",
+  authMiddleware,
+  interviewController.generateResumePdfController,
+);
+
+interviewRouter.interviewRouter = interviewRouter;
+module.exports = interviewRouter;
