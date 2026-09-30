@@ -11,6 +11,8 @@ import AtsHistory from "./components/pages/AtsHistory";
 import AtsDetail from "./components/pages/AtsDetail";
 import Resumes from "./components/pages/Resumes";
 import JobMatch from "./components/pages/JobMatch";
+import Jobs from "./components/pages/Jobs";
+import Applications from "./components/pages/Applications";
 
 export const router = createBrowserRouter([
   {
@@ -78,6 +80,22 @@ export const router = createBrowserRouter([
     element: (
       <Protected>
         <JobMatch />
+      </Protected>
+    ),
+  },
+  {
+    path: "/jobs",
+    element: (
+      <Protected>
+        <Jobs />
+      </Protected>
+    ),
+  },
+  {
+    path: "/applications",
+    element: (
+      <Protected>
+        <Applications />
       </Protected>
     ),
   },

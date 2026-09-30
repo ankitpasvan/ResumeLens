@@ -56,6 +56,22 @@ const Navbar = () => {
           Job Match
         </NavLink>
         <NavLink
+          to="/jobs"
+          className={({ isActive }) =>
+            `navbar-link ${isActive ? "navbar-link-active" : ""}`
+          }
+        >
+          Jobs
+        </NavLink>
+        <NavLink
+          to="/applications"
+          className={({ isActive }) =>
+            `navbar-link ${isActive ? "navbar-link-active" : ""}`
+          }
+        >
+          Applications
+        </NavLink>
+        <NavLink
           to="/ats/history"
           className={({ isActive }) =>
             `navbar-link ${isActive ? "navbar-link-active" : ""}`

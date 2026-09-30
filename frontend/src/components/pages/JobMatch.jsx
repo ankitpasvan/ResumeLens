@@ -4,6 +4,7 @@ import "../../style/matching.scss";
 import Navbar from "../Navbar";
 import { useResumes } from "../../features/resumes/hooks/useResumes";
 import { useMatching } from "../../features/matching/hooks/useMatching";
+import { saveJob } from "../../features/jobs/services/jobs.api";
 
 const formatDate = (iso) => {
   if (!iso) return "—";
@@ -193,6 +194,8 @@ const JobMatch = () => {
   const [jobTitle, setJobTitle] = useState("");
   const [jobDescription, setJobDescription] = useState("");
   const [viewId, setViewId] = useState(null);
+  // idle | saving | saved | error — for the "save this job" button.
+  const [saveState, setSaveState] = useState("idle");
 
   useEffect(() => {
     fetchResumes()
@@ -230,6 +233,7 @@ const JobMatch = () => {
         jobDescription,
       });
       setViewId(match._id);
+      setSaveState("idle");
     } catch {
       // error is already surfaced via the hook
     }
@@ -238,6 +242,7 @@ const JobMatch = () => {
   const onSelectHistory = async (id) => {
     clearCurrent();
     setViewId(id);
+    setSaveState("idle");
     try {
       await fetchMatch(id);
     } catch {
@@ -248,6 +253,24 @@ const JobMatch = () => {
   const onNewMatch = () => {
     clearCurrent();
     setViewId(null);
+    setSaveState("idle");
+  };
+
+  const onSaveJob = async () => {
+    if (!current || saveState === "saving" || saveState === "saved") return;
+    setSaveState("saving");
+    try {
+      await saveJob({
+        jobTitle: current.jobTitle,
+        company: "",
+        description: current.jobDescription || "",
+        matchId: current._id,
+      });
+      setSaveState("saved");
+    } catch {
+      // Most likely a duplicate save (409).
+      setSaveState("error");
+    }
   };
 
   return (
@@ -374,7 +397,33 @@ const JobMatch = () => {
 
           <div className="result-column">
             {current ? (
-              <MatchResult match={current} />
+              <>
+                <div className="match-save-row">
+                  <button
+                    type="button"
+                    className="button ghost-button"
+                    onClick={onSaveJob}
+                    disabled={saveState === "saving" || saveState === "saved"}
+                  >
+                    {saveState === "saved"
+                      ? "Saved ✓"
+                      : saveState === "saving"
+                        ? "Saving…"
+                        : "Save this job"}
+                  </button>
+                  {saveState === "saved" && (
+                    <Link to="/jobs" className="muted small save-hint">
+                      View saved jobs
+                    </Link>
+                  )}
+                  {saveState === "error" && (
+                    <span className="muted small save-hint">
+                      Could not save — it may already be in your saved jobs.
+                    </span>
+                  )}
+                </div>
+                <MatchResult match={current} />
+              </>
             ) : (
               <section className="panel result-empty">
                 <h2 className="panel-title">Your result appears here</h2>
