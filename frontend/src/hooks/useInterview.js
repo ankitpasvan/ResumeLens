@@ -23,14 +23,13 @@ export const useInterview = () => {
     resumeFile,
   }) => {
     setLoading(true);
-    let data = null;
     try {
       const response = await generateInterviewReport({
         jobDescription,
         selfDescription,
         resumeFile,
       });
-      data = response.interviewReport || response;
+      const data = response.interviewReport || response;
       setReport(data);
       return data;
     } catch (error) {
@@ -43,10 +42,9 @@ export const useInterview = () => {
 
   const getReportById = async (interviewId) => {
     setLoading(true);
-    let data = null;
     try {
       const response = await fetchInterviewReportById(interviewId);
-      data = response.interviewReport || response;
+      const data = response.interviewReport || response;
       setReport(data);
       return data;
     } catch (error) {
@@ -59,10 +57,9 @@ export const useInterview = () => {
 
   const getReports = async () => {
     setLoading(true);
-    let data = [];
     try {
       const response = await getAllInterviewReports();
-      data = response.interviewReports || response;
+      const data = response.interviewReports || response;
       setReports(data);
       return data;
     } catch (error) {
@@ -77,7 +74,9 @@ export const useInterview = () => {
     setLoading(true);
     try {
       const blob = await fetchResumePdf({ interviewReportId });
-      const url = window.URL.createObjectURL(new Blob([blob], { type: "application/pdf" }));
+      const url = window.URL.createObjectURL(
+        new Blob([blob], { type: "application/pdf" }),
+      );
       const link = document.createElement("a");
       link.href = url;
       link.setAttribute("download", `resume_${interviewReportId}.pdf`);

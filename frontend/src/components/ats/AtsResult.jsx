@@ -1,5 +1,5 @@
-// Human-readable verdict for a numeric ATS score.
-export function scoreVerdict(score) {
+/* eslint-disable react-refresh/only-export-components -- scoreVerdict is a shared helper also used by AtsHistory */
+export const scoreVerdict = (score) => {
   if (score >= 80) return { label: "Excellent", className: "verdict-excellent" };
   if (score >= 60) return { label: "Good", className: "verdict-good" };
   if (score >= 40) return { label: "Fair", className: "verdict-fair" };

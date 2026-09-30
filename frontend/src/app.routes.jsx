@@ -10,6 +10,7 @@ import AtsAnalyzer from "./components/pages/AtsAnalyzer";
 import AtsHistory from "./components/pages/AtsHistory";
 import AtsDetail from "./components/pages/AtsDetail";
 import Resumes from "./components/pages/Resumes";
+import JobMatch from "./components/pages/JobMatch";
 
 export const router = createBrowserRouter([
   {
@@ -69,6 +70,14 @@ export const router = createBrowserRouter([
     element: (
       <Protected>
         <Resumes />
+      </Protected>
+    ),
+  },
+  {
+    path: "/match",
+    element: (
+      <Protected>
+        <JobMatch />
       </Protected>
     ),
   },

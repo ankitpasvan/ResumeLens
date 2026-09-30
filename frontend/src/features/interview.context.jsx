@@ -1,4 +1,5 @@
-import { createContext, useContext, useState } from 'react';
+/* eslint-disable react-refresh/only-export-components -- colocated InterviewContext + InterviewProvider is the established pattern in this codebase */
+import { createContext, useState } from 'react';
 
 export const InterviewContext = createContext();
 

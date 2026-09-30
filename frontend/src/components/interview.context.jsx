@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components -- colocated InterviewContext + InterviewProvider is the established pattern in this codebase */
 import { createContext, useMemo, useState } from "react";
 
 export const InterviewContext = createContext(null);
