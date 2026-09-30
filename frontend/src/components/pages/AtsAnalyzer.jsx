@@ -1,5 +1,5 @@
 import { useState, useRef } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import "../../style/ats.scss";
 import Navbar from "../Navbar";
 import AtsResult from "../ats/AtsResult";
@@ -9,9 +9,13 @@ const MAX_FILE_BYTES = 3 * 1024 * 1024; // matches backend multer limit
 
 const AtsAnalyzer = () => {
   const { analyzing, analysis, error, analyze, setError, setAnalysis } = useAts();
+  const location = useLocation();
 
   const [resumeFile, setResumeFile] = useState(null);
-  const [resumeText, setResumeText] = useState("");
+  // Prefilled when arriving from the Resumes page ("Analyze in ATS").
+  const [resumeText, setResumeText] = useState(
+    location.state?.resumeText || "",
+  );
   const [jobDescription, setJobDescription] = useState("");
   const [dragActive, setDragActive] = useState(false);
   const fileInputRef = useRef(null);

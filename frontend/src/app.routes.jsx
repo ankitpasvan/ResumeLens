@@ -9,6 +9,7 @@ import { InterviewProvider } from "./components/interview.context";
 import AtsAnalyzer from "./components/pages/AtsAnalyzer";
 import AtsHistory from "./components/pages/AtsHistory";
 import AtsDetail from "./components/pages/AtsDetail";
+import Resumes from "./components/pages/Resumes";
 
 export const router = createBrowserRouter([
   {
@@ -60,6 +61,14 @@ export const router = createBrowserRouter([
     element: (
       <Protected>
         <AtsDetail />
+      </Protected>
+    ),
+  },
+  {
+    path: "/resumes",
+    element: (
+      <Protected>
+        <Resumes />
       </Protected>
     ),
   },

@@ -40,6 +40,22 @@ const Navbar = () => {
           ATS Analyzer
         </NavLink>
         <NavLink
+          to="/resumes"
+          className={({ isActive }) =>
+            `navbar-link ${isActive ? "navbar-link-active" : ""}`
+          }
+        >
+          Resumes
+        </NavLink>
+        <NavLink
+          to="/match"
+          className={({ isActive }) =>
+            `navbar-link ${isActive ? "navbar-link-active" : ""}`
+          }
+        >
+          Job Match
+        </NavLink>
+        <NavLink
           to="/ats/history"
           className={({ isActive }) =>
             `navbar-link ${isActive ? "navbar-link-active" : ""}`
