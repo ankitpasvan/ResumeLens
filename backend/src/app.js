@@ -29,6 +29,7 @@ app.use("/api/auth", require("./routes/auth.route"));
 app.use("/api/interview", require("./routes/interview.route"));
 app.use("/api/ats", require("./routes/ats.route"));
 app.use("/api/resumes", require("./routes/resume.route"));
+app.use("/api/matches", require("./routes/match.route"));
 
 // 404 handler for unknown routes, then the global error handler (must be last).
 app.use(notFoundHandler);

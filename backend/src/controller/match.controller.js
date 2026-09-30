@@ -94,6 +94,14 @@ const createMatchController = asyncHandler(async (req, res) => {
     matchedSkills: findings.matchedSkills,
     missingSkills: findings.missingSkills,
     summary: feedback.summary || "",
+    strengths: Array.isArray(feedback.strengths) ? feedback.strengths : [],
+    gaps: (Array.isArray(feedback.gaps) ? feedback.gaps : []).map((g = {}) => ({
+      issue: g.issue || "",
+      severity: ["low", "medium", "high"].includes(g.severity)
+        ? g.severity
+        : "medium",
+      suggestion: g.suggestion || "",
+    })),
     recommendations: Array.isArray(feedback.recommendations)
       ? feedback.recommendations
       : [],

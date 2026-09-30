@@ -53,6 +53,18 @@ const jobMatchSchema = new mongoose.Schema(
       type: String,
       default: "",
     },
+    strengths: [{ type: String }],
+    gaps: [
+      {
+        issue: { type: String, default: "" },
+        severity: {
+          type: String,
+          enum: ["low", "medium", "high"],
+          default: "medium",
+        },
+        suggestion: { type: String, default: "" },
+      },
+    ],
     recommendations: [{ type: String }],
   },
   { timestamps: true },
