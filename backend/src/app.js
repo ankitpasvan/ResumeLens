@@ -1,34 +1,38 @@
 const express = require("express");
 const cors = require("cors");
+const cookieParser = require("cookie-parser");
+
+// Validates required environment variables and exits if any are missing.
+const config = require("./utils/env");
+const connectDB = require("./config/database");
+const {
+  notFoundHandler,
+  errorHandler,
+} = require("./middleware/error.middleware");
+
 const app = express();
-// const invokeGeminiAi = require("./services/ai.service");
-// invokeGeminiAi();
-// const { resume, selfDescription, jobDescription } = require("./services/temp");
-// const { generateInterviewReport } = require("./services/ai.service");
-// generateInterviewReport({ resume, selfDescription, jobDescription });
+
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: config.corsOrigin,
     credentials: true,
   }),
 );
-const connectDB = require("./config/database");
-const dotenv = require("dotenv");
-dotenv.config();
-
-connectDB();
-
-const cookieParser = require("cookie-parser");
 app.use(cookieParser());
 app.use(express.json());
 
-// Define routes
+app.get("/api/health", (req, res) => {
+  res.status(200).json({ status: "ok" });
+});
 
-const authRoutes = require("./routes/auth.route");
-const interviewRouter = require("./routes/interview.route");
+app.use("/api/auth", require("./routes/auth.route"));
+app.use("/api/interview", require("./routes/interview.route"));
+app.use("/api/ats", require("./routes/ats.route"));
 
-// using all routes here
-app.use("/api/auth", authRoutes);
-app.use("/api/interview", interviewRouter);
+// 404 handler for unknown routes, then the global error handler (must be last).
+app.use(notFoundHandler);
+app.use(errorHandler);
+
+connectDB();
 
 module.exports = app;

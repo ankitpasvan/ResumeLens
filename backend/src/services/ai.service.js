@@ -1,15 +1,14 @@
 const { GoogleGenAI } = require("@google/genai");
 const { z } = require("zod");
-const { zodToJsonSchema } = require("zod-to-json-schema");
-const temp = require("./temp");
-
-const dotenv = require("dotenv");
-dotenv.config();
+const config = require("../utils/env");
 
 const ai = new GoogleGenAI({
-  apiKey: process.env.GOOGLE_GENAI_API_KEY,
+  apiKey: config.geminiApiKey,
 });
 
+// This schema is the single contract for the AI output. It matches the
+// Mongoose report schema and the fields the frontend renders, so nothing
+// gets silently dropped by Mongoose strict mode.
 const interviewReportSchema = z.object({
   matchScore: z
     .number()
@@ -24,19 +23,19 @@ const interviewReportSchema = z.object({
           .string()
           .describe("The technical question can be asked in the interview"),
 
-        intention: z
-          .string()
-          .describe("The intention of interviewer behind asking this question"),
+        difficulty: z
+          .enum(["Easy", "Medium", "Hard"])
+          .describe("The difficulty level of the question"),
 
-        answer: z
+        expectedAnswer: z
           .string()
           .describe(
-            "How to answer this question, what points to cover, what approach to take etc.",
+            "How to answer this question: the important concepts, points, examples, and approach to cover",
           ),
       }),
     )
     .describe(
-      "Technical questions that can be asked in the interview along with their intention",
+      "Technical questions that can be asked in the interview, with difficulty and guidance on answering them",
     ),
 
   behavioralQuestions: z
@@ -48,19 +47,15 @@ const interviewReportSchema = z.object({
             "The behavioral question that can be asked in the interview",
           ),
 
-        intention: z
-          .string()
-          .describe("The intention of interviewer behind asking this question"),
-
-        answer: z
+        tip: z
           .string()
           .describe(
-            "How to answer this question, what points to cover, what approach to take etc.",
+            "A tip for answering: how to structure the response, e.g. using the STAR method",
           ),
       }),
     )
     .describe(
-      "Behavioral questions that can be asked in the interview along with their intention and how to answer them",
+      "Behavioral questions that can be asked in the interview along with tips for answering them",
     ),
 
   skillGaps: z
@@ -71,10 +66,16 @@ const interviewReportSchema = z.object({
         severity: z
           .enum(["low", "medium", "high"])
           .describe("The severity of this skill gap"),
+
+        suggestion: z
+          .string()
+          .describe(
+            "A concrete suggestion for how the candidate can close this gap",
+          ),
       }),
     )
     .describe(
-      "List of skill gaps in the candidate's profile along with their severity",
+      "List of skill gaps in the candidate's profile along with their severity and suggestions",
     ),
 
   preparationPlan: z
@@ -162,15 +163,15 @@ Questions must be based on:
 - Skills that the candidate claims to know
 
 Include questions from different difficulty levels:
-- Basic
-- Intermediate
-- Advanced
+- Easy
+- Medium
+- Hard
 
 For every technical question provide:
 
 - question: The exact interview question.
-- intention: Explain what the interviewer is trying to evaluate.
-- answer: Explain how the candidate should answer. Include the important concepts, points, examples, and approach that should be discussed.
+- difficulty: One of "Easy", "Medium", or "Hard".
+- expectedAnswer: Explain how the candidate should answer. Include the important concepts, points, examples, and approach that should be discussed.
 
 Avoid asking the same question in different forms.
 
@@ -195,11 +196,7 @@ Include questions related to:
 For every behavioral question provide:
 
 - question
-- intention
-- answer
-
-The answer should explain how the candidate should structure their response. When appropriate, recommend using the STAR method:
-Situation → Task → Action → Result.
+- tip: How the candidate should structure their response. When appropriate, recommend using the STAR method: Situation → Task → Action → Result.
 
 Do not invent achievements or experiences that are not present in the resume. If an example is required but not available, explain what type of example the candidate should provide.
 
@@ -216,6 +213,7 @@ Identify skills that:
 For every skill gap provide:
 - skill: Name of the missing or weak skill
 - severity: low, medium, or high
+- suggestion: A concrete suggestion for closing the gap
 
 Use:
 - high = important requirement and candidate has little/no evidence of it
@@ -278,23 +276,111 @@ IMPORTANT INSTRUCTIONS
 
     config: {
       responseMimeType: "application/json",
-      responseJsonSchema: zodToJsonSchema(interviewReportSchema),
+      responseJsonSchema: z.toJSONSchema(interviewReportSchema),
     },
   });
-
-  // Print AI response
-  console.log(response.text);
 
   // Return response
   return response.text;
 }
 
-async function generateInterview({ resume, selfDescription, jobDescription }) {
-  const prompt = `Generate an interview report for a candidate with the following details:
-     Resume:${resume}
-     Self Description:${selfDescription}
-     job Description:${jobDescription}
-     `;
+// Structured qualitative feedback for the ATS analyzer. The numeric score
+// itself is computed deterministically in ats.service.js; the AI only
+// explains strengths/weaknesses and suggests concrete improvements — it
+// never invents the score and never invents candidate experience.
+const atsFeedbackSchema = z.object({
+  summary: z.string().describe("2-3 sentence overall assessment of the resume"),
+
+  strengths: z
+    .array(z.string())
+    .describe(
+      "Concrete strengths actually found in the resume, each tied to real resume content",
+    ),
+
+  weaknesses: z
+    .array(
+      z.object({
+        issue: z.string().describe("The specific weakness found"),
+
+        severity: z
+          .enum(["low", "medium", "high"])
+          .describe("How much this weakness hurts the ATS score"),
+
+        suggestion: z
+          .string()
+          .describe(
+            "A concrete, actionable fix that does not invent experience the candidate did not provide",
+          ),
+      }),
+    )
+    .describe("Weaknesses ordered by impact on the ATS score"),
+
+  suggestions: z
+    .array(z.string())
+    .describe(
+      "Prioritized list of concrete resume improvements, most impactful first",
+    ),
+});
+
+async function generateAtsFeedback({ resumeText, jobDescription, findings }) {
+  const resumeExcerpt = (resumeText || "").slice(0, 6000);
+  const jdExcerpt = (jobDescription || "").slice(0, 3000);
+
+  const findingsText = findings.breakdown
+    .map(
+      (b) =>
+        `- ${b.label}: ${
+          b.skipped
+            ? "skipped (no job description provided)"
+            : `${b.score}/${b.maxScore}`
+        } — ${b.details.join(" ")}`,
+    )
+    .join("\n");
+
+  const prompt = `
+You are an expert resume reviewer and hiring consultant.
+
+Analyze the candidate's resume (and the target job description, if provided)
+and produce qualitative feedback that explains and complements the
+deterministic ATS findings below. Do NOT invent a numeric score — the score
+is already computed and shown below.
+
+========================
+CANDIDATE RESUME (excerpt)
+========================
+${resumeExcerpt}
+
+========================
+TARGET JOB DESCRIPTION (may be empty)
+========================
+${jdExcerpt || "(none provided)"}
+
+========================
+DETERMINISTIC ATS FINDINGS
+========================
+Score: ${findings.score}/100
+${findingsText}
+Missing keywords: ${findings.missingKeywords.join(", ") || "(none)"}
+
+========================
+YOUR TASK
+========================
+
+1. summary: A 2-3 sentence overall assessment of the resume.
+2. strengths: Concrete strengths, each tied to something actually present in the resume.
+3. weaknesses: Specific weaknesses ordered by impact, each with a severity and a concrete fix.
+4. suggestions: Prioritized concrete improvements, most impactful first (maximum 7).
+
+========================
+IMPORTANT INSTRUCTIONS
+========================
+
+- Base everything on the resume text provided. Never invent experience, companies, skills, or achievements.
+- Phrase gaps as "not found in the resume" — never claim the candidate lacks a skill in real life.
+- Be specific: reference actual resume content where possible.
+- Do not repeat the numeric breakdown; explain what the candidate should DO about it.
+- Return ONLY the structured JSON response according to the provided schema.
+`;
 
   const response = await ai.models.generateContent({
     model: "gemini-3.6-flash",
@@ -302,32 +388,22 @@ async function generateInterview({ resume, selfDescription, jobDescription }) {
 
     config: {
       responseMimeType: "application/json",
-      responseJsonSchema: zodToJsonSchema(interviewReportSchema),
+      responseJsonSchema: z.toJSONSchema(atsFeedbackSchema),
     },
   });
 
-  console.log(JSON.parse(response.text));
-  console.log(response.text);
+  return response.text;
 }
 
-async function invokeGeminiAi() {
-  const response = await ai.models.generateContent({
-    model: "gemini-3.6-flash",
-
-    contents: "Hello Gemini! Explain what an interview is.",
-  });
-
-  console.log(response.text);
-}
-
-async function generateResumePdf({ resume, jobDescription, selfDescription }) {
+// Placeholder: returns a minimal valid PDF so the download endpoint works
+// end to end. Replaced by a real PDF generator in a later phase.
+async function generateResumePdf(resume) {
   const content = `%PDF-1.4\n1 0 obj\n<< /Title (Interview Strategy Resume) >>\nendobj\ntrailer\n<< >>\n%%EOF`;
   return Buffer.from(content, "utf-8");
 }
 
 module.exports = {
   generateInterviewReport,
-  invokeGeminiAi,
-  generateInterview,
+  generateAtsFeedback,
   generateResumePdf,
 };

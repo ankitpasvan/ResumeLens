@@ -4,11 +4,9 @@ const authmiddleware = require("../middleware/auth.middleware");
 const authController = require("../controller/auth.controller");
 const authRouter = Router();
 
-// Define your authentication routes here
-
 authRouter.post(
   "/register",
-  authmiddleware.validateUser,
+  authmiddleware.validateRegister,
   authController.registerUser,
 );
 authRouter.post("/login", authController.loginUser);
