@@ -4,6 +4,11 @@ import Register from "./components/pages/Register";
 import NotFound from "./components/pages/NotFound";
 import Home from "./components/pages/Home";
 import Interview from "./components/pages/interview";
+import Protected from "./components/Protected";
+import { InterviewProvider } from "./components/interview.context";
+import AtsAnalyzer from "./components/pages/AtsAnalyzer";
+import AtsHistory from "./components/pages/AtsHistory";
+import AtsDetail from "./components/pages/AtsDetail";
 
 export const router = createBrowserRouter([
   {
@@ -15,12 +20,48 @@ export const router = createBrowserRouter([
     element: <Register />,
   },
   {
-    path:"/",
-    element: <protected><Home /></protected>
+    path: "/",
+    element: (
+      <Protected>
+        <InterviewProvider>
+          <Home />
+        </InterviewProvider>
+      </Protected>
+    ),
   },
   {
-    path:"/interview/:interviewId",
-    element: <protected><Interview /></protected>,
+    path: "/interview/:interviewId",
+    element: (
+      <Protected>
+        <InterviewProvider>
+          <Interview />
+        </InterviewProvider>
+      </Protected>
+    ),
+  },
+  {
+    path: "/ats",
+    element: (
+      <Protected>
+        <AtsAnalyzer />
+      </Protected>
+    ),
+  },
+  {
+    path: "/ats/history",
+    element: (
+      <Protected>
+        <AtsHistory />
+      </Protected>
+    ),
+  },
+  {
+    path: "/ats/:id",
+    element: (
+      <Protected>
+        <AtsDetail />
+      </Protected>
+    ),
   },
   {
     path: "*",

@@ -1,11 +1,55 @@
-import React, { useState } from 'react'
+import { useState, useRef } from 'react'
+import { useNavigate } from 'react-router-dom'
 import '../../../src/style/home.scss'
+import Navbar from '../Navbar'
+import { useInterview } from '../interviewhook/useInterview.js'
 
 const Home = () => {
+  const navigate = useNavigate()
+  const { generateReport } = useInterview()
+
   const [jobDescription, setJobDescription] = useState('')
+  const [selfDescription, setSelfDescription] = useState('')
+  const [resumeFile, setResumeFile] = useState(null)
+  const [generating, setGenerating] = useState(false)
+  const [error, setError] = useState('')
+  const fileInputRef = useRef(null)
+
+  const handleFileChange = (e) => {
+    setResumeFile(e.target.files?.[0] || null)
+  }
+
+  const handleGenerate = async () => {
+    setError('')
+
+    if (!jobDescription.trim()) {
+      setError('Job description is required.')
+      return
+    }
+    if (!resumeFile && !selfDescription.trim()) {
+      setError('Upload a resume PDF or add a self-description.')
+      return
+    }
+
+    setGenerating(true)
+    try {
+      const report = await generateReport({
+        jobDescription: jobDescription.trim(),
+        selfDescription: selfDescription.trim(),
+        resumeFile,
+      })
+      navigate(`/interview/${report._id}`)
+    } catch (err) {
+      setError(err.message || 'Failed to generate the interview plan. Please try again.')
+    } finally {
+      setGenerating(false)
+    }
+  }
 
   return (
     <main className="home">
+      <Navbar />
+
       {/* Page Header */}
       <header className="page-header">
         <h1>
@@ -70,10 +114,20 @@ const Home = () => {
                     <path d="M12 12v6M9 15l3-3 3 3" />
                   </svg>
                 </div>
-                <p className="upload-text">Click to upload or drag & drop</p>
-                <p className="upload-subtext">PDF or DOCX (Max 5MB)</p>
+                <p className="upload-text">
+                  {resumeFile ? resumeFile.name : 'Click to upload or drag & drop'}
+                </p>
+                <p className="upload-subtext">PDF (Max 3MB)</p>
               </label>
-              <input hidden type="file" id="resume" name="resume" accept=".pdf,.docx" />
+              <input
+                hidden
+                ref={fileInputRef}
+                type="file"
+                id="resume"
+                name="resume"
+                accept=".pdf"
+                onChange={handleFileChange}
+              />
             </div>
 
             <div className="or-divider">
@@ -88,6 +142,8 @@ const Home = () => {
               <textarea
                 name="selfDescription"
                 id="selfDescription"
+                value={selfDescription}
+                onChange={(e) => setSelfDescription(e.target.value)}
                 placeholder="Briefly describe your experience, key skills, and years of experience if you don't have a resume handy..."
               />
             </div>
@@ -102,12 +158,23 @@ const Home = () => {
           </div>
         </div>
 
+        {error && (
+          <p style={{ color: '#f87171', fontSize: '0.9rem', margin: '0 0 1rem 0', textAlign: 'center' }}>
+            {error}
+          </p>
+        )}
+
         {/* Card Footer */}
         <div className="card-footer">
           <span className="footer-meta">AI-Powered Strategy Generation • Approx 30s</span>
-          <button className="button primary-button" type="button">
+          <button
+            className="button primary-button"
+            type="button"
+            onClick={handleGenerate}
+            disabled={generating}
+          >
             <span className="btn-sparkle">✦</span>
-            Generate My Interview Strategy
+            {generating ? 'Generating...' : 'Generate My Interview Strategy'}
           </button>
         </div>
       </div>

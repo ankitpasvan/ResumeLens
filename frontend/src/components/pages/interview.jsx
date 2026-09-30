@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react'
-import '../style/interview.scss'
-import { useInterview } from '../hooks/useInterview.js'
-import { useParams } from 'react-router'
+import { useState } from 'react'
+import '../../style/interview.scss'
+import { useInterview } from '../interviewhook/useInterview.js'
+import Navbar from '../Navbar'
 
 const SECTIONS = [
   { id: 'technical', label: 'Technical questions' },
@@ -9,7 +9,7 @@ const SECTIONS = [
   { id: 'roadmap', label: 'Road Map' },
 ]
 
-const QuestionAccordion = ({ item, index }) => {
+const QuestionAccordion = ({ item, index, answerLabel }) => {
   const [isOpen, setIsOpen] = useState(false)
 
   return (
@@ -22,13 +22,15 @@ const QuestionAccordion = ({ item, index }) => {
 
       {isOpen && (
         <div className="q-accordion__body">
+          {item.difficulty && (
+            <div className="q-accordion__block">
+              <span className="q-accordion__tag intention-tag">Difficulty</span>
+              <p>{item.difficulty}</p>
+            </div>
+          )}
           <div className="q-accordion__block">
-            <span className="q-accordion__tag intention-tag">Intention</span>
-            <p>{item.intention}</p>
-          </div>
-          <div className="q-accordion__block">
-            <span className="q-accordion__tag answer-tag">Model Answer</span>
-            <p>{item.answer}</p>
+            <span className="q-accordion__tag answer-tag">{answerLabel}</span>
+            <p style={{ whiteSpace: 'pre-wrap' }}>{item.body}</p>
           </div>
         </div>
       )}
@@ -42,20 +44,21 @@ const RoadMapCard = ({ plan }) => (
       <span className="roadmap-card__day">Day {plan.day}</span>
       <h4 className="roadmap-card__focus">{plan.focus}</h4>
     </div>
-    <p className="roadmap-card__task">{plan.tasks}</p>
+    {Array.isArray(plan.tasks) ? (
+      <ul style={{ margin: '0.5rem 0 0 1.1rem', padding: 0, display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
+        {plan.tasks.map((t, i) => (
+          <li key={i}>{t}</li>
+        ))}
+      </ul>
+    ) : (
+      <p className="roadmap-card__task">{plan.tasks}</p>
+    )}
   </article>
 )
 
 const Interview = () => {
   const [activeTab, setActiveTab] = useState('technical')
-  const { report, getReportById, loading } = useInterview()
-  const { interviewId } = useParams()
-
-  useEffect(() => {
-    if (interviewId) {
-      getReportById(interviewId)
-    }
-  }, [interviewId])
+  const { report, loading, getResumePdf } = useInterview()
 
   if (loading || !report) {
     return (
@@ -68,101 +71,159 @@ const Interview = () => {
 
   const technicalQuestions = report.technicalQuestions || []
   const behavioralQuestions = report.behavioralQuestions || []
-  const preparationPlans = report.preparationPlans || []
-  const skillgaps = report.skillgaps || []
+  const preparationPlan = report.preparationPlan || []
+  const skillGaps = report.skillGaps || []
 
   return (
-    <div className="interview-viewport">
-      <div className="interview-board">
-        {/* ── Left Column: Nav Items ── */}
-        <nav className="interview-board__left">
-          <div className="nav-button-group">
-            {SECTIONS.map((tab) => (
-              <button
-                key={tab.id}
-                type="button"
-                className={`nav-button ${activeTab === tab.id ? 'nav-button--active' : ''}`}
-                onClick={() => setActiveTab(tab.id)}
-              >
-                {tab.label}
-              </button>
-            ))}
-          </div>
-        </nav>
+    <main style={{ minHeight: '100vh' }}>
+      <Navbar />
 
-        <div className="interview-board__divider" />
-
-        {/* ── Middle Column: Main Dynamic Content ── */}
-        <section className="interview-board__center">
-          <div className="content-container">
-            {activeTab === 'technical' && (
-              <div className="content-panel">
-                <header className="content-panel__head">
-                  <h3>Technical Questions</h3>
-                  <span className="count-pill">{technicalQuestions.length}</span>
-                </header>
-                <div className="accordion-stack">
-                  {technicalQuestions.map((q, idx) => (
-                    <QuestionAccordion key={idx} item={q} index={idx} />
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {activeTab === 'behavioral' && (
-              <div className="content-panel">
-                <header className="content-panel__head">
-                  <h3>Behavioral Questions</h3>
-                  <span className="count-pill">{behavioralQuestions.length}</span>
-                </header>
-                <div className="accordion-stack">
-                  {behavioralQuestions.map((q, idx) => (
-                    <QuestionAccordion key={idx} item={q} index={idx} />
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {activeTab === 'roadmap' && (
-              <div className="content-panel">
-                <header className="content-panel__head">
-                  <h3>Road Map</h3>
-                  <span className="count-pill">{preparationPlans.length} Days</span>
-                </header>
-                <div className="roadmap-stack">
-                  {preparationPlans.map((plan, idx) => (
-                    <RoadMapCard key={plan.day || idx} plan={plan} />
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
-        </section>
-
-        <div className="interview-board__divider" />
-
-        {/* ── Right Column: Skill Gaps ── */}
-        <aside className="interview-board__right">
-          <div className="skill-section">
-            <h4 className="skill-section__heading">Skill Gaps</h4>
-            <div className="skill-section__chips">
-              {skillgaps.length > 0 ? (
-                skillgaps.map((gap, idx) => (
-                  <span
-                    key={idx}
-                    className={`skill-chip skill-chip--${gap.severity || 'low'}`}
-                  >
-                    {gap.skill}
-                  </span>
-                ))
-              ) : (
-                <p className="no-gaps">No skill gaps found</p>
-              )}
+      <div className="interview-viewport">
+        {/* Report header: match score + PDF download */}
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            gap: '1rem',
+            flexWrap: 'wrap',
+            marginBottom: '1.25rem',
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.9rem' }}>
+            <div
+              style={{
+                width: '3.4rem',
+                height: '3.4rem',
+                borderRadius: '50%',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontWeight: 800,
+                border: '2px solid #f43f5e',
+                color: '#f43f5e',
+              }}
+            >
+              {report.matchScore ?? '–'}
+            </div>
+            <div>
+              <h2 style={{ margin: 0, fontSize: '1.25rem' }}>Your Interview Plan</h2>
+              <p style={{ margin: '0.15rem 0 0 0', color: '#8491a5', fontSize: '0.88rem' }}>
+                Match score: {report.matchScore ?? '–'}/100
+              </p>
             </div>
           </div>
-        </aside>
+          <button
+            type="button"
+            className="button button-primary"
+            onClick={() => getResumePdf(report._id)}
+          >
+            Download resume PDF
+          </button>
+        </div>
+
+        <div className="interview-board">
+          {/* ── Left Column: Nav Items ── */}
+          <nav className="interview-board__left">
+            <div className="nav-button-group">
+              {SECTIONS.map((tab) => (
+                <button
+                  key={tab.id}
+                  type="button"
+                  className={`nav-button ${activeTab === tab.id ? 'nav-button--active' : ''}`}
+                  onClick={() => setActiveTab(tab.id)}
+                >
+                  {tab.label}
+                </button>
+              ))}
+            </div>
+          </nav>
+
+          <div className="interview-board__divider" />
+
+          {/* ── Middle Column: Main Dynamic Content ── */}
+          <section className="interview-board__center">
+            <div className="content-container">
+              {activeTab === 'technical' && (
+                <div className="content-panel">
+                  <header className="content-panel__head">
+                    <h3>Technical Questions</h3>
+                    <span className="count-pill">{technicalQuestions.length}</span>
+                  </header>
+                  <div className="accordion-stack">
+                    {technicalQuestions.map((q, idx) => (
+                      <QuestionAccordion
+                        key={idx}
+                        item={{ ...q, body: q.expectedAnswer }}
+                        index={idx}
+                        answerLabel="How to answer"
+                      />
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {activeTab === 'behavioral' && (
+                <div className="content-panel">
+                  <header className="content-panel__head">
+                    <h3>Behavioral Questions</h3>
+                    <span className="count-pill">{behavioralQuestions.length}</span>
+                  </header>
+                  <div className="accordion-stack">
+                    {behavioralQuestions.map((q, idx) => (
+                      <QuestionAccordion
+                        key={idx}
+                        item={{ ...q, body: q.tip }}
+                        index={idx}
+                        answerLabel="Answer tip"
+                      />
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {activeTab === 'roadmap' && (
+                <div className="content-panel">
+                  <header className="content-panel__head">
+                    <h3>Road Map</h3>
+                    <span className="count-pill">{preparationPlan.length} Days</span>
+                  </header>
+                  <div className="roadmap-stack">
+                    {preparationPlan.map((plan, idx) => (
+                      <RoadMapCard key={plan.day || idx} plan={plan} />
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          </section>
+
+          <div className="interview-board__divider" />
+
+          {/* ── Right Column: Skill Gaps ── */}
+          <aside className="interview-board__right">
+            <div className="skill-section">
+              <h4 className="skill-section__heading">Skill Gaps</h4>
+              <div className="skill-section__chips">
+                {skillGaps.length > 0 ? (
+                  skillGaps.map((gap, idx) => (
+                    <span
+                      key={idx}
+                      className={`skill-chip skill-chip--${gap.severity || 'low'}`}
+                      title={gap.suggestion || ''}
+                    >
+                      {gap.skill}
+                    </span>
+                  ))
+                ) : (
+                  <p className="no-gaps">No skill gaps found</p>
+                )}
+              </div>
+            </div>
+          </aside>
+        </div>
       </div>
-    </div>
+    </main>
   )
 }
 

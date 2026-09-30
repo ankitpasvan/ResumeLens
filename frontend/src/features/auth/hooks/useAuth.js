@@ -1,29 +1,34 @@
-import { useContext, useEffect } from "react";
+import { useContext } from "react";
 import { AuthContext } from "../auth.context.jsx";
-import { login, logout, register, getUser } from "../services/auth.api.js";
+import { login, logout, register } from "../services/auth.api.js";
 
 export const useAuth = () => {
-  const { user, loading, setUser, setLoading } = useContext(AuthContext);
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error("useAuth must be used within an AuthProvider");
+  }
 
+  const { user, loading, setUser, setLoading, refreshUser } = context;
+
+  // All handlers resolve with the user object and THROW on failure, so
+  // pages can show the real backend error message (no silent swallowing).
   const handleLogin = async (email, password) => {
     setLoading(true);
     try {
-      const userData = await login({ email, password });
-      setUser(userData);
-    } catch (error) {
-      console.error("Login failed:", error);
+      const data = await login({ email, password });
+      setUser(data.user);
+      return data.user;
     } finally {
       setLoading(false);
     }
   };
 
-  const handleregister = async (username, email, password) => {
+  const handleRegister = async (username, email, password) => {
     setLoading(true);
     try {
-      const userData = await register({ username, email, password });
-      setUser(userData);
-    } catch (error) {
-      console.error("Register failed:", error);
+      const data = await register({ username, email, password });
+      setUser(data.user);
+      return data.user;
     } finally {
       setLoading(false);
     }
@@ -33,10 +38,8 @@ export const useAuth = () => {
     setLoading(true);
     try {
       await logout();
-      setUser(null);
-    } catch (error) {
-      console.error("Logout failed:", error);
     } finally {
+      setUser(null);
       setLoading(false);
     }
   };
@@ -45,7 +48,8 @@ export const useAuth = () => {
     user,
     loading,
     handleLogin,
-    handleregister,
+    handleRegister,
     handleLogout,
+    refreshUser,
   };
 };
