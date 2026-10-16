@@ -1,12 +1,15 @@
 /* Jobs + application tracking smoke test: exercises the real HTTP stack
  * (routes, middleware, controllers) for job postings, saved jobs and the
  * application pipeline with in-memory model fakes. */
-const testEnv = {
-  JWT_SECRET: "jobs-smoke-test-signing-value",
-  GEMINI_API_KEY: "not-needed-for-jobs",
-};
-for (const [name, value] of Object.entries(testEnv)) {
-  if (!process.env[name]) process.env[name] = value;
+// Test credentials: real values come from the environment (CI secrets).
+// Otherwise fall back to generated non-secret placeholders so the suites
+// run with zero config. Never commit real credentials here.
+const crypto = require("crypto");
+if (!process.env.JWT_SECRET) {
+  process.env.JWT_SECRET = crypto.randomBytes(32).toString("hex");
+}
+if (!process.env.GEMINI_API_KEY) {
+  process.env.GEMINI_API_KEY = "smoke-test-placeholder-not-a-real-key";
 }
 process.env.MONGO_URI = "mongodb://localhost:27017/smoke";
 
@@ -272,6 +275,82 @@ async function run() {
   check(
     "owner updates job -> 200",
     res.status === 200 && res.body.job?.title === "Lead Frontend Developer",
+    `(got ${res.status})`,
+  );
+
+  // 6b. PATCH semantics regression tests: partial updates must validate
+  // only supplied fields and must never reset omitted fields to defaults.
+  res = await agentA
+    .post("/api/jobs")
+    .send({
+      ...JOB_A,
+      title: "Intern Role",
+      jobType: "internship",
+      workMode: "remote",
+    });
+  check(
+    "create internship job -> 201",
+    res.status === 201 && res.body.job?.jobType === "internship",
+    `(got ${res.status})`,
+  );
+  const internId = res.body.job?._id;
+
+  res = await agentA.patch(`/api/jobs/${internId}`).send({ status: "closed" });
+  check(
+    "partial PATCH with only status -> 200",
+    res.status === 200 && res.body.job?.status === "closed",
+    `(got ${res.status})`,
+  );
+
+  res = await agentA.get(`/api/jobs/${internId}`);
+  check(
+    "partial PATCH preserves title/jobType/workMode/salary/source",
+    res.status === 200 &&
+      res.body.job?.title === "Intern Role" &&
+      res.body.job?.jobType === "internship" &&
+      res.body.job?.workMode === "remote" &&
+      res.body.job?.salaryMin === 1800000 &&
+      res.body.job?.salaryMax === 2500000 &&
+      res.body.job?.source === "manual",
+    `(got ${res.status})`,
+  );
+
+  res = await agentA.patch(`/api/jobs/${internId}`).send({ jobType: "weird" });
+  check(
+    "partial PATCH with invalid jobType -> 400",
+    res.status === 400,
+    `(got ${res.status})`,
+  );
+
+  res = await agentA.patch(`/api/jobs/${internId}`).send({ title: "  " });
+  check(
+    "partial PATCH with blank title -> 400",
+    res.status === 400,
+    `(got ${res.status})`,
+  );
+
+  res = await agentA
+    .patch(`/api/jobs/${internId}`)
+    .send({ salaryMin: 99999999 });
+  check(
+    "partial PATCH salaryMin above stored salaryMax -> 400",
+    res.status === 400,
+    `(got ${res.status})`,
+  );
+
+  res = await agentA.get(`/api/jobs/${internId}`);
+  check(
+    "rejected PATCH left the document unchanged",
+    res.status === 200 &&
+      res.body.job?.salaryMin === 1800000 &&
+      res.body.job?.status === "closed",
+    `(got ${res.status})`,
+  );
+
+  res = await agentA.delete(`/api/jobs/${internId}`);
+  check(
+    "cleanup: delete internship job -> 204",
+    res.status === 204,
     `(got ${res.status})`,
   );
 

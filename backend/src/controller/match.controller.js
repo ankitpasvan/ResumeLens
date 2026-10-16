@@ -61,20 +61,25 @@ const createMatchController = asyncHandler(async (req, res) => {
   );
 
   // Qualitative feedback from the AI layer (stubbed in smoke tests).
-  const raw = await generateMatchFeedback({
-    resumeText: resume.parsedText,
-    jobTitle,
-    jobDescription,
-    findings,
-  });
-
-  let feedback;
+  // Graceful degradation: if the AI call fails or returns unusable output,
+  // the deterministic findings above still stand — persist and return them
+  // with empty feedback instead of failing the whole request.
+  let feedback = null;
+  let aiDegraded = false;
   try {
-    feedback = typeof raw === "string" ? JSON.parse(raw) : raw;
-  } catch {
-    return res.status(502).json({
-      error: "AI service returned an invalid response. Please try again.",
+    const raw = await generateMatchFeedback({
+      resumeText: resume.parsedText,
+      jobTitle,
+      jobDescription,
+      findings,
     });
+    feedback = typeof raw === "string" ? JSON.parse(raw) : raw;
+  } catch (error) {
+    aiDegraded = true;
+    console.warn(
+      "Match AI feedback unavailable, returning deterministic results:",
+      error.message,
+    );
   }
 
   const match = await jobMatchModel.create({
@@ -93,16 +98,18 @@ const createMatchController = asyncHandler(async (req, res) => {
     })),
     matchedSkills: findings.matchedSkills,
     missingSkills: findings.missingSkills,
-    summary: feedback.summary || "",
-    strengths: Array.isArray(feedback.strengths) ? feedback.strengths : [],
-    gaps: (Array.isArray(feedback.gaps) ? feedback.gaps : []).map((g = {}) => ({
-      issue: g.issue || "",
-      severity: ["low", "medium", "high"].includes(g.severity)
-        ? g.severity
-        : "medium",
-      suggestion: g.suggestion || "",
-    })),
-    recommendations: Array.isArray(feedback.recommendations)
+    summary: feedback?.summary || "",
+    strengths: Array.isArray(feedback?.strengths) ? feedback.strengths : [],
+    gaps: (Array.isArray(feedback?.gaps) ? feedback.gaps : []).map(
+      (g = {}) => ({
+        issue: g.issue || "",
+        severity: ["low", "medium", "high"].includes(g.severity)
+          ? g.severity
+          : "medium",
+        suggestion: g.suggestion || "",
+      }),
+    ),
+    recommendations: Array.isArray(feedback?.recommendations)
       ? feedback.recommendations
       : [],
   });
@@ -110,6 +117,11 @@ const createMatchController = asyncHandler(async (req, res) => {
   res.status(201).json({
     message: "Job match completed.",
     match,
+    warnings: aiDegraded
+      ? [
+          "AI feedback is temporarily unavailable; showing deterministic match results only.",
+        ]
+      : [],
   });
 });
 

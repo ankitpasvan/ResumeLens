@@ -1,6 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
+const helmet = require("helmet");
 
 // Validates required environment variables and exits if any are missing.
 const config = require("./utils/env");
@@ -9,8 +10,17 @@ const {
   notFoundHandler,
   errorHandler,
 } = require("./middleware/error.middleware");
+const { generalLimiter } = require("./middleware/rateLimit.middleware");
 
 const app = express();
+
+// Behind Render/Railway/Heroku the app sits behind a proxy — trust the
+// first hop so req.ip (used by the rate limiters) is the real client IP.
+// Do NOT raise this number without understanding the proxy chain.
+app.set("trust proxy", 1);
+
+// Security headers (hides X-Powered-By, sets HSTS in production, etc.).
+app.use(helmet());
 
 app.use(
   cors({
@@ -20,6 +30,10 @@ app.use(
 );
 app.use(cookieParser());
 app.use(express.json());
+
+// General rate-limit safety net for every route (stricter limiters are
+// applied per-route below).
+app.use(generalLimiter);
 
 app.get("/api/health", (req, res) => {
   res.status(200).json({ status: "ok" });

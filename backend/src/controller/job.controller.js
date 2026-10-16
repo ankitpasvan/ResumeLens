@@ -38,21 +38,31 @@ function cleanSalary(value) {
 }
 
 // Shared validation for job create/update bodies. Returns an error string
-// or null when valid.
-function validateJobBody(body) {
+// or null when valid. In partial mode (PATCH), only supplied fields are
+// validated — required-field checks are skipped for absent fields, and a
+// field explicitly sent as undefined is treated as absent.
+function validateJobBody(body, { partial = false } = {}) {
+  const present = (key) => body[key] !== undefined;
+
   const title = (body.title || "").trim();
   const company = (body.company || "").trim();
   const description = (body.description || "").trim();
 
-  if (!title) return "Job title is required.";
-  if (title.length > 120) return "Job title must be at most 120 characters.";
-  if (!company) return "Company name is required.";
-  if (company.length > 120)
-    return "Company name must be at most 120 characters.";
-  if (description.length < MIN_DESCRIPTION_LENGTH)
-    return `Job description is too short (minimum ${MIN_DESCRIPTION_LENGTH} characters).`;
-  if (description.length > MAX_DESCRIPTION_LENGTH)
-    return `Job description is too long (max ${MAX_DESCRIPTION_LENGTH} characters).`;
+  if (!partial || present("title")) {
+    if (!title) return "Job title is required.";
+    if (title.length > 120) return "Job title must be at most 120 characters.";
+  }
+  if (!partial || present("company")) {
+    if (!company) return "Company name is required.";
+    if (company.length > 120)
+      return "Company name must be at most 120 characters.";
+  }
+  if (!partial || present("description")) {
+    if (description.length < MIN_DESCRIPTION_LENGTH)
+      return `Job description is too short (minimum ${MIN_DESCRIPTION_LENGTH} characters).`;
+    if (description.length > MAX_DESCRIPTION_LENGTH)
+      return `Job description is too long (max ${MAX_DESCRIPTION_LENGTH} characters).`;
+  }
   if (body.jobType && !JOB_TYPES.includes(body.jobType))
     return `Invalid job type. Must be one of: ${JOB_TYPES.join(", ")}.`;
   if (body.workMode && !WORK_MODES.includes(body.workMode))
@@ -72,7 +82,35 @@ function validateJobBody(body) {
   return null;
 }
 
-function buildJobDoc(body) {
+function buildJobDoc(body, { partial = false } = {}) {
+  if (partial) {
+    // PATCH semantics: only touch supplied fields. Absent fields are left
+    // alone — never reset to defaults. Invalid-but-supplied values were
+    // already rejected by validateJobBody, so enums here are trusted.
+    const doc = {};
+    if (body.title !== undefined) doc.title = (body.title || "").trim();
+    if (body.company !== undefined) doc.company = (body.company || "").trim();
+    if (body.location !== undefined)
+      doc.location = cleanString(body.location, 120);
+    if (body.jobType !== undefined) doc.jobType = body.jobType;
+    if (body.workMode !== undefined) doc.workMode = body.workMode;
+    if (body.description !== undefined)
+      doc.description = (body.description || "").trim();
+    if (body.requirements !== undefined)
+      doc.requirements = cleanList(body.requirements, 300);
+    if (body.skills !== undefined) doc.skills = cleanList(body.skills, 60);
+    const salaryMin = cleanSalary(body.salaryMin);
+    const salaryMax = cleanSalary(body.salaryMax);
+    if (salaryMin !== undefined) doc.salaryMin = salaryMin;
+    if (salaryMax !== undefined) doc.salaryMax = salaryMax;
+    if (body.currency !== undefined)
+      doc.currency = cleanString(body.currency, 6) || "INR";
+    if (body.status !== undefined) doc.status = body.status;
+    if (body.source !== undefined)
+      doc.source = body.source === "match" ? "match" : "manual";
+    if (body.match) doc.match = body.match;
+    return doc;
+  }
   return {
     title: (body.title || "").trim(),
     company: (body.company || "").trim(),
@@ -187,9 +225,10 @@ const getJobController = asyncHandler(async (req, res) => {
   return res.status(200).json({ job: plain });
 });
 
-// Update a job — owner only.
+// Update a job — owner only. PATCH semantics: only supplied fields are
+// validated and updated; omitted fields keep their stored values.
 const updateJobController = asyncHandler(async (req, res) => {
-  const validationError = validateJobBody(req.body);
+  const validationError = validateJobBody(req.body, { partial: true });
   if (validationError) {
     return res.status(400).json({ error: validationError });
   }
@@ -199,7 +238,20 @@ const updateJobController = asyncHandler(async (req, res) => {
     return res.status(404).json({ error: "Job not found." });
   }
 
-  Object.assign(job, buildJobDoc(req.body));
+  Object.assign(job, buildJobDoc(req.body, { partial: true }));
+
+  // Cross-check the merged salaries: a partial update may supply only one
+  // bound, so validate against the stored document, not just the body.
+  if (
+    job.salaryMin !== undefined &&
+    job.salaryMax !== undefined &&
+    job.salaryMin > job.salaryMax
+  ) {
+    return res
+      .status(400)
+      .json({ error: "Minimum salary cannot be greater than maximum salary." });
+  }
+
   await job.save();
 
   return res.status(200).json({ job });

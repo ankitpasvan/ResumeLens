@@ -1,4 +1,5 @@
 const multer = require("multer");
+const logger = require("../utils/logger");
 
 // 404 for any route that didn't match. Must be registered AFTER all routes.
 function notFoundHandler(req, res) {
@@ -40,7 +41,7 @@ function errorHandler(err, req, res, next) {
     return res.status(err.statusCode).json({ error: err.message });
   }
 
-  console.error("Unhandled error:", err);
+  logger.error({ err }, "Unhandled error");
   res.status(500).json({ error: "Something went wrong. Please try again." });
 }
 

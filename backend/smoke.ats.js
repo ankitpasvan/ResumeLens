@@ -2,8 +2,16 @@
  * controllers) for the ATS analyzer with in-memory model fakes and a
  * stubbed Gemini feedback call. Also unit-tests the deterministic scorer
  * directly (pure function, no fakes needed). */
-process.env.JWT_SECRET = "smoke-test-secret";
-process.env.GEMINI_API_KEY = "smoke-test-key";
+// Test credentials: real values come from the environment (CI secrets).
+// Otherwise fall back to generated non-secret placeholders so the suites
+// run with zero config. Never commit real credentials here.
+const crypto = require("crypto");
+if (!process.env.JWT_SECRET) {
+  process.env.JWT_SECRET = crypto.randomBytes(32).toString("hex");
+}
+if (!process.env.GEMINI_API_KEY) {
+  process.env.GEMINI_API_KEY = "smoke-test-placeholder-not-a-real-key";
+}
 process.env.MONGO_URI = "mongodb://localhost:27017/smoke";
 
 const request = require("supertest");
@@ -87,12 +95,19 @@ const fakeFeedback = {
   ],
 };
 
+// Set to true to simulate a Gemini outage for the graceful-degradation test.
+let atsAiOutage = false;
+
 function installFakes() {
   // --- Stub Gemini feedback before controllers load ---
   const aiPath = require.resolve("./src/services/ai.service");
-  require(aiPath);
-  require.cache[aiPath].exports.generateAtsFeedback = async () =>
-    JSON.stringify(fakeFeedback);
+  const { AiServiceError } = require(aiPath);
+  require.cache[aiPath].exports.generateAtsFeedback = async () => {
+    if (atsAiOutage) {
+      throw new AiServiceError("simulated Gemini outage", { transient: true });
+    }
+    return JSON.stringify(fakeFeedback);
+  };
 
   // --- In-memory User model fake ---
   const users = [];
@@ -140,6 +155,19 @@ function installFakes() {
     },
     async findOne({ token }) {
       return blacklisted.has(token) ? { token } : null;
+    },
+  };
+
+  // --- In-memory AiUsage model fake (per-user daily quota counters) ---
+  const quotaCounts = new Map();
+  const aiUsagePath = require.resolve("./src/models/aiUsage.model");
+  require(aiUsagePath);
+  require.cache[aiUsagePath].exports = {
+    async findOneAndUpdate(filter, update) {
+      const key = `${filter.user}|${filter.day}`;
+      const next = (quotaCounts.get(key) || 0) + (update.$inc?.count || 0);
+      quotaCounts.set(key, next);
+      return { user: filter.user, day: filter.day, count: next };
     },
   };
 
@@ -253,13 +281,11 @@ async function main() {
   );
 
   // ============ HTTP: auth + validation ============
-  await agent
-    .post("/api/auth/register")
-    .send({
-      username: "atsuser",
-      email: "ats@test.dev",
-      password: "password123",
-    });
+  await agent.post("/api/auth/register").send({
+    username: "atsuser",
+    email: "ats@test.dev",
+    password: "password123",
+  });
 
   let res = await request(app)
     .post("/api/ats/analyze")
@@ -352,13 +378,11 @@ async function main() {
   check("get malformed id -> 400", res.status === 400, `got ${res.status}`);
 
   const agentB = request.agent(app);
-  await agentB
-    .post("/api/auth/register")
-    .send({
-      username: "intruder",
-      email: "intruder2@test.dev",
-      password: "password123",
-    });
+  await agentB.post("/api/auth/register").send({
+    username: "intruder",
+    email: "intruder2@test.dev",
+    password: "password123",
+  });
   res = await agentB.get(`/api/ats/${analysisId}`);
   check(
     "other user reads analysis -> 404 (IDOR safe)",
@@ -372,6 +396,25 @@ async function main() {
     res.status === 401,
     `got ${res.status}`,
   );
+
+  // ============ Graceful degradation: AI outage (runs last: it persists
+  // a degraded analysis, which would change the history counts above) ====
+  atsAiOutage = true;
+  res = await agent
+    .post("/api/ats/analyze")
+    .field("resumeText", GOOD_RESUME)
+    .field("jobDescription", JD);
+  check(
+    "AI outage -> 201 with deterministic results + warnings (no 500/502)",
+    res.status === 201 &&
+      typeof res.body.analysis?.score === "number" &&
+      Array.isArray(res.body.warnings) &&
+      res.body.warnings.length > 0 &&
+      res.body.analysis.summary === "" &&
+      res.body.analysis.suggestions.length === 0,
+    `got ${res.status}`,
+  );
+  atsAiOutage = false;
 
   for (const [s, n, e] of results)
     console.log(`${s}  ${n}${e ? "  (" + e + ")" : ""}`);

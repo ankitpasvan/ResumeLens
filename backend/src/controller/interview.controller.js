@@ -2,6 +2,7 @@ const { PDFParse } = require("pdf-parse");
 const {
   generateInterviewReport,
   generateResumePdf,
+  AiServiceError,
 } = require("../services/ai.service");
 const interviewReportModel = require("../models/interviewReport.model");
 const asyncHandler = require("../utils/asyncHandler");
@@ -34,11 +35,23 @@ const generateInterViewReportController = asyncHandler(async (req, res) => {
     });
   }
 
-  const rawResponse = await generateInterviewReport({
-    resume: resumeText,
-    selfDescription: selfDescription.trim(),
-    jobDescription: jobDescription.trim(),
-  });
+  // The interview report is fully AI-generated, so there is no
+  // deterministic fallback — but a failure must surface as a clear 503
+  // (transient) or 502 (bad AI output), never a hung request or a 500.
+  let rawResponse;
+  try {
+    rawResponse = await generateInterviewReport({
+      resume: resumeText,
+      selfDescription: selfDescription.trim(),
+      jobDescription: jobDescription.trim(),
+    });
+  } catch (error) {
+    const transient = error instanceof AiServiceError ? error.transient : false;
+    return res.status(transient ? 503 : 502).json({
+      error:
+        "AI service is temporarily unavailable. Please try again in a moment.",
+    });
+  }
 
   let aiReport;
   try {

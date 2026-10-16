@@ -1,7 +1,7 @@
 const express = require("express");
 const { authMiddleware } = require("../middleware/auth.middleware");
 const resumeController = require("../controller/resume.controller");
-const upload = require("../middleware/file.middleware");
+const { upload, verifyPdfContent } = require("../middleware/file.middleware");
 
 const resumeRouter = express.Router();
 
@@ -12,6 +12,7 @@ resumeRouter.post(
   "/upload",
   authMiddleware,
   upload.single("resume"),
+  verifyPdfContent,
   resumeController.uploadResumeController,
 );
 

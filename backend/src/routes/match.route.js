@@ -1,5 +1,7 @@
 const express = require("express");
 const { authMiddleware } = require("../middleware/auth.middleware");
+const { aiLimiter } = require("../middleware/rateLimit.middleware");
+const aiQuota = require("../middleware/aiQuota.middleware");
 const matchController = require("../controller/match.controller");
 
 const matchRouter = express.Router();
@@ -9,7 +11,13 @@ const matchRouter = express.Router();
 // Match a stored resume against a job posting.
 // Body: { resumeId?, jobTitle, jobDescription }.
 // Without resumeId, the user's primary resume is used.
-matchRouter.post("/", authMiddleware, matchController.createMatchController);
+matchRouter.post(
+  "/",
+  authMiddleware,
+  aiLimiter,
+  aiQuota,
+  matchController.createMatchController,
+);
 
 // History of the user's past matches, newest first.
 matchRouter.get("/", authMiddleware, matchController.listMatchesController);

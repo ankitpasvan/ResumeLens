@@ -12,18 +12,92 @@ const config = require("../utils/env");
 
 const ai = new GoogleGenAI({ apiKey: config.geminiApiKey });
 
-const MODEL = "gemini-3.6-flash";
+const MODEL = config.geminiModel;
+const AI_TIMEOUT_MS = config.aiTimeoutMs;
+const AI_MAX_RETRIES = config.aiMaxRetries;
+
+// Typed error for AI-layer failures so controllers can tell a transient
+// outage (worth a degraded response / 503) apart from a programming bug.
+class AiServiceError extends Error {
+  constructor(message, { transient = false } = {}) {
+    super(message);
+    this.name = "AiServiceError";
+    this.transient = transient;
+  }
+}
+
+// Transient = worth a retry and/or a degraded response: rate limits,
+// server-side 5xx, network failures, timeouts. Other client errors (bad
+// API key, retired model name, malformed request) are NOT retried.
+function isTransientError(error) {
+  if (!error) return false;
+  if (error.code === "AI_TIMEOUT" || error.name === "AbortError") return true;
+  const message = String(error.message || "");
+  if (
+    /timed out|timeout|ECONNRESET|ETIMEDOUT|ENOTFOUND|EAI_AGAIN|EPIPE|socket hang up|network error|fetch failed/i.test(
+      message,
+    )
+  )
+    return true;
+  const status =
+    error.status ?? error.statusCode ?? error.response?.status ?? error.code;
+  if (status === 429 || status === "429") return true;
+  const numeric = Number(status);
+  if (Number.isFinite(numeric) && numeric >= 500 && numeric < 600) return true;
+  return false;
+}
 
 async function generateStructured(prompt, schema) {
-  const response = await ai.models.generateContent({
-    model: MODEL,
-    contents: prompt,
-    config: {
-      responseMimeType: "application/json",
-      responseJsonSchema: z.toJSONSchema(schema),
-    },
+  const attempts = AI_MAX_RETRIES + 1;
+  let lastError = null;
+
+  for (let attempt = 1; attempt <= attempts; attempt++) {
+    const controller = new AbortController();
+    const timer = setTimeout(() => {
+      const timeoutError = new Error(
+        `AI request timed out after ${AI_TIMEOUT_MS}ms`,
+      );
+      timeoutError.code = "AI_TIMEOUT";
+      controller.abort(timeoutError);
+    }, AI_TIMEOUT_MS);
+
+    try {
+      const response = await ai.models.generateContent({
+        model: MODEL,
+        contents: prompt,
+        config: {
+          responseMimeType: "application/json",
+          responseJsonSchema: z.toJSONSchema(schema),
+          // Cancels the client-side wait on timeout. Note: the model call
+          // may still be billed server-side (see SDK docs).
+          abortSignal: controller.signal,
+        },
+      });
+      return response.text;
+    } catch (error) {
+      lastError = error;
+      const transient = isTransientError(error);
+      if (attempt < attempts && transient) {
+        // One brief linear backoff before retrying. Retries are capped by
+        // AI_MAX_RETRIES on purpose — every retry costs money.
+        await new Promise((resolve) => setTimeout(resolve, 750 * attempt));
+        continue;
+      }
+      throw new AiServiceError(
+        `AI request failed${attempt > 1 ? ` after ${attempt} attempts` : ""}: ${
+          error.message || error
+        }`,
+        { transient },
+      );
+    } finally {
+      clearTimeout(timer);
+    }
+  }
+
+  // Unreachable — kept so the function always throws or returns.
+  throw new AiServiceError(`AI request failed: ${lastError?.message}`, {
+    transient: isTransientError(lastError),
   });
-  return response.text;
 }
 
 // ---------------------------------------------------------------------------
@@ -407,4 +481,6 @@ module.exports = {
   generateAtsFeedback,
   generateMatchFeedback,
   generateResumePdf,
+  AiServiceError,
+  isTransientError,
 };
