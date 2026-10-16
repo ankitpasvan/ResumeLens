@@ -1,6 +1,9 @@
 const express = require("express");
 const { authMiddleware } = require("../middleware/auth.middleware");
+const { aiLimiter } = require("../middleware/rateLimit.middleware");
+const aiQuota = require("../middleware/aiQuota.middleware");
 const resumeController = require("../controller/resume.controller");
+const bulletController = require("../controller/bullet.controller");
 const { upload, verifyPdfContent } = require("../middleware/file.middleware");
 
 const resumeRouter = express.Router();
@@ -48,6 +51,18 @@ resumeRouter.delete(
   "/:id",
   authMiddleware,
   resumeController.deleteResumeController,
+);
+
+// Improve a single resume bullet with AI. JSON body: { bullet, jobDescription? }.
+// AI endpoint: goes through the AI rate limiter and the per-user daily quota,
+// same as the ATS/match/interview routes. Registered after the /:id routes;
+// as a POST it cannot be shadowed by the GET/PATCH/DELETE /:id routes above.
+resumeRouter.post(
+  "/improve-bullet",
+  authMiddleware,
+  aiLimiter,
+  aiQuota,
+  bulletController.improveBulletController,
 );
 
 module.exports = resumeRouter;
