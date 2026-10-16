@@ -1,5 +1,12 @@
 const userModel = require("../models/user.model");
 const blacklistModel = require("../models/blacklist.model");
+const resumeModel = require("../models/resume.model");
+const atsAnalysisModel = require("../models/atsAnalysis.model");
+const jobMatchModel = require("../models/jobMatch.model");
+const savedJobModel = require("../models/savedJob.model");
+const jobApplicationModel = require("../models/jobApplication.model");
+const interviewReportModel = require("../models/interviewReport.model");
+const aiUsageModel = require("../models/aiUsage.model");
 const jwt = require("jsonwebtoken");
 const { randomUUID } = require("crypto");
 const config = require("../utils/env");
@@ -104,4 +111,97 @@ const getUser = asyncHandler(async (req, res) => {
   res.status(200).json({ success: true, user });
 });
 
-module.exports = { registerUser, loginUser, logoutUser, getUser };
+// Changes the user's password after verifying the current one.
+// The pre-save hook on the user schema re-hashes the new password,
+// so it is assigned in plain text here — never hashed manually.
+const changePasswordController = asyncHandler(async (req, res) => {
+  const { currentPassword, newPassword } = req.body;
+
+  if (!currentPassword || !newPassword) {
+    return res
+      .status(400)
+      .json({ error: "Current password and new password are required." });
+  }
+
+  const user = await userModel.findById(req.user.id);
+  if (!user) {
+    return res.status(404).json({ error: "User not found" });
+  }
+
+  const isMatch = await user.comparePassword(currentPassword);
+  if (!isMatch) {
+    return res.status(401).json({ error: "Current password is incorrect." });
+  }
+
+  if (typeof newPassword !== "string" || newPassword.length < 8) {
+    return res
+      .status(400)
+      .json({ error: "Password must be at least 8 characters long." });
+  }
+
+  user.password = newPassword;
+  await user.save();
+
+  res.status(200).json({ message: "Password changed successfully." });
+});
+
+// Permanently deletes the account and every document the user owns,
+// then revokes the current session token exactly like logout does.
+// Known limitation: other sessions' tokens are NOT blacklisted — they
+// expire naturally within 24h (JWT expiry); only the current token is revoked.
+const deleteAccountController = asyncHandler(async (req, res) => {
+  const { password } = req.body;
+
+  if (!password) {
+    return res.status(400).json({ error: "Password is required." });
+  }
+
+  const user = await userModel.findById(req.user.id);
+  if (!user) {
+    return res.status(404).json({ error: "User not found" });
+  }
+
+  const isMatch = await user.comparePassword(password);
+  if (!isMatch) {
+    return res.status(401).json({ error: "Password is incorrect." });
+  }
+
+  const userId = user._id;
+
+  await Promise.all([
+    resumeModel.deleteMany({ user: userId }),
+    atsAnalysisModel.deleteMany({ user: userId }),
+    jobMatchModel.deleteMany({ user: userId }),
+    savedJobModel.deleteMany({ user: userId }),
+    jobApplicationModel.deleteMany({ user: userId }),
+    interviewReportModel.deleteMany({ user: userId }),
+    aiUsageModel.deleteMany({ user: userId }),
+  ]);
+  await userModel.findByIdAndDelete(userId);
+
+  // End this session immediately, exactly like logout does.
+  const token = req.cookies?.token;
+  if (token) {
+    let expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000);
+    try {
+      const decoded = jwt.decode(token);
+      if (decoded && decoded.exp) {
+        expiresAt = new Date(decoded.exp * 1000);
+      }
+      await blacklistModel.create({ token, expiresAt });
+    } catch {
+      // If the token can't be decoded, just clear the cookie.
+    }
+  }
+
+  res.clearCookie("token").status(204).end();
+});
+
+module.exports = {
+  registerUser,
+  loginUser,
+  logoutUser,
+  getUser,
+  changePasswordController,
+  deleteAccountController,
+};
