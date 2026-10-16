@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "../../style/jobs.scss";
 import Navbar from "../Navbar";
-import { useJobs } from "../../features/jobs/hooks/useJobs";
+// import { useJobs } from "../../features/jobs/hooks/useJobs";
 
 const JOB_TYPES = ["full-time", "part-time", "contract", "internship", "freelance"];
 const WORK_MODES = ["remote", "on-site", "hybrid"];

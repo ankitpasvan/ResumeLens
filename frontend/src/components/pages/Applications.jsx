@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import "../../style/jobs.scss";
 import Navbar from "../Navbar";
-import { useJobs } from "../../features/jobs/hooks/useJobs";
+// import { useJobs } from "../../features/jobs/hooks/useJobs";
 import { APPLICATION_STATUSES } from "../../features/jobs/services/jobs.api";
 
 const STATUS_LABELS = {
