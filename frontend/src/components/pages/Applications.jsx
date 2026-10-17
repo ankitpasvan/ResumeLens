@@ -3,6 +3,7 @@ import "../../style/jobs.scss";
 import Navbar from "../Navbar";
 // import { useJobs } from "../../features/jobs/hooks/useJobs";
 import { APPLICATION_STATUSES } from "../../features/jobs/services/jobs.api";
+import { useJobs } from "../../features/jobs/hooks/useJobs";
 
 const STATUS_LABELS = {
   saved: "Saved",

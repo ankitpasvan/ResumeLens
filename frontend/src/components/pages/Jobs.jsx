@@ -3,6 +3,11 @@ import { Link, useNavigate } from "react-router-dom";
 import "../../style/jobs.scss";
 import Navbar from "../Navbar";
 // import { useJobs } from "../../features/jobs/hooks/useJobs";
+// purani line (line 5):
+// import { useJobs } from "../../features/jobs/hooks/useJobs";
+// nayi line:
+import { useJobs } from "../../features/jobs/hooks/useJobs";
+
 
 const JOB_TYPES = ["full-time", "part-time", "contract", "internship", "freelance"];
 const WORK_MODES = ["remote", "on-site", "hybrid"];
