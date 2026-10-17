@@ -19,7 +19,10 @@ const ScoreRing = ({ score = 0, size = 120, stroke = 10, label = "Score", tone }
   const clamped = Number.isFinite(numeric)
     ? Math.max(0, Math.min(100, Math.round(numeric)))
     : 0;
-
+  const resolvedTone = tone || toneFor(clamped);
+  const r = (size - stroke) / 2;
+  const c = 2 * Math.PI * r;
+  const offset = c - (clamped / 100) * c;
 
   return (
     <div className="ui-score-ring">
