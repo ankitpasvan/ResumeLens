@@ -4,7 +4,7 @@ import "../../style/matching.scss";
 import Navbar from "../Navbar";
 import { useResumes } from "../../features/resumes/hooks/useResumes";
 import { useMatching } from "../../features/matching/hooks/useMatching";
-import { saveJob } from "../../features/jobs/services/jobs.api";
+
 import { saveJob, listSavedJobs } from "../../features/jobs/services/jobs.api";
 
 
