@@ -1,5 +1,9 @@
 @use "./style/button.scss";
 
+// Single Google Fonts load for the whole app. Page-level SCSS files must NOT
+// repeat this @import (it was duplicated 6 times, refetching on every page).
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
 * {
     margin: 0;
     padding: 0;
@@ -12,12 +16,14 @@ body,
     height: 100%;
     width: 100%;
 
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
         Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue",
         sans-serif;
 
-    background-color: #161616;
-    color: whitesmoke;
+    // Matches the per-page $bg-dark (#090a0f) so there is no color flash
+    // on short pages or during route transitions.
+    background-color: #090a0f;
+    color: #f3f4f6;
 }
 
 .highlight{

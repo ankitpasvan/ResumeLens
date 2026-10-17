@@ -1,0 +1,130 @@
+// ── App Navbar ─────────────────────────────────────────────────────────────
+// Extracted from ats.scss so the navbar no longer depends on the ATS page
+// stylesheet. Includes a mobile hamburger menu (≤900px).
+
+$card-border: #1e2638;
+$input-bg: #161c28;
+$input-border: #232c40;
+$text-primary: #f3f4f6;
+$text-muted: #8491a5;
+$accent-pink: #f43f5e;
+
+.app-navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.9rem 1.75rem;
+  border-bottom: 1px solid $card-border;
+  background: rgba(16, 20, 29, 0.9);
+  backdrop-filter: blur(8px);
+  position: sticky;
+  top: 0;
+  z-index: 50;
+
+  .navbar-brand {
+    color: $text-primary;
+    text-decoration: none;
+    font-weight: 800;
+    font-size: 1.15rem;
+    letter-spacing: -0.02em;
+    flex-shrink: 0;
+    .brand-mark { color: $accent-pink; margin-right: 0.35rem; }
+  }
+
+  .navbar-links { display: flex; gap: 0.25rem; align-items: center; }
+
+  .navbar-link {
+    color: $text-muted;
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 600;
+    padding: 0.5rem 0.9rem;
+    border-radius: 0.6rem;
+    white-space: nowrap;
+    &:hover { color: $text-primary; background: $input-bg; }
+  }
+  .navbar-link-active { color: $text-primary; background: $input-bg; }
+
+  .navbar-user { display: flex; align-items: center; gap: 0.9rem; flex-shrink: 0; }
+  .navbar-username {
+    color: $text-muted;
+    font-size: 0.88rem;
+    font-weight: 600;
+    max-width: 140px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .navbar-logout {
+    background: transparent;
+    border: 1px solid $input-border;
+    color: $text-muted;
+    border-radius: 0.6rem;
+    padding: 0.45rem 0.9rem;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 0.85rem;
+    font-weight: 600;
+    white-space: nowrap;
+    &:hover { color: $text-primary; border-color: $accent-pink; }
+  }
+
+  .navbar-toggle {
+    display: none;
+    background: transparent;
+    border: 1px solid $input-border;
+    border-radius: 0.6rem;
+    padding: 0.5rem 0.6rem;
+    cursor: pointer;
+    flex-direction: column;
+    gap: 4px;
+    align-items: center;
+    justify-content: center;
+
+    span {
+      display: block;
+      width: 18px;
+      height: 2px;
+      background: $text-primary;
+      border-radius: 2px;
+      transition: transform 0.2s ease, opacity 0.2s ease;
+    }
+
+    &[aria-expanded="true"] {
+      span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
+      span:nth-child(2) { opacity: 0; }
+      span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
+    }
+  }
+}
+
+@media (max-width: 900px) {
+  .app-navbar {
+    padding: 0.8rem 1rem;
+    flex-wrap: wrap;
+
+    .navbar-toggle { display: flex; }
+
+    .navbar-links {
+      display: none;
+      width: 100%;
+      flex-direction: column;
+      align-items: stretch;
+      gap: 0.25rem;
+      padding-top: 0.75rem;
+      border-top: 1px solid $card-border;
+      margin-top: 0.75rem;
+    }
+
+    &.menu-open .navbar-links { display: flex; }
+
+    .navbar-link {
+      padding: 0.7rem 0.9rem;
+      font-size: 0.95rem;
+    }
+
+    .navbar-user { margin-left: auto; }
+    .navbar-username { display: none; }
+  }
+}
