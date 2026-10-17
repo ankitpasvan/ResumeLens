@@ -118,3 +118,24 @@
     .form-container { padding: 1.5rem; }
   }
 }
+.auth-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-bottom: 1.75rem;
+  color: #f1f5f9;
+  text-decoration: none;
+  font-weight: 800;
+  font-size: 1.2rem;
+  letter-spacing: -0.02em;
+
+  span { color: #a855f7; }
+  &:hover { color: #fff; }
+}
+
+.auth-sub {
+  margin: -1rem 0 0;
+  font-size: 0.9rem;
+  color: #94a3b8;
+  text-align: center;
+}

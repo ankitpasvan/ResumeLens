@@ -18,8 +18,7 @@ const Login = () => {
     setSubmitting(true);
     try {
       await handleLogin(email.trim(), password);
-     navigate("/dashboard", { replace: true });
-
+      navigate("/dashboard", { replace: true });
     } catch (err) {
       setError(err.message || "Login failed. Please try again.");
     } finally {
@@ -29,16 +28,20 @@ const Login = () => {
 
   if (loading) {
     return (
-      <main>
+      <main className="auth-page">
         <h1>Loading...</h1>
       </main>
     );
   }
 
   return (
-    <main>
+    <main className="auth-page">
+      <Link to="/" className="auth-brand" aria-label="ResumeLens home">
+        <span aria-hidden="true">◈</span> ResumeLens
+      </Link>
       <div className="form-container">
-        <h1>Login</h1>
+        <h1>Welcome back</h1>
+        <p className="auth-sub">Log in to your career command center.</p>
         <form onSubmit={handleSubmit}>
           <div className="input-group">
             <label htmlFor="email">Email</label>
@@ -65,7 +68,7 @@ const Login = () => {
             />
           </div>
           {error && (
-            <p style={{ color: "#f87171", fontSize: "0.9rem" }}>{error}</p>
+            <p className="auth-error" role="alert">{error}</p>
           )}
           <button
             className="button button-primary"

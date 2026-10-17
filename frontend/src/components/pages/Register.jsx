@@ -20,7 +20,7 @@ const Register = () => {
     setSubmitting(true);
     try {
       await handleRegister(username.trim(), email.trim(), password);
-      navigate("/", { replace: true });
+      navigate("/dashboard", { replace: true });
     } catch (err) {
       setError(err.message || "Registration failed. Please try again.");
     } finally {
@@ -30,16 +30,20 @@ const Register = () => {
 
   if (loading) {
     return (
-      <main>
+      <main className="auth-page">
         <h1>Loading...</h1>
       </main>
     );
   }
 
   return (
-    <main>
+    <main className="auth-page">
+      <Link to="/" className="auth-brand" aria-label="ResumeLens home">
+        <span aria-hidden="true">◈</span> ResumeLens
+      </Link>
       <div className="form-container">
-        <h1>Register</h1>
+        <h1>Create your account</h1>
+        <p className="auth-sub">Start analyzing your resume in under a minute.</p>
 
         <form onSubmit={handleSubmit}>
           <div className="input-group">
@@ -85,7 +89,7 @@ const Register = () => {
           </div>
 
           {error && (
-            <p style={{ color: "#f87171", fontSize: "0.9rem" }}>{error}</p>
+            <p className="auth-error" role="alert">{error}</p>
           )}
 
           <button
