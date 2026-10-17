@@ -1,0 +1,83 @@
+// ── ResumeLens Design Tokens ───────────────────────────────────────────────
+// Single source of truth for the cinematic identity (deep navy + violet +
+// emerald). Phase A: this file is a CONTRACT — existing pages are untouched,
+// so nothing visually changes yet. New work (landing, ui/ primitives) consumes
+// these tokens. Available both as SCSS variables and as CSS custom properties
+// on :root (for plain CSS and future Tailwind arbitrary values).
+
+// ——— Colors ———
+$bg-abyss: #05070d;
+$bg-navy: #0a0f1e;
+$bg-panel: #0d1526;
+$bg-input: #111a2e;
+
+$border: rgba(148, 163, 184, 0.14);
+$border-strong: rgba(148, 163, 184, 0.26);
+
+$text: #f1f5f9;
+$muted: #94a3b8;
+$faint: #64748b;
+
+$violet: #8b5cf6;
+$violet-deep: #7c3aed;
+$violet-glow: #a855f7;
+$emerald: #10b981;
+$emerald-glow: #34d399;
+$danger: #f87171;
+$warning: #fbbf24;
+
+:root {
+  --bg-abyss: #05070d;
+  --bg-navy: #0a0f1e;
+  --bg-panel: #0d1526;
+  --bg-input: #111a2e;
+  --border: rgba(148, 163, 184, 0.14);
+  --border-strong: rgba(148, 163, 184, 0.26);
+  --text: #f1f5f9;
+  --muted: #94a3b8;
+  --faint: #64748b;
+  --violet: #8b5cf6;
+  --violet-deep: #7c3aed;
+  --violet-glow: #a855f7;
+  --emerald: #10b981;
+  --emerald-glow: #34d399;
+  --danger: #f87171;
+  --warning: #fbbf24;
+
+  --radius-sm: 0.5rem;
+  --radius-md: 0.75rem;
+  --radius-lg: 1rem;
+  --radius-xl: 1.5rem;
+
+  --shadow-card: 0 20px 50px rgba(0, 0, 0, 0.45);
+  --shadow-glow: 0 8px 28px rgba(139, 92, 246, 0.35);
+
+  --font: 'Plus Jakarta Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+
+  // Aurora nebula: violet light top-left, emerald light bottom-right,
+  // over the abyss base. Text always sits on solid panels above this.
+  --aurora: radial-gradient(42rem 30rem at 12% -6%, rgba(139, 92, 246, 0.22), transparent 62%),
+    radial-gradient(38rem 28rem at 88% 108%, rgba(16, 185, 129, 0.14), transparent 60%),
+    #05070d;
+}
+
+// ——— Mixins ———
+@mixin glass-panel {
+  background: rgba(13, 21, 38, 0.6);
+  border: 1px solid $border;
+  border-radius: 1rem;
+  backdrop-filter: blur(12px);
+  box-shadow: $shadow-card;
+}
+
+@mixin focus-ring {
+  outline: 2px solid $violet;
+  outline-offset: 2px;
+}
+
+// ——— Motion ———
+// Keep micro-interactions fast; ambient motion slow. All animation MUST be
+// disabled under prefers-reduced-motion (see ui.scss).
+$ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+$dur-fast: 150ms;
+$dur-med: 250ms;
