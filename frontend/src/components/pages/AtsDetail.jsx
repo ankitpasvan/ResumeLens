@@ -10,7 +10,10 @@ const AtsDetail = () => {
   const { loading, analysis, error, fetchById } = useAts();
 
   useEffect(() => {
-    if (id) fetchById(id).catch(() => {});
+    if (!id) return;
+    const controller = new AbortController();
+    fetchById(id, { signal: controller.signal }).catch(() => {});
+    return () => controller.abort();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 

@@ -55,11 +55,15 @@ export async function listAtsAnalyses() {
 
 // Fetch a single analysis by id (owner-scoped server-side).
 // Resolves to the analysis object.
-export async function getAtsAnalysis(id) {
+export async function getAtsAnalysis(id, { signal } = {}) {
   try {
-    const { data } = await api.get(`/api/ats/${id}`);
+    const { data } = await api.get(`/api/ats/${id}`, { signal });
     return data.analysis;
   } catch (error) {
+    // Aborted requests are not errors — the caller moved on.
+    if (error?.code === "ERR_CANCELED" || error?.name === "CanceledError") {
+      throw error;
+    }
     apiError(error, "Failed to load the ATS analysis.");
   }
 }

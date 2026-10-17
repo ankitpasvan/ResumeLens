@@ -5,6 +5,8 @@ import Navbar from "../Navbar";
 import { useResumes } from "../../features/resumes/hooks/useResumes";
 import { useMatching } from "../../features/matching/hooks/useMatching";
 import { saveJob } from "../../features/jobs/services/jobs.api";
+import { saveJob, listSavedJobs } from "../../features/jobs/services/jobs.api";
+
 
 const formatDate = (iso) => {
   if (!iso) return "—";
@@ -239,16 +241,26 @@ const JobMatch = () => {
     }
   };
 
-  const onSelectHistory = async (id) => {
-    clearCurrent();
-    setViewId(id);
-    setSaveState("idle");
-    try {
-      await fetchMatch(id);
-    } catch {
-      // error is already surfaced via the hook
-    }
-  };
+ const onSelectHistory = async (id) => {
+  clearCurrent();
+  setViewId(id);
+  setSaveState("idle");
+  try {
+    await fetchMatch(id);
+    // If this match's job was already saved, reflect that instead of
+    // offering "Save this job" again (which would 409).
+    const saved = await listSavedJobs().catch(() => []);
+    const alreadySaved = saved.some((s) => {
+      const ref = s.match;
+      const refId = ref && typeof ref === "object" ? ref._id : ref;
+      return String(refId) === String(id);
+    });
+    if (alreadySaved) setSaveState("saved");
+  } catch {
+    // error is already surfaced via the hook
+  }
+};
+
 
   const onNewMatch = () => {
     clearCurrent();
