@@ -2,6 +2,8 @@ import { createBrowserRouter } from "react-router-dom";
 import Login from "./components/pages/Login";
 import Register from "./components/pages/Register";
 import NotFound from "./components/pages/NotFound";
+import Landing from "./components/pages/Landing";
+import Dashboard from "./components/pages/Dashboard";
 import Home from "./components/pages/Home";
 import Interview from "./components/pages/interview";
 import Protected from "./components/Protected";
@@ -16,6 +18,12 @@ import Applications from "./components/pages/Applications";
 
 export const router = createBrowserRouter([
   {
+    // Public landing. Authenticated visitors are redirected to /dashboard
+    // inside the Landing component.
+    path: "/",
+    element: <Landing />,
+  },
+  {
     path: "/login",
     element: <Login />,
   },
@@ -24,7 +32,17 @@ export const router = createBrowserRouter([
     element: <Register />,
   },
   {
-    path: "/",
+    path: "/dashboard",
+    element: (
+      <Protected>
+        <Dashboard />
+      </Protected>
+    ),
+  },
+  {
+    // The interview generator previously lived at "/". Same component and
+    // providers, new path — no functionality changed.
+    path: "/interview-prep",
     element: (
       <Protected>
         <InterviewProvider>

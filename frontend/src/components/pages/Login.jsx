@@ -18,7 +18,8 @@ const Login = () => {
     setSubmitting(true);
     try {
       await handleLogin(email.trim(), password);
-      navigate("/", { replace: true });
+     navigate("/dashboard", { replace: true });
+
     } catch (err) {
       setError(err.message || "Login failed. Please try again.");
     } finally {

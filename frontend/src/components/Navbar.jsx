@@ -21,7 +21,8 @@ const Navbar = () => {
   const closeMenu = () => setMenuOpen(false);
 
   const links = [
-    { to: "/", label: "Interview Prep", end: true },
+    { to: "/dashboard", label: "Dashboard" },
+    { to: "/interview-prep", label: "Interview Prep", end: true },
     { to: "/ats", label: "ATS Analyzer" },
     { to: "/resumes", label: "Resumes" },
     { to: "/match", label: "Job Match" },
@@ -32,7 +33,7 @@ const Navbar = () => {
 
   return (
     <nav className={`app-navbar${menuOpen ? " menu-open" : ""}`}>
-      <Link to="/" className="navbar-brand" onClick={closeMenu}>
+      <Link to="/dashboard" className="navbar-brand" onClick={closeMenu}>
         <span className="brand-mark">◈</span> ResumeLens
       </Link>
 
