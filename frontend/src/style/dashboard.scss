@@ -1,0 +1,134 @@
+/* ── Dashboard ────────────────────────────────────────────────────────────
+   Authenticated app page: uses the cinematic tokens, keeps the app's
+   existing layout conventions (Navbar on top, centered container). */
+
+.dashboard {
+  min-height: 100vh;
+  background: #05070d;
+  background-image: var(--aurora);
+  background-attachment: fixed;
+  color: #f1f5f9;
+  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+}
+
+.dashboard__inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2.5rem 1.5rem 4rem;
+}
+
+.dashboard__head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-bottom: 2rem;
+}
+
+.dashboard__title {
+  margin: 0 0 0.35rem;
+  font-size: 1.9rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.dashboard__sub { margin: 0; color: #94a3b8; font-size: 0.95rem; }
+
+.dashboard__loading,
+.dashboard__error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.9rem;
+  padding: 4rem 1.5rem;
+  text-align: center;
+  color: #94a3b8;
+}
+
+.dashboard__error {
+  border: 1px solid rgba(248, 113, 113, 0.3);
+  border-radius: 1rem;
+  background: rgba(248, 113, 113, 0.06);
+}
+.dashboard__error p { margin: 0; color: #f1f5f9; }
+
+.dashboard__stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(200px, 100%), 1fr));
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.stat-card { display: flex; flex-direction: column; gap: 0.15rem; }
+.stat-card__value {
+  font-size: 2rem; font-weight: 800; letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+}
+.stat-card__label { font-size: 0.84rem; color: #94a3b8; font-weight: 600; }
+.stat-card__link {
+  margin-top: 0.6rem; font-size: 0.84rem; font-weight: 600;
+  color: #a855f7; text-decoration: none;
+}
+.stat-card__link:hover { text-decoration: underline; }
+
+.dashboard__grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-bottom: 2.5rem;
+}
+
+.dashboard__list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 0.6rem; }
+.dashboard__row {
+  display: flex; align-items: center; gap: 0.9rem;
+  padding: 0.7rem; border-radius: 0.75rem; text-decoration: none; color: inherit;
+  border: 1px solid transparent;
+  transition: border-color 150ms ease, background 150ms ease;
+}
+.dashboard__row:hover { border-color: rgba(148, 163, 184, 0.2); background: rgba(148, 163, 184, 0.05); }
+.dashboard__row-main { min-width: 0; flex: 1; }
+.dashboard__row-title { margin: 0 0 0.15rem; font-weight: 700; font-size: 0.92rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.dashboard__row-sub { margin: 0; font-size: 0.82rem; color: #94a3b8; }
+.dashboard__chips { display: flex; gap: 0.35rem; flex-wrap: wrap; margin-top: 0.45rem; }
+
+.dashboard__section-title {
+  margin: 0 0 1rem; font-size: 1.15rem; font-weight: 700; letter-spacing: -0.01em;
+}
+
+.dashboard__quick {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(170px, 100%), 1fr));
+  gap: 0.85rem;
+}
+
+.quick-link {
+  display: flex; flex-direction: column; gap: 0.25rem;
+  padding: 1.1rem 1.15rem;
+  background: rgba(13, 21, 38, 0.6);
+  border: 1px solid rgba(148, 163, 184, 0.12);
+  border-radius: 0.9rem;
+  text-decoration: none; color: inherit;
+  transition: transform 150ms ease, border-color 150ms ease;
+}
+.quick-link:hover { transform: translateY(-2px); border-color: rgba(139, 92, 246, 0.35); }
+.quick-link__glyph {
+  font-size: 1.2rem; color: #a855f7; margin-bottom: 0.35rem;
+}
+.quick-link__label { font-weight: 700; font-size: 0.92rem; }
+.quick-link__desc { font-size: 0.8rem; color: #94a3b8; }
+
+@media (max-width: 900px) {
+  .dashboard__grid { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 640px) {
+  .dashboard__inner { padding: 1.5rem 1rem 3rem; }
+  .dashboard__title { font-size: 1.5rem; }
+  .dashboard__head .ui-btn { width: 100%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dashboard__row, .quick-link { transition: none; }
+  .dashboard__row:hover, .quick-link:hover { transform: none; }
+}
