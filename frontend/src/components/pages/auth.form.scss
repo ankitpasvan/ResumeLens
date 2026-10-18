@@ -1,7 +1,4 @@
-// Scoped auth styles — everything lives under `.auth-page` so these rules
-// NEVER leak into other pages' <main>, <form>, <a> or .input-group elements.
-// (Previously this file used bare `main`/`form` selectors, which broke the
-// layout of every other page once the login CSS was loaded by Vite.)
+
 .auth-page {
   min-height: 100vh;
   width: 100%;

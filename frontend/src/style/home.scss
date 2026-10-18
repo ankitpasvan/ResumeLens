@@ -38,11 +38,11 @@ $accent-purple: #c084fc;
       letter-spacing: -0.025em;
       margin: 0 0 0.6rem 0;
 
-      .gradient-text {
-        background: linear-gradient(135deg, #fb7185 0%, #e879f9 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-      }
+    .gradient-text {
+  background: linear-gradient(135deg, #fb7185 0%, #e879f9 100%);
+  background-clip: text;
+  color: transparent;
+}
     }
 
     p {
