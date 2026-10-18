@@ -60,3 +60,15 @@ export async function getUser() {
     apiError(error, "Failed to get user");
   }
 }
+
+// Login with a Google ID token (from Google Identity Services).
+// Sends the `credential` to POST /api/auth/google for server-side
+// verification. Resolves to { message, user } — same shape as login().
+export async function googleLogin(credential) {
+  try {
+    const { data } = await api.post("/api/auth/google", { credential });
+    return data;
+  } catch (error) {
+    apiError(error, "Google login failed");
+  }
+}
