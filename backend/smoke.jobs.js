@@ -1,9 +1,3 @@
-/* Jobs + application tracking smoke test: exercises the real HTTP stack
- * (routes, middleware, controllers) for job postings, saved jobs and the
- * application pipeline with in-memory model fakes. */
-// Test credentials: real values come from the environment (CI secrets).
-// Otherwise fall back to generated non-secret placeholders so the suites
-// run with zero config. Never commit real credentials here.
 const crypto = require("crypto");
 if (!process.env.JWT_SECRET) {
   process.env.JWT_SECRET = crypto.randomBytes(32).toString("hex");
@@ -67,9 +61,6 @@ function installFakes() {
     },
   };
 
-  // Generic in-memory collection supporting the query shapes used by the
-  // job controller: create, find, findOne (plain values + RegExp), deleteOne,
-  // countDocuments, and doc.save().
   function makeCollection() {
     const rows = [];
 
@@ -278,16 +269,12 @@ async function run() {
     `(got ${res.status})`,
   );
 
-  // 6b. PATCH semantics regression tests: partial updates must validate
-  // only supplied fields and must never reset omitted fields to defaults.
-  res = await agentA
-    .post("/api/jobs")
-    .send({
-      ...JOB_A,
-      title: "Intern Role",
-      jobType: "internship",
-      workMode: "remote",
-    });
+  res = await agentA.post("/api/jobs").send({
+    ...JOB_A,
+    title: "Intern Role",
+    jobType: "internship",
+    workMode: "remote",
+  });
   check(
     "create internship job -> 201",
     res.status === 201 && res.body.job?.jobType === "internship",

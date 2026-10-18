@@ -1,8 +1,5 @@
 const mongoose = require("mongoose");
 
-// Stores revoked JWTs (from logout) so they can no longer be used.
-// Entries expire automatically via a TTL index so the collection
-// never grows unboundedly.
 const blacklistSchema = new mongoose.Schema({
   token: {
     type: String,

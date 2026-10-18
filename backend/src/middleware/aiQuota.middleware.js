@@ -1,13 +1,3 @@
-// Per-user daily AI usage quota.
-//
-// Policy: each authenticated user gets AI_DAILY_LIMIT (default 30) AI-powered
-// calls per UTC day across the ATS analyzer, job matcher, and interview
-// generator combined. The counter increments BEFORE the AI call runs, so
-// failed calls still count — this prevents retry-spam from dodging the
-// quota. When the limit is reached the endpoint returns 429 with the limit
-// and the UTC reset time; no AI call is made.
-//
-// Must run AFTER authMiddleware (it needs req.user.id).
 const AiUsage = require("../models/aiUsage.model");
 const config = require("../utils/env");
 const asyncHandler = require("../utils/asyncHandler");

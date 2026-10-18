@@ -1,13 +1,3 @@
-// Rate limiting: brute-force protection for auth, cost protection for the
-// Gemini-backed AI endpoints, and a general safety net for everything else.
-//
-// All limiters are per-IP, per 15-minute window. Limits are configurable
-// via RATE_LIMIT_* env vars (see src/utils/env.js). Responses use the
-// standard RateLimit-* headers (draft-7) plus a JSON error body.
-//
-// NOTE: behind a proxy (Render/Railway), app.set("trust proxy", 1) in
-// app.js keeps req.ip accurate. Without it, X-Forwarded-For spoofing could
-// bypass these limits.
 const rateLimit = require("express-rate-limit");
 const config = require("../utils/env");
 
@@ -22,7 +12,6 @@ function jsonHandler(message) {
   };
 }
 
-// Login/register: strict — credential-stuffing and fake-account protection.
 const authLimiter = rateLimit({
   windowMs: WINDOW_MS,
   max: config.rateLimitAuthMax,
@@ -33,8 +22,6 @@ const authLimiter = rateLimit({
   ),
 });
 
-// AI endpoints (ATS analyze, match, interview generation): moderate —
-// every hit costs at least one Gemini call, so this caps quota burn.
 const aiLimiter = rateLimit({
   windowMs: WINDOW_MS,
   max: config.rateLimitAiMax,
@@ -45,7 +32,6 @@ const aiLimiter = rateLimit({
   ),
 });
 
-// Everything else: generous safety net against accidental floods.
 const generalLimiter = rateLimit({
   windowMs: WINDOW_MS,
   max: config.rateLimitGeneralMax,

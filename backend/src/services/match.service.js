@@ -1,21 +1,9 @@
-// Deterministic resume↔job matching.
-//
-// This module contains NO AI calls on purpose. Every point is awarded by a
-// transparent, explainable rule, so the match score is reproducible and the
-// API response can tell the user exactly which skills matched, which were
-// not found in the resume, and how each scoring component contributed.
-// The Gemini layer (ai.service.js) only adds qualitative feedback
-// (summary / strengths / gaps / recommendations) on top of these findings.
-
 const { extractKeywords } = require("./ats.service");
 
 function escapeRegExp(s) {
   return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
-// Whole-word, case-insensitive match. The boundary class excludes
-// [a-z0-9+#.] so "Java" never matches inside "JavaScript", "Go" never
-// matches inside "MongoDB", and "C++" never matches inside "C++17".
 function termPresent(text, term) {
   const re = new RegExp(
     `(^|[^a-z0-9+#.])${escapeRegExp(term)}([^a-z0-9+#.]|$)`,
@@ -24,9 +12,6 @@ function termPresent(text, term) {
   return re.test(text || "");
 }
 
-// Canonical skill vocabulary. `aliases` are alternative spellings that count
-// as the same skill. Entries with `skipBareName` are only matched through
-// their aliases (e.g. bare "go" is an English verb — only "golang" counts).
 const SKILL_VOCABULARY = [
   // Languages
   { name: "JavaScript", aliases: [] },
@@ -178,9 +163,6 @@ function significantTitleWords(jobTitle) {
     .filter((w) => w.length > 2 && !TITLE_STOPWORDS.has(w));
 }
 
-// --- Scoring components (same { key, label, score, maxScore, skipped, details }
-// shape as the ATS scorer) --------------------------------------------------
-
 function scoreSkillOverlap(resume, jobDescription) {
   const maxScore = 40;
   const jobSkills = extractJobSkills(jobDescription);
@@ -330,9 +312,6 @@ function scoreTitleRelevance(resume, jobTitle) {
   };
 }
 
-// Main entry: returns { score, breakdown, matchedSkills, missingSkills }.
-// score is earned/applicable * 100, so a skipped component never punishes
-// the user. An empty resume scores 0.
 function matchResumeToJob(resumeText = "", jobTitle = "", jobDescription = "") {
   const resume = resumeText || "";
   const wordCount = resume.split(/\s+/).filter(Boolean).length;

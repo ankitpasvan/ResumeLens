@@ -19,8 +19,7 @@ const userSchema = new mongoose.Schema(
     },
     password: {
       type: String,
-      // Required only for email/password users. Google users authenticate
-      // via their verified Google identity and have no password.
+
       required: [
         function () {
           return !this.googleId;
@@ -39,9 +38,6 @@ const userSchema = new mongoose.Schema(
   { timestamps: true },
 );
 
-// Hash the password before saving. Only re-hashes when the password field
-// was actually changed (so profile updates don't double-hash).
-// Google-only users have no password — skip hashing for them.
 userSchema.pre("save", async function () {
   if (!this.isModified("password") || !this.password) return;
   const salt = await bcrypt.genSalt(10);
@@ -53,7 +49,6 @@ userSchema.methods.comparePassword = async function (candidatePassword) {
   return bcrypt.compare(candidatePassword, this.password);
 };
 
-// Never serialize the password hash, even if someone forgets .select().
 userSchema.set("toJSON", {
   transform: (doc, ret) => {
     delete ret.password;

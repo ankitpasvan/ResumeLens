@@ -19,9 +19,6 @@ const cookieOptions = {
   maxAge: 24 * 60 * 60 * 1000, // 24h
 };
 
-// Every token gets a unique JWT ID so two tokens are never identical.
-// Without this, a logout followed by a login within the same second could
-// produce the same token string, which would then match the blacklist.
 function signToken(user) {
   return jwt.sign(
     { id: user._id, userId: user._id, email: user.email, jti: randomUUID() },
@@ -111,9 +108,6 @@ const getUser = asyncHandler(async (req, res) => {
   res.status(200).json({ success: true, user });
 });
 
-// Changes the user's password after verifying the current one.
-// The pre-save hook on the user schema re-hashes the new password,
-// so it is assigned in plain text here — never hashed manually.
 const changePasswordController = asyncHandler(async (req, res) => {
   const { currentPassword, newPassword } = req.body;
 
@@ -145,10 +139,6 @@ const changePasswordController = asyncHandler(async (req, res) => {
   res.status(200).json({ message: "Password changed successfully." });
 });
 
-// Permanently deletes the account and every document the user owns,
-// then revokes the current session token exactly like logout does.
-// Known limitation: other sessions' tokens are NOT blacklisted — they
-// expire naturally within 24h (JWT expiry); only the current token is revoked.
 const deleteAccountController = asyncHandler(async (req, res) => {
   const { password } = req.body;
 
@@ -179,7 +169,6 @@ const deleteAccountController = asyncHandler(async (req, res) => {
   ]);
   await userModel.findByIdAndDelete(userId);
 
-  // End this session immediately, exactly like logout does.
   const token = req.cookies?.token;
   if (token) {
     let expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000);
@@ -189,9 +178,7 @@ const deleteAccountController = asyncHandler(async (req, res) => {
         expiresAt = new Date(decoded.exp * 1000);
       }
       await blacklistModel.create({ token, expiresAt });
-    } catch {
-      // If the token can't be decoded, just clear the cookie.
-    }
+    } catch {}
   }
 
   res.clearCookie("token").status(204).end();

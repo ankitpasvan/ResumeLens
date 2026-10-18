@@ -2,8 +2,6 @@ const jwt = require("jsonwebtoken");
 const config = require("../utils/env");
 const blacklistModel = require("../models/blacklist.model");
 
-// Protects routes by verifying the JWT stored in the `token` cookie.
-// Also rejects tokens that were revoked via logout (blacklist).
 async function authMiddleware(req, res, next) {
   const token = req.cookies?.token;
 

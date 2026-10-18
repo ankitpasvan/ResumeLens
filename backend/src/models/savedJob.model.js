@@ -1,8 +1,5 @@
 const mongoose = require("mongoose");
 
-// A job a user saved for later — either a posting from the job board
-// (referenced via `job`) or an ad-hoc listing captured from a JobMatch
-// result (stored as a snapshot: jobTitle/company/description).
 const savedJobSchema = new mongoose.Schema(
   {
     user: {

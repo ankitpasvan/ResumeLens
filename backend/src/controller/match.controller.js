@@ -7,8 +7,6 @@ const asyncHandler = require("../utils/asyncHandler");
 const MAX_JD_LENGTH = 20000;
 const MIN_JD_LENGTH = 20;
 
-// Resolve which resume to match against: an explicit resumeId (owner-scoped),
-// otherwise the user's primary resume (falling back to the newest one).
 async function resolveResume(userId, resumeId) {
   if (resumeId) {
     return resumeModel.findOne({ _id: resumeId, user: userId });
@@ -19,8 +17,6 @@ async function resolveResume(userId, resumeId) {
   );
 }
 
-// Match a stored resume against a job posting. Body:
-// { resumeId?, jobTitle, jobDescription }.
 const createMatchController = asyncHandler(async (req, res) => {
   const jobTitle = (req.body.jobTitle || "").trim();
   const jobDescription = (req.body.jobDescription || "").trim();
@@ -60,10 +56,6 @@ const createMatchController = asyncHandler(async (req, res) => {
     jobDescription,
   );
 
-  // Qualitative feedback from the AI layer (stubbed in smoke tests).
-  // Graceful degradation: if the AI call fails or returns unusable output,
-  // the deterministic findings above still stand — persist and return them
-  // with empty feedback instead of failing the whole request.
   let feedback = null;
   let aiDegraded = false;
   try {
@@ -125,8 +117,6 @@ const createMatchController = asyncHandler(async (req, res) => {
   });
 });
 
-// History of the user's past matches, newest first. The full job
-// description is excluded here — fetch a single match for the details.
 const listMatchesController = asyncHandler(async (req, res) => {
   const matches = await jobMatchModel
     .find({ user: req.user.id })
@@ -139,7 +129,6 @@ const listMatchesController = asyncHandler(async (req, res) => {
   });
 });
 
-// Single match, owner-scoped (same IDOR protection as ATS/interview).
 const getMatchController = asyncHandler(async (req, res) => {
   const match = await jobMatchModel.findOne({
     _id: req.params.id,

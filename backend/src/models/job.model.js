@@ -1,9 +1,5 @@
 const mongoose = require("mongoose");
 
-// A job posting on the shared job board. Any authenticated user can browse
-// open jobs; only the owner can edit or close their own posting. Jobs can
-// be created manually ("manual") or captured from a resume↔job match
-// ("match", referencing the originating JobMatch).
 const jobSchema = new mongoose.Schema(
   {
     user: {

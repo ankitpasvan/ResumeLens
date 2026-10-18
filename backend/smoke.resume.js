@@ -1,6 +1,3 @@
-/* Resume smoke test: exercises the real HTTP stack (routes, middleware,
- * controllers) for the Resume Vault with in-memory model fakes.
- * Run: node smoke.resume.js  (from backend/) */
 process.env.JWT_SECRET = "smoke-test-secret";
 process.env.GEMINI_API_KEY = "smoke-test-key";
 process.env.MONGO_URI = "mongodb://localhost:27017/smoke";

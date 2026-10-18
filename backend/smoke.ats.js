@@ -1,10 +1,3 @@
-/* ATS smoke test: exercises the real HTTP stack (routes, middleware,
- * controllers) for the ATS analyzer with in-memory model fakes and a
- * stubbed Gemini feedback call. Also unit-tests the deterministic scorer
- * directly (pure function, no fakes needed). */
-// Test credentials: real values come from the environment (CI secrets).
-// Otherwise fall back to generated non-secret placeholders so the suites
-// run with zero config. Never commit real credentials here.
 const crypto = require("crypto");
 if (!process.env.JWT_SECRET) {
   process.env.JWT_SECRET = crypto.randomBytes(32).toString("hex");
@@ -18,7 +11,6 @@ const request = require("supertest");
 const bcrypt = require("bcryptjs");
 const { Types } = require("mongoose");
 
-// Pure function: safe to require without any fakes.
 const { analyzeAts } = require("./src/services/ats.service");
 
 const GOOD_RESUME = `
@@ -95,11 +87,9 @@ const fakeFeedback = {
   ],
 };
 
-// Set to true to simulate a Gemini outage for the graceful-degradation test.
 let atsAiOutage = false;
 
 function installFakes() {
-  // --- Stub Gemini feedback before controllers load ---
   const aiPath = require.resolve("./src/services/ai.service");
   const { AiServiceError } = require(aiPath);
   require.cache[aiPath].exports.generateAtsFeedback = async () => {

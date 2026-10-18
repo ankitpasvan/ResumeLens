@@ -10,7 +10,6 @@ const asyncHandler = require("../utils/asyncHandler");
 const generateInterViewReportController = asyncHandler(async (req, res) => {
   let resumeText = "";
 
-  // Extract text from the uploaded resume PDF (if provided).
   if (req.file?.buffer) {
     const parser = new PDFParse({ data: req.file.buffer });
     try {
@@ -35,9 +34,6 @@ const generateInterViewReportController = asyncHandler(async (req, res) => {
     });
   }
 
-  // The interview report is fully AI-generated, so there is no
-  // deterministic fallback — but a failure must surface as a clear 503
-  // (transient) or 502 (bad AI output), never a hung request or a 500.
   let rawResponse;
   try {
     rawResponse = await generateInterviewReport({
@@ -70,8 +66,6 @@ const generateInterViewReportController = asyncHandler(async (req, res) => {
     });
   }
 
-  // Normalize the AI output into the canonical report shape. The fallbacks
-  // tolerate older field names in case the model drifts from the schema.
   const normalizeTechnical = (q = {}) => ({
     question: q.question || "",
     difficulty: ["Easy", "Medium", "Hard"].includes(q.difficulty)

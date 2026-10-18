@@ -1,7 +1,3 @@
-/* Job-match smoke test: exercises the real HTTP stack (routes,
- * middleware, controllers) for resume↔job matching with in-memory model
- * fakes and a stubbed Gemini feedback call. Also unit-tests the
- * deterministic matcher directly (pure function, no fakes needed). */
 process.env.JWT_SECRET = "smoke-test-secret";
 process.env.GEMINI_API_KEY = "smoke-test-key";
 process.env.MONGO_URI = "mongodb://localhost:27017/smoke";
@@ -10,7 +6,6 @@ const request = require("supertest");
 const bcrypt = require("bcryptjs");
 const { Types } = require("mongoose");
 
-// Pure function: safe to require without any fakes.
 const { matchResumeToJob } = require("./src/services/match.service");
 
 const GOOD_RESUME = `

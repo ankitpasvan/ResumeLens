@@ -1,9 +1,5 @@
 const mongoose = require("mongoose");
 
-// Tracks one job application through the pipeline:
-// saved → applied → assessment → interview → offer (or rejected).
-// Every status change is appended to `statusHistory` so the user can see
-// the full journey. All records are owner-scoped via `user`.
 const APPLICATION_STATUSES = [
   "saved",
   "applied",

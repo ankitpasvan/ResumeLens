@@ -9,20 +9,16 @@ const jobModel = require("../models/job.model");
 const savedJobModel = require("../models/savedJob.model");
 const asyncHandler = require("../utils/asyncHandler");
 
-// Perf bound on the recommendation candidate pool: scoring is CPU work,
-// so the pool is capped before scoring starts.
 const RECOMMENDATION_POOL_SIZE = 50;
 const DEFAULT_RECOMMENDATION_LIMIT = 10;
 const MAX_RECOMMENDATION_LIMIT = 20;
 
-// Mean of `key` over docs, rounded to 1 decimal; 0 when there are none.
 function averageScore(docs, key) {
   if (docs.length === 0) return 0;
   const total = docs.reduce((sum, doc) => sum + (doc[key] || 0), 0);
   return Math.round((total / docs.length) * 10) / 10;
 }
 
-// The user's primary resume, falling back to the newest one.
 async function resolvePrimaryResume(userId) {
   return (
     (await resumeModel.findOne({ user: userId, isPrimary: true })) ||
@@ -30,8 +26,6 @@ async function resolvePrimaryResume(userId) {
   );
 }
 
-// Aggregate statistics for the authenticated user's dashboard.
-// GET /api/dashboard/stats
 const getDashboardStats = asyncHandler(async (req, res) => {
   const userId = req.user.id;
 
@@ -59,7 +53,6 @@ const getDashboardStats = asyncHandler(async (req, res) => {
     jobModel.countDocuments({ user: userId }),
   ]);
 
-  // Every application status is present, even when its count is 0.
   const byStatus = {};
   for (const status of APPLICATION_STATUSES) {
     byStatus[status] = 0;
@@ -104,12 +97,6 @@ const getDashboardStats = asyncHandler(async (req, res) => {
   });
 });
 
-// Deterministic job recommendations for the authenticated user.
-// Open jobs (not posted by the user, not already saved or applied to)
-// are scored against the user's primary resume with the deterministic
-// matcher. No AI calls are made here, so this endpoint never consumes
-// AI quota.
-// GET /api/dashboard/recommendations?limit=10
 const getRecommendations = asyncHandler(async (req, res) => {
   const userId = req.user.id;
 
@@ -126,15 +113,12 @@ const getRecommendations = asyncHandler(async (req, res) => {
   }
   const resumeText = resume.parsedText || "";
 
-  // Candidate pool: open jobs from other users, newest first, bounded.
   const jobs = await jobModel
     .find({ status: "open", user: { $ne: userId } })
     .sort({ createdAt: -1 })
     .limit(RECOMMENDATION_POOL_SIZE)
     .lean();
 
-  // Exclude jobs the user already saved or applied to (board postings
-  // carry the `job` reference; ad-hoc snapshots have none to exclude).
   const [savedJobs, applications] = await Promise.all([
     savedJobModel
       .find({ user: userId, job: { $ne: null } })
@@ -153,11 +137,9 @@ const getRecommendations = asyncHandler(async (req, res) => {
   for (const job of jobs) {
     if (excludedJobIds.has(String(job._id))) continue;
     const jobDescription = job.description || "";
-    // A job with no description has nothing to score against — skip it
-    // rather than returning a meaningless zero.
+
     if (!jobDescription.trim()) continue;
-    // matchResumeToJob is deterministic and never throws on plain
-    // strings, but one malformed job must not fail the whole request.
+
     try {
       const result = matchResumeToJob(
         resumeText,

@@ -1,9 +1,5 @@
 const mongoose = require("mongoose");
 
-// One persisted ATS analysis. The numeric score and its breakdown are
-// produced deterministically by ats.service.js; the qualitative fields
-// (summary/strengths/weaknesses/suggestions) come from the AI feedback
-// layer. Storing both keeps the history view fast and reproducible.
 const breakdownItemSchema = new mongoose.Schema(
   {
     key: { type: String },

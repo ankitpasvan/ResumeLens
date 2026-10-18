@@ -1,19 +1,3 @@
-// Shared DB-side pagination helpers for list endpoints.
-//
-// getPagination(req.query) -> { page, limit, skip }:
-//   - page defaults to 1 (minimum 1)
-//   - limit defaults to 20, clamped to 1-100
-//   - non-numeric input falls back to the defaults and never throws
-//
-// runPagedQuery(query, { skip, limit }) applies pagination to a Mongoose
-// query. On a real database this chains .skip().limit() so pagination
-// happens DB-side. The in-memory model fakes used by the smoke suites only
-// implement .sort()/.select(), so when chaining is unavailable the helper
-// falls back to slicing the returned rows (test-only path).
-//
-// countTotal(model, filter) returns the total matching document count,
-// falling back to counting find() results for fakes without countDocuments.
-
 function getPagination(query = {}) {
   const rawPage = Number.parseInt(query.page, 10);
   const rawLimit = Number.parseInt(query.limit, 10);

@@ -4,8 +4,6 @@ const { analyzeAts } = require("../services/ats.service");
 const atsAnalysisModel = require("../models/atsAnalysis.model");
 const asyncHandler = require("../utils/asyncHandler");
 
-// Resume text comes from the uploaded PDF when present, otherwise from the
-// resumeText field (useful for API clients and tests).
 async function getResumeText(req) {
   if (req.file?.buffer) {
     const parser = new PDFParse({ data: req.file.buffer });
@@ -37,12 +35,8 @@ const analyzeAtsController = asyncHandler(async (req, res) => {
       .json({ error: "Resume text is too long (max 60000 characters)." });
   }
 
-  // Deterministic, explainable scoring — no AI involved here.
   const findings = analyzeAts(resumeText, jobDescription);
 
-  // Qualitative feedback from the AI layer (stubbed in smoke tests).
-  // If the AI service is down, degrade gracefully: persist the deterministic
-  // analysis with empty AI fields and surface a warning, instead of 500ing.
   let feedback = null;
   let warnings = [];
   try {
@@ -107,8 +101,6 @@ const listAtsController = asyncHandler(async (req, res) => {
   });
 });
 
-// Owner-scoped: users can only read their own analyses (same IDOR
-// protection as the interview report endpoints).
 const getAtsController = asyncHandler(async (req, res) => {
   const analysis = await atsAnalysisModel.findOne({
     _id: req.params.id,

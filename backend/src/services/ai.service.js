@@ -1,11 +1,3 @@
-// AI service: Gemini-powered qualitative feedback.
-//
-// Design rule: the AI layer is used ONLY for qualitative value (summaries,
-// feedback, questions, recommendations). Every numeric score in the product
-// is computed deterministically in the *.service modules and is never
-// invented by the model. The model also never invents candidate experience:
-// gaps are always phrased as "not found in the resume".
-
 const { z } = require("zod");
 const { GoogleGenAI } = require("@google/genai");
 const config = require("../utils/env");
@@ -16,8 +8,6 @@ const MODEL = config.geminiModel;
 const AI_TIMEOUT_MS = config.aiTimeoutMs;
 const AI_MAX_RETRIES = config.aiMaxRetries;
 
-// Typed error for AI-layer failures so controllers can tell a transient
-// outage (worth a degraded response / 503) apart from a programming bug.
 class AiServiceError extends Error {
   constructor(message, { transient = false } = {}) {
     super(message);
@@ -26,9 +16,6 @@ class AiServiceError extends Error {
   }
 }
 
-// Transient = worth a retry and/or a degraded response: rate limits,
-// server-side 5xx, network failures, timeouts. Other client errors (bad
-// API key, retired model name, malformed request) are NOT retried.
 function isTransientError(error) {
   if (!error) return false;
   if (error.code === "AI_TIMEOUT" || error.name === "AbortError") return true;
@@ -68,8 +55,7 @@ async function generateStructured(prompt, schema) {
         config: {
           responseMimeType: "application/json",
           responseJsonSchema: z.toJSONSchema(schema),
-          // Cancels the client-side wait on timeout. Note: the model call
-          // may still be billed server-side (see SDK docs).
+
           abortSignal: controller.signal,
         },
       });
@@ -78,8 +64,6 @@ async function generateStructured(prompt, schema) {
       lastError = error;
       const transient = isTransientError(error);
       if (attempt < attempts && transient) {
-        // One brief linear backoff before retrying. Retries are capped by
-        // AI_MAX_RETRIES on purpose — every retry costs money.
         await new Promise((resolve) => setTimeout(resolve, 750 * attempt));
         continue;
       }

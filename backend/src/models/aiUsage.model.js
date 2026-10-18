@@ -1,7 +1,5 @@
 const mongoose = require("mongoose");
 
-// Per-user daily AI usage counter for quota enforcement. One document per
-// user per UTC day; old documents self-delete after 30 days via TTL.
 const aiUsageSchema = new mongoose.Schema(
   {
     user: {
@@ -10,8 +8,7 @@ const aiUsageSchema = new mongoose.Schema(
       required: true,
       index: true,
     },
-    // UTC calendar day as YYYY-MM-DD (string keeps day-boundary math
-    // trivial and timezone-independent).
+
     day: {
       type: String,
       required: true,
@@ -26,7 +23,7 @@ const aiUsageSchema = new mongoose.Schema(
 );
 
 aiUsageSchema.index({ user: 1, day: 1 }, { unique: true });
-// Keep 30 days of history, then let MongoDB clean up.
+
 aiUsageSchema.index(
   { createdAt: 1 },
   { expireAfterSeconds: 30 * 24 * 60 * 60 },

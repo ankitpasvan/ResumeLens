@@ -5,9 +5,6 @@ const {
 const resumeModel = require("../models/resume.model");
 const asyncHandler = require("../utils/asyncHandler");
 
-// Improves a single resume bullet using AI. The rewrite is grounded on the
-// user's primary (or newest) resume text so quantified impact is drawn only
-// from real resume content, never invented by the model.
 const improveBulletController = asyncHandler(async (req, res) => {
   const { bullet = "", jobDescription = "" } = req.body || {};
 
@@ -21,16 +18,11 @@ const improveBulletController = asyncHandler(async (req, res) => {
   const jdText =
     typeof jobDescription === "string" ? jobDescription.trim() : "";
 
-  // Primary resume first, newest one as fallback — mirrors
-  // getPrimaryResumeController in resume.controller.js.
   const resumeDoc =
     (await resumeModel.findOne({ user: req.user.id, isPrimary: true })) ||
     (await resumeModel.findOne({ user: req.user.id }).sort({ createdAt: -1 }));
   const resumeText = resumeDoc?.parsedText || "";
 
-  // The improvement is fully AI-generated, so there is no deterministic
-  // fallback — a failure surfaces as a clear 503 (transient) or 502,
-  // exactly like the interview report endpoint.
   let rawResponse;
   try {
     rawResponse = await generateBulletImprovements({

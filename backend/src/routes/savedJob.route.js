@@ -4,8 +4,6 @@ const jobController = require("../controller/job.controller");
 
 const savedJobRouter = express.Router();
 
-// The user's saved jobs — always owner-scoped.
-
 savedJobRouter.post(
   "/",
   authMiddleware,

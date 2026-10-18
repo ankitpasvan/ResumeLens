@@ -1,9 +1,5 @@
 const mongoose = require("mongoose");
 
-// A persisted resume↔job match result. The numeric score and the
-// matched/missing skill lists are computed deterministically (see
-// match.service.js); the AI layer only adds qualitative summary and
-// recommendations. Everything is owner-scoped via `user`.
 const jobMatchSchema = new mongoose.Schema(
   {
     user: {

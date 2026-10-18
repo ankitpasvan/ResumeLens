@@ -1,12 +1,3 @@
-// Deterministic ATS (Applicant Tracking System) scoring.
-//
-// This module contains NO AI calls on purpose. Every point is awarded by a
-// transparent, explainable rule, so the score is reproducible and the API
-// response can tell the user exactly which checks passed, which failed, and
-// which keywords are missing. The Gemini layer (ai.service.js) only adds
-// qualitative feedback (strengths / weaknesses / suggestions) on top of
-// these findings.
-
 const STOPWORDS = new Set([
   "the",
   "a",
@@ -196,8 +187,6 @@ const SECTION_PATTERNS = [
   },
 ];
 
-// Matches whole words only, so "java" does not match "javascript".
-// Allows tech tokens such as node.js, c++ and c#.
 function escapeRegExp(str) {
   return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
@@ -210,8 +199,6 @@ function keywordPresent(text, word) {
   return re.test(text);
 }
 
-// Pulls the most frequent meaningful terms out of a job description.
-// Single words only; frequency = importance.
 function extractKeywords(jobDescription, limit = 25) {
   const freq = new Map();
   const tokens = (jobDescription || "")
@@ -486,9 +473,6 @@ function scoreFormatting(resume) {
   };
 }
 
-// Main entry: returns { score, wordCount, breakdown, missingKeywords }.
-// score is earned/applicable * 100, so a skipped component (no JD) never
-// punishes the user.
 function analyzeAts(resumeText = "", jobDescription = "") {
   const resume = resumeText || "";
   const jd = (jobDescription || "").trim();
@@ -518,8 +502,6 @@ function analyzeAts(resumeText = "", jobDescription = "") {
   const max = applicable.reduce((sum, b) => sum + b.maxScore, 0);
   let score = max === 0 ? 0 : Math.round((earned / max) * 100);
 
-  // An empty resume scores 0 — no partial credit for "clean formatting"
-  // when there is nothing to format.
   if (wordCount === 0) {
     for (const b of breakdown) b.score = 0;
     score = 0;

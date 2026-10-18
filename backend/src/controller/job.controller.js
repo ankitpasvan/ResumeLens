@@ -37,10 +37,6 @@ function cleanSalary(value) {
   return Math.round(num);
 }
 
-// Shared validation for job create/update bodies. Returns an error string
-// or null when valid. In partial mode (PATCH), only supplied fields are
-// validated — required-field checks are skipped for absent fields, and a
-// field explicitly sent as undefined is treated as absent.
 function validateJobBody(body, { partial = false } = {}) {
   const present = (key) => body[key] !== undefined;
 
@@ -84,9 +80,6 @@ function validateJobBody(body, { partial = false } = {}) {
 
 function buildJobDoc(body, { partial = false } = {}) {
   if (partial) {
-    // PATCH semantics: only touch supplied fields. Absent fields are left
-    // alone — never reset to defaults. Invalid-but-supplied values were
-    // already rejected by validateJobBody, so enums here are trusted.
     const doc = {};
     if (body.title !== undefined) doc.title = (body.title || "").trim();
     if (body.company !== undefined) doc.company = (body.company || "").trim();
@@ -129,9 +122,6 @@ function buildJobDoc(body, { partial = false } = {}) {
   };
 }
 
-// Create a job posting. Body: { title, company, description, location?,
-// jobType?, workMode?, requirements?, skills?, salaryMin?, salaryMax?,
-// currency?, status? }.
 const createJobController = asyncHandler(async (req, res) => {
   const validationError = validateJobBody(req.body);
   if (validationError) {
@@ -146,9 +136,6 @@ const createJobController = asyncHandler(async (req, res) => {
   return res.status(201).json({ job });
 });
 
-// List jobs: all open postings (shared board) plus the caller's own jobs
-// regardless of status. Supports ?q= (title/company/skills), ?jobType=,
-// ?status=, ?mine=1 (only own postings).
 const listJobsController = asyncHandler(async (req, res) => {
   const query = (req.query.q || "").trim().toLowerCase();
   const jobType = req.query.jobType || "";
@@ -225,8 +212,6 @@ const getJobController = asyncHandler(async (req, res) => {
   return res.status(200).json({ job: plain });
 });
 
-// Update a job — owner only. PATCH semantics: only supplied fields are
-// validated and updated; omitted fields keep their stored values.
 const updateJobController = asyncHandler(async (req, res) => {
   const validationError = validateJobBody(req.body, { partial: true });
   if (validationError) {
@@ -240,8 +225,6 @@ const updateJobController = asyncHandler(async (req, res) => {
 
   Object.assign(job, buildJobDoc(req.body, { partial: true }));
 
-  // Cross-check the merged salaries: a partial update may supply only one
-  // bound, so validate against the stored document, not just the body.
   if (
     job.salaryMin !== undefined &&
     job.salaryMax !== undefined &&
@@ -269,8 +252,6 @@ const deleteJobController = asyncHandler(async (req, res) => {
   return res.status(204).send();
 });
 
-// Save a job for later. Body: { jobId?, jobTitle?, company?, description?,
-// matchId?, notes? }. Duplicates are rejected with 409.
 const createSavedJobController = asyncHandler(async (req, res) => {
   let snapshot = {
     job: undefined,
@@ -348,9 +329,6 @@ const deleteSavedJobController = asyncHandler(async (req, res) => {
   return res.status(204).send();
 });
 
-// Start tracking an application. Body: { savedJobId?, jobId?, jobTitle?,
-// company?, description?, matchScore?, status? ("saved" | "applied"),
-// notes? }. When a savedJobId is given, its snapshot is used.
 const createApplicationController = asyncHandler(async (req, res) => {
   let snapshot = {
     savedJob: undefined,
@@ -419,7 +397,6 @@ const createApplicationController = asyncHandler(async (req, res) => {
   return res.status(201).json({ application });
 });
 
-// List the user's applications, newest first. Supports ?status=.
 const listApplicationsController = asyncHandler(async (req, res) => {
   const status = req.query.status || "";
   const applications = await jobApplicationModel
@@ -435,7 +412,6 @@ const listApplicationsController = asyncHandler(async (req, res) => {
   return res.status(200).json({ applications: filtered });
 });
 
-// Move an application to a new pipeline status. Body: { status, note? }.
 const updateApplicationStatusController = asyncHandler(async (req, res) => {
   const status = (req.body.status || "").trim();
   if (!APPLICATION_STATUSES.includes(status)) {
@@ -462,8 +438,6 @@ const updateApplicationStatusController = asyncHandler(async (req, res) => {
   return res.status(200).json({ application });
 });
 
-// Edit an application's notes / next step. Body: { notes?, nextStep?,
-// nextStepDate? }.
 const updateApplicationController = asyncHandler(async (req, res) => {
   const application = await jobApplicationModel.findOne({
     _id: req.params.id,
@@ -493,7 +467,6 @@ const updateApplicationController = asyncHandler(async (req, res) => {
   return res.status(200).json({ application });
 });
 
-// Delete an application — owner only.
 const deleteApplicationController = asyncHandler(async (req, res) => {
   const result = await jobApplicationModel.deleteOne({
     _id: req.params.id,
