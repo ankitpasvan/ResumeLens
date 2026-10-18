@@ -1,8 +1,102 @@
-import { useState, useRef } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useState, useRef, useEffect } from 'react'
+import { useNavigate, Link } from 'react-router-dom'
 import '../../../src/style/home.scss'
 import Navbar from '../Navbar'
 import { useInterview } from '../interviewhook/useInterview.js'
+
+const formatDate = (iso) => {
+  if (!iso) return '—'
+  return new Date(iso).toLocaleDateString(undefined, {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+  })
+}
+
+const HistorySection = () => {
+  const { reports, getReports } = useInterview()
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState('')
+  const [retryKey, setRetryKey] = useState(0)
+
+  useEffect(() => {
+    let cancelled = false
+    getReports()
+      .then(() => {
+        if (!cancelled) { setLoading(false); setError('') }
+      })
+      .catch((err) => {
+        if (!cancelled) {
+          setLoading(false)
+          setError(err.message || 'Failed to load interview history.')
+        }
+      })
+    return () => { cancelled = true }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [retryKey])
+
+  return (
+    <section className="interview-history" aria-label="Recent interview reports">
+      <header className="history-head">
+        <h2>Recent interviews</h2>
+        {reports.length > 0 && (
+          <span className="muted small">{reports.length} report{reports.length === 1 ? '' : 's'}</span>
+        )}
+      </header>
+
+      {loading && (
+        <div className="history-loading">
+          <span className="spinner" />
+          <p className="muted small">Loading history…</p>
+        </div>
+      )}
+
+      {!loading && error && (
+        <div className="history-error" role="alert">
+          <p>{error}</p>
+          <button
+            type="button"
+            className="button ghost-button"
+            onClick={() => setRetryKey((k) => k + 1)}
+          >
+            Retry
+          </button>
+        </div>
+      )}
+
+      {!loading && !error && reports.length === 0 && (
+        <p className="muted small history-empty">
+          No interview reports yet. Generate your first strategy above.
+        </p>
+      )}
+
+      {!loading && !error && reports.length > 0 && (
+        <ul className="history-list">
+          {reports.map((r) => {
+            const qCount = (r.technicalQuestions?.length || 0) + (r.behavioralQuestions?.length || 0)
+            const jdSnippet = (r.jobDescription || '').trim().slice(0, 90)
+            return (
+              <li key={r._id}>
+                <Link to={`/interview/${r._id}`} className="history-row">
+                  <div className="history-row-main">
+                    <p className="history-row-title">
+                      {jdSnippet ? `${jdSnippet}${r.jobDescription.length > 90 ? '…' : ''}` : 'Interview report'}
+                    </p>
+                    <p className="muted small">
+                      {formatDate(r.createdAt)}
+                      {qCount > 0 && ` · ${qCount} question${qCount === 1 ? '' : 's'}`}
+                    </p>
+                  </div>
+                  <span className="history-row-open" aria-hidden="true">→</span>
+                </Link>
+              </li>
+            )
+          })}
+        </ul>
+      )}
+    </section>
+  )
+}
 
 const Home = () => {
   const navigate = useNavigate()
@@ -178,6 +272,8 @@ const Home = () => {
           </button>
         </div>
       </div>
+
+      <HistorySection />
 
       {/* Page Footer */}
       <footer className="page-footer">
