@@ -19,8 +19,21 @@ const userSchema = new mongoose.Schema(
     },
     password: {
       type: String,
-      required: [true, "Password is required"],
+      // Required only for email/password users. Google users authenticate
+      // via their verified Google identity and have no password.
+      required: [
+        function () {
+          return !this.googleId;
+        },
+        "Password is required",
+      ],
       minlength: [8, "Password must be at least 8 characters"],
+    },
+    googleId: {
+      type: String,
+      unique: true,
+      sparse: true,
+      index: true,
     },
   },
   { timestamps: true },
@@ -28,13 +41,15 @@ const userSchema = new mongoose.Schema(
 
 // Hash the password before saving. Only re-hashes when the password field
 // was actually changed (so profile updates don't double-hash).
+// Google-only users have no password — skip hashing for them.
 userSchema.pre("save", async function () {
-  if (!this.isModified("password")) return;
+  if (!this.isModified("password") || !this.password) return;
   const salt = await bcrypt.genSalt(10);
   this.password = await bcrypt.hash(this.password, salt);
 });
 
 userSchema.methods.comparePassword = async function (candidatePassword) {
+  if (!this.password) return false;
   return bcrypt.compare(candidatePassword, this.password);
 };
 
