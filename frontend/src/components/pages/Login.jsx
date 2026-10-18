@@ -2,6 +2,8 @@ import { useState } from "react";
 import "./auth.form.scss";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../../features/auth/hooks/useAuth";
+import GoogleButton from "../auth/GoogleButton";
+
 
 const Login = () => {
   const navigate = useNavigate();
@@ -78,9 +80,14 @@ const Login = () => {
             {submitting ? "Logging in..." : "Login"}
           </button>
         </form>
-        <p>
-          Don&apos;t have an account? <Link to="/register">Register</Link>
-        </p>
+        <div className="auth-divider">
+  <span>or</span>
+</div>
+<GoogleButton />
+<p>
+  Don&apos;t have an account? <Link to="/register">Register</Link>
+</p>
+
       </div>
     </main>
   );
