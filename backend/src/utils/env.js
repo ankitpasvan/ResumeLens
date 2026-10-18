@@ -28,6 +28,7 @@ module.exports = {
   mongoUri: process.env.MONGO_URI,
   jwtSecret: process.env.JWT_SECRET,
   geminiApiKey: process.env.GEMINI_API_KEY,
+  googleClientId: process.env.GOOGLE_CLIENT_ID,
 
   corsOrigin: process.env.CORS_ORIGIN || "http://localhost:5173",
   cookieSecure: process.env.NODE_ENV === "production",
