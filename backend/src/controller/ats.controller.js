@@ -41,19 +41,27 @@ const analyzeAtsController = asyncHandler(async (req, res) => {
   const findings = analyzeAts(resumeText, jobDescription);
 
   // Qualitative feedback from the AI layer (stubbed in smoke tests).
-  const raw = await generateAtsFeedback({
-    resumeText,
-    jobDescription,
-    findings,
-  });
-
-  let feedback;
+  // If the AI service is down, degrade gracefully: persist the deterministic
+  // analysis with empty AI fields and surface a warning, instead of 500ing.
+  let feedback = null;
+  let warnings = [];
   try {
-    feedback = typeof raw === "string" ? JSON.parse(raw) : raw;
-  } catch {
-    return res.status(502).json({
-      error: "AI service returned an invalid response. Please try again.",
+    const raw = await generateAtsFeedback({
+      resumeText,
+      jobDescription,
+      findings,
     });
+    try {
+      feedback = typeof raw === "string" ? JSON.parse(raw) : raw;
+    } catch {
+      return res.status(502).json({
+        error: "AI service returned an invalid response. Please try again.",
+      });
+    }
+  } catch (error) {
+    warnings = [
+      "AI feedback is temporarily unavailable. Showing deterministic analysis only.",
+    ];
   }
 
   const analysis = await atsAnalysisModel.create({
@@ -63,9 +71,9 @@ const analyzeAtsController = asyncHandler(async (req, res) => {
     score: findings.score,
     breakdown: findings.breakdown,
     missingKeywords: findings.missingKeywords,
-    summary: feedback.summary || "",
-    strengths: Array.isArray(feedback.strengths) ? feedback.strengths : [],
-    weaknesses: (Array.isArray(feedback.weaknesses)
+    summary: feedback?.summary || "",
+    strengths: Array.isArray(feedback?.strengths) ? feedback.strengths : [],
+    weaknesses: (Array.isArray(feedback?.weaknesses)
       ? feedback.weaknesses
       : []
     ).map((w = {}) => ({
@@ -75,14 +83,16 @@ const analyzeAtsController = asyncHandler(async (req, res) => {
         : "medium",
       suggestion: w.suggestion || "",
     })),
-    suggestions: Array.isArray(feedback.suggestions)
+    suggestions: Array.isArray(feedback?.suggestions)
       ? feedback.suggestions
       : [],
+    warnings,
   });
 
   res.status(201).json({
     message: "ATS analysis completed.",
     analysis,
+    warnings,
   });
 });
 

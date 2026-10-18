@@ -46,6 +46,7 @@ const atsAnalysisSchema = new mongoose.Schema(
     strengths: [{ type: String }],
     weaknesses: [weaknessSchema],
     suggestions: [{ type: String }],
+    warnings: [{ type: String }],
   },
   { timestamps: true },
 );
