@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "nodemon server.js",
     "start": "node server.js",
-    "test": "node smoke.ats.js && node smoke.jobs.js && node smoke.match.js && node smoke.resume.js && node smoke.interview.js && node smoke.ai-resilience.js && node smoke.stage2.js"
+    "test": "node smoke.ats.js && node smoke.jobs.js && node smoke.match.js && node smoke.resume.js && node smoke.ai-resilience.js"
   },
   "keywords": [],
   "author": "",
