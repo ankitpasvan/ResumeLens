@@ -1,6 +1,6 @@
 import { useContext } from "react";
 import { AuthContext } from "../auth.context.jsx";
-import { login, logout, register } from "../services/auth.api.js";
+import { login, logout, register, googleLogin } from "../services/auth.api.js";
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
@@ -34,6 +34,20 @@ export const useAuth = () => {
     }
   };
 
+  // Login with a Google ID token. The `credential` comes from Google
+  // Identity Services after the user signs in with Google.
+  // Same pattern as handleLogin — resolves with user, throws on failure.
+  const handleGoogleLogin = async (credential) => {
+    setLoading(true);
+    try {
+      const data = await googleLogin(credential);
+      setUser(data.user);
+      return data.user;
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleLogout = async () => {
     setLoading(true);
     try {
@@ -51,5 +65,6 @@ export const useAuth = () => {
     handleRegister,
     handleLogout,
     refreshUser,
+    handleGoogleLogin,
   };
 };
