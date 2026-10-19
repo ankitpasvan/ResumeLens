@@ -1,0 +1,107 @@
+/* ── App shell: sidebar + header + content ──────────────────────────────────── */
+
+.app-shell {
+  min-height: 100vh;
+  background: #05070d;
+  color: #f1f5f9;
+  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  position: relative;
+}
+
+.app-shell::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(42rem 30rem at 12% -6%, rgba(139, 92, 246, 0.14), transparent 62%),
+    radial-gradient(38rem 28rem at 88% 108%, rgba(16, 185, 129, 0.09), transparent 60%);
+}
+
+.app-main {
+  position: relative;
+  z-index: 1;
+  margin-left: 248px;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.app-header {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 1.75rem;
+  background: rgba(5, 7, 13, 0.78);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+}
+
+.app-header__menu {
+  display: none;
+  background: transparent;
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  border-radius: 0.6rem;
+  padding: 0.55rem 0.6rem;
+  cursor: pointer;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.app-header__menu span {
+  display: block;
+  width: 18px;
+  height: 2px;
+  background: #f1f5f9;
+  border-radius: 2px;
+}
+
+.app-header__titles {
+  min-width: 0;
+}
+
+.app-header__title {
+  margin: 0;
+  font-size: 1.35rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: #f1f5f9;
+}
+
+.app-header__subtitle {
+  margin: 0.15rem 0 0;
+  font-size: 0.88rem;
+  color: #94a3b8;
+}
+
+.app-content {
+  flex: 1;
+  padding: 1.75rem;
+  max-width: 1280px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+@media (max-width: 900px) {
+  .app-main {
+    margin-left: 0;
+  }
+
+  .app-header__menu {
+    display: flex;
+  }
+
+  .app-content {
+    padding: 1.25rem 1rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .app-shell::before {
+    display: none;
+  }
+}
