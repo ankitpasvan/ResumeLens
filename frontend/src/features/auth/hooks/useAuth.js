@@ -1,6 +1,7 @@
 import { useContext } from "react";
 import { AuthContext } from "../auth.context.jsx";
 import { login, logout, register, googleLogin } from "../services/auth.api.js";
+import { useContext, useCallback } from "react";
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
@@ -10,8 +11,6 @@ export const useAuth = () => {
 
   const { user, loading, setUser, setLoading, refreshUser } = context;
 
-  // All handlers resolve with the user object and THROW on failure, so
-  // pages can show the real backend error message (no silent swallowing).
   const handleLogin = async (email, password) => {
     setLoading(true);
     try {
@@ -34,19 +33,19 @@ export const useAuth = () => {
     }
   };
 
-  // Login with a Google ID token. The `credential` comes from Google
-  // Identity Services after the user signs in with Google.
-  // Same pattern as handleLogin — resolves with user, throws on failure.
-  const handleGoogleLogin = async (credential) => {
-    setLoading(true);
-    try {
-      const data = await googleLogin(credential);
-      setUser(data.user);
-      return data.user;
-    } finally {
-      setLoading(false);
-    }
-  };
+  const handleGoogleLogin = useCallback(
+    async (credential) => {
+      setLoading(true);
+      try {
+        const data = await googleLogin(credential);
+        setUser(data.user);
+        return data.user;
+      } finally {
+        setLoading(false);
+      }
+    },
+    [setUser, setLoading],
+  );
 
   const handleLogout = async () => {
     setLoading(true);
