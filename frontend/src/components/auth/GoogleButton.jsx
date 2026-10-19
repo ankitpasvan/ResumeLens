@@ -4,6 +4,10 @@ import { useNavigate } from "react-router-dom";
 
 const GIS_SCRIPT_URL = "https://accounts.google.com/gsi/client";
 
+// Client ID is read once at module render time, not inside the effect,
+// so we never call setState synchronously within an effect.
+const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID;
+
 // Loads the Google Identity Services script once, returns a promise.
 function loadGisScript() {
   return new Promise((resolve, reject) => {
@@ -33,15 +37,13 @@ const GoogleButton = () => {
   const buttonRef = useRef(null);
   const navigate = useNavigate();
   const { handleGoogleLogin } = useAuth();
-  const [error, setError] = useState("");
+  const [error, setError] = useState(
+    GOOGLE_CLIENT_ID ? "" : "Google login is not configured."
+  );
   const [busy, setBusy] = useState(false);
 
   useEffect(() => {
-    const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
-    if (!clientId) {
-      setError("Google login is not configured.");
-      return;
-    }
+    if (!GOOGLE_CLIENT_ID) return;
 
     let cancelled = false;
 
@@ -64,7 +66,7 @@ const GoogleButton = () => {
       .then(() => {
         if (cancelled || !buttonRef.current) return;
         window.google.accounts.id.initialize({
-          client_id: clientId,
+          client_id: GOOGLE_CLIENT_ID,
           callback: handleCredential,
           // Don't auto-prompt; only show on button click.
           auto_select: false,

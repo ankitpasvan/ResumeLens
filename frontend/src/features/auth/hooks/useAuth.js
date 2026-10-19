@@ -1,7 +1,6 @@
-import { useContext } from "react";
+import { useContext, useCallback } from "react";
 import { AuthContext } from "../auth.context.jsx";
 import { login, logout, register, googleLogin } from "../services/auth.api.js";
-import { useContext, useCallback } from "react";
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
