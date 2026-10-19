@@ -33,4 +33,6 @@ authRouter.delete(
   authController.deleteAccountController,
 );
 
+authRouter.post("/google", authLimiter, authController.googleLogin);
+
 module.exports = authRouter;
