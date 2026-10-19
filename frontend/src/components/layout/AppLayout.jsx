@@ -3,7 +3,7 @@ import Sidebar from "./Sidebar";
 import "../../style/app-layout.scss";
 
 // Shared authenticated layout: left sidebar + top header + content area.
-// All protected pages render inside this layout.
+// All 8 protected pages render inside this layout.
 const AppLayout = ({ children, title, subtitle }) => {
   const [mobileOpen, setMobileOpen] = useState(false);
 
