@@ -9,6 +9,7 @@ const interviewReportModel = require("../models/interviewReport.model");
 const aiUsageModel = require("../models/aiUsage.model");
 const jwt = require("jsonwebtoken");
 const { randomUUID } = require("crypto");
+const { OAuth2Client } = require("google-auth-library");
 const config = require("../utils/env");
 const asyncHandler = require("../utils/asyncHandler");
 
@@ -18,6 +19,10 @@ const cookieOptions = {
   sameSite: "lax",
   maxAge: 24 * 60 * 60 * 1000, // 24h
 };
+
+// Google ID token verifier. The audience MUST be our own Client ID —
+// this is what proves the token was minted for our app, not someone else's.
+const googleClient = new OAuth2Client(config.googleClientId);
 
 function signToken(user) {
   return jwt.sign(
@@ -184,6 +189,85 @@ const deleteAccountController = asyncHandler(async (req, res) => {
   res.clearCookie("token").status(204).end();
 });
 
+// Google Login via Google Identity Services ID token.
+// The frontend sends the `credential` (JWT) it received from Google.
+// We verify it server-side — never trust email/name from the client alone.
+const googleLogin = asyncHandler(async (req, res) => {
+  const { credential } = req.body;
+
+  if (!credential || typeof credential !== "string") {
+    return res.status(400).json({ error: "Google credential is required." });
+  }
+
+  if (!config.googleClientId) {
+    return res
+      .status(500)
+      .json({ error: "Google login is not configured on the server." });
+  }
+
+  // Verify the token signature, expiry, and audience with Google.
+  let payload;
+  try {
+    const ticket = await googleClient.verifyIdToken({
+      idToken: credential,
+      audience: config.googleClientId,
+    });
+    payload = ticket.getPayload();
+  } catch (error) {
+    return res
+      .status(401)
+      .json({ error: "Invalid Google token. Please try again." });
+  }
+
+  const googleId = payload?.sub;
+  const email = payload?.email?.toLowerCase().trim();
+  const emailVerified = payload?.email_verified === true;
+
+  if (!googleId || !email || !emailVerified) {
+    return res
+      .status(401)
+      .json({ error: "Google account verification failed." });
+  }
+
+  // Case 1: Returning Google user — log them in.
+  let user = await userModel.findOne({ googleId });
+
+  if (!user) {
+    // Case 2: Email already registered via password — DO NOT auto-link.
+    // Silent linking would allow account takeover, so we return 409 and
+    // ask the user to log in with their password instead.
+    const existingByEmail = await userModel.findOne({ email });
+    if (existingByEmail) {
+      return res.status(409).json({
+        error:
+          "An account with this email already exists. Please log in with your password.",
+        code: "EMAIL_EXISTS",
+      });
+    }
+
+    // Case 3: Brand new Google user — create the account (no password).
+    const rawName = (payload?.name || "").trim();
+    const baseName = rawName || email.split("@")[0];
+    const username =
+      baseName.length >= 3
+        ? baseName.slice(0, 50)
+        : `user_${googleId.slice(0, 8)}`;
+
+    user = await userModel.create({ username, email, googleId });
+  }
+
+  // Issue our own JWT session cookie — identical to password login.
+  const token = signToken(user);
+
+  const userResponse = user.toObject();
+  delete userResponse.password;
+
+  res.cookie("token", token, cookieOptions).status(200).json({
+    message: "Logged in with Google successfully",
+    user: userResponse,
+  });
+});
+
 module.exports = {
   registerUser,
   loginUser,
@@ -191,4 +275,5 @@ module.exports = {
   getUser,
   changePasswordController,
   deleteAccountController,
+  googleLogin,
 };
