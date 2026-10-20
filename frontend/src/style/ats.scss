@@ -300,7 +300,7 @@ $danger: #EF4444;
 
 /* ── Result ─────────────────────────────── */
 .score-hero {
-  display: ring;
+  display: flex;
   align-items: center;
   gap: 2rem;
 
