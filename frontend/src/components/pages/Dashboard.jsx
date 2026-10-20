@@ -170,10 +170,7 @@ const Dashboard = () => {
   ];
 
   return (
-    <AppLayout
-      title="Dashboard"
-      subtitle={`${getGreeting()}, ${firstName} — here's your career command center.`}
-    >
+    <AppLayout>
       <div className="dash">
         {loading && (
           <div className="dash__loading" role="status" aria-label="Loading dashboard">
