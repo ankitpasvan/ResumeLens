@@ -1,19 +1,19 @@
 @use "sass:color";
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
 
-$bg-dark: #090a0f;
-$card-bg: #10141d;
-$card-border: #1e2638;
-$input-bg: #161c28;
-$input-border: #232c40;
-$text-primary: #f3f4f6;
-$text-muted: #8491a5;
-$accent-pink: #8b5cf6;
-$accent-pink-hover: #7c3aed;
-$accent-purple: #c084fc;
-$success: #34d399;
-$warning: #fbbf24;
-$danger: #f87171;
+$bg-dark: #F8F9FA;
+$card-bg: #FFFFFF;
+$card-border: #E5E7EB;
+$input-bg: #FFFFFF;
+$input-border: #D1D5DB;
+$text-primary: #111111;
+$text-muted: #6B7280;
+$accent-pink: #111111;
+$accent-pink-hover: #262626;
+$accent-purple: #111111;
+$success: #10B981;
+$warning: #F59E0B;
+$danger: #EF4444;
 
 .jobs-page {
   width: 100%;
@@ -81,7 +81,7 @@ $danger: #f87171;
   .banner-error {
     background: rgba($danger, 0.08);
     border: 1px solid rgba($danger, 0.3);
-    color: color.adjust($danger, $lightness: 12%);
+    color: #DC2626;
   }
 }
 
@@ -174,8 +174,8 @@ $danger: #f87171;
   font-size: 0.9rem;
   font-family: inherit;
   outline: none;
-  &:focus { border-color: $accent-pink; }
-  &::placeholder { color: color.adjust($text-muted, $lightness: -12%); }
+  &:focus { border-color: #111111; box-shadow: 0 0 0 3px rgba(17, 17, 17, 0.1); }
+  &::placeholder { color: #9CA3AF; }
 }
 
 .jobs-page textarea { resize: vertical; width: 100%; }
@@ -192,7 +192,7 @@ $danger: #f87171;
   padding: 1.25rem 1.4rem;
   transition: border-color 0.2s ease;
 
-  &:hover { border-color: color.adjust($card-border, $lightness: 8%); }
+  &:hover { border-color: #D1D5DB; box-shadow: 0 10px 30px rgba(17, 24, 39, 0.07); }
 
   .job-card-top {
     display: flex;
@@ -269,14 +269,14 @@ $danger: #f87171;
 .chip-skill {
   background: rgba($success, 0.08);
   border-color: rgba($success, 0.25);
-  color: $success;
+  color: #059669;
   text-transform: none;
 }
 
 .chip-salary {
   background: rgba($warning, 0.08);
   border-color: rgba($warning, 0.25);
-  color: $warning;
+  color: #B45309;
   text-transform: none;
 }
 
@@ -310,7 +310,7 @@ $danger: #f87171;
 .modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.65);
+  background: rgba(17, 24, 39, 0.45);
   display: flex;
   align-items: flex-start;
   justify-content: center;
@@ -326,7 +326,7 @@ $danger: #f87171;
   width: 100%;
   max-width: 640px;
   padding: 1.5rem;
-  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 24px 60px rgba(17, 24, 39, 0.15);
 
   .modal-head {
     display: flex;
@@ -379,7 +379,7 @@ $danger: #f87171;
   .form-error {
     background: rgba($danger, 0.08);
     border: 1px solid rgba($danger, 0.3);
-    color: color.adjust($danger, $lightness: 12%);
+    color: #DC2626;
     border-radius: 0.7rem;
     padding: 0.65rem 0.9rem;
     font-size: 0.85rem;
@@ -440,9 +440,9 @@ $danger: #f87171;
 
   .col-empty { text-align: center; padding: 1rem 0; }
 
-  &.col-offer .pipeline-col-head h3 { color: $success; }
-  &.col-rejected .pipeline-col-head h3 { color: $danger; }
-  &.col-interview .pipeline-col-head h3 { color: $accent-purple; }
+  &.col-offer .pipeline-col-head h3 { color: #059669; }
+  &.col-rejected .pipeline-col-head h3 { color: #DC2626; }
+  &.col-interview .pipeline-col-head h3 { color: #B45309; }
 }
 
 .app-card {
@@ -465,7 +465,7 @@ $danger: #f87171;
     font-weight: 700;
     background: rgba($success, 0.1);
     border: 1px solid rgba($success, 0.3);
-    color: $success;
+    color: #059669;
     border-radius: 999px;
     padding: 0.2rem 0.55rem;
     white-space: nowrap;
@@ -474,7 +474,7 @@ $danger: #f87171;
   .next-step {
     font-size: 0.82rem;
     margin: 0.5rem 0 0;
-    .next-step-label { color: $warning; font-weight: 700; }
+    .next-step-label { color: #B45309; font-weight: 700; }
   }
 
   .app-notes {
@@ -541,8 +541,8 @@ $danger: #f87171;
 // ── Redesign additions (AppLayout shell + pg-* primitives) ──────────────────
 // Appended for the sidebar-layout redesign. Existing classes above are kept;
 // the rules below only neutralise the old full-page wrapper when the pages
-// render inside the shared AppLayout shell, recolour the legacy pink accent
-// to the violet theme, and style the new panel/table elements.
+// render inside the shared AppLayout shell, recolour the legacy accent
+// to the near-black light theme, and style the new panel/table elements.
 
 // Inside AppLayout, the wrapper must not paint its own page background or
 // force viewport height — the shell already provides both.
@@ -551,26 +551,26 @@ $danger: #f87171;
   background: transparent;
 }
 
-// Violet accent overrides for the legacy jobs-page scoped controls (modal
-// form buttons, focus rings, tabs). Colours now match the app theme.
+// Near-black accent overrides for the legacy jobs-page scoped controls
+// (modal form buttons, focus rings, tabs). Colours now match the app theme.
 .jobs-page {
   .button.primary-button {
-    background: linear-gradient(135deg, #7c3aed, #8b5cf6);
+    background: #111111;
     &:hover:not(:disabled) {
-      background: linear-gradient(135deg, #7c3aed, #8b5cf6);
-      filter: brightness(1.1);
+      background: #262626;
     }
   }
 
   .button.ghost-button:hover:not(:disabled) {
-    border-color: rgba(139, 92, 246, 0.5);
-    color: #c084fc;
+    border-color: #111111;
+    color: #111111;
   }
 
   input:focus,
   select:focus,
   textarea:focus {
-    border-color: rgba(139, 92, 246, 0.55);
+    border-color: #111111;
+    box-shadow: 0 0 0 3px rgba(17, 17, 17, 0.1);
   }
 
   // Shared primitives inside the legacy wrapper: keep their own look instead
@@ -583,8 +583,8 @@ $danger: #f87171;
   }
 
   .pg-select {
-    background-color: rgba(17, 26, 46, 0.8);
-    border-color: rgba(148, 163, 184, 0.14);
+    background-color: #FFFFFF;
+    border-color: #D1D5DB;
   }
 
   .check {
@@ -592,12 +592,12 @@ $danger: #f87171;
     align-items: center;
     gap: 0.45rem;
     font-size: 0.88rem;
-    color: #94a3b8;
+    color: #6B7280;
     cursor: pointer;
     align-self: center;
 
     input {
-      accent-color: #8b5cf6;
+      accent-color: #111111;
       background: none;
       border: none;
       padding: 0;
@@ -605,13 +605,13 @@ $danger: #f87171;
   }
 
   .empty {
-    border-color: rgba(148, 163, 184, 0.2);
-    background: rgba(13, 21, 38, 0.45);
+    border-color: #E5E7EB;
+    background: #F9FAFB;
   }
 }
 
 .tabs .tab.tab-active {
-  background: rgba(139, 92, 246, 0.14);
+  background: #F3F4F6;
 }
 
 // Small variant for the shared button primitive (used in cards/table rows).
@@ -635,7 +635,7 @@ $danger: #f87171;
 }
 
 .app-detail-row td {
-  background: rgba(148, 163, 184, 0.03);
+  background: #F9FAFB;
 }
 
 .app-detail {
@@ -647,11 +647,11 @@ $danger: #f87171;
 .app-detail__next {
   margin: 0;
   font-size: 0.88rem;
-  color: #f1f5f9;
+  color: #111111;
 }
 
 .app-detail__next-label {
-  color: #fbbf24;
+  color: #B45309;
   font-weight: 700;
 }
 
@@ -659,7 +659,7 @@ $danger: #f87171;
   margin: 0;
   font-size: 0.88rem;
   line-height: 1.6;
-  color: #a8b3c5;
+  color: #6B7280;
   white-space: pre-line;
 }
 
@@ -667,7 +667,7 @@ $danger: #f87171;
   list-style: none;
   margin: 0;
   padding: 0.6rem 0 0;
-  border-top: 1px dashed rgba(148, 163, 184, 0.18);
+  border-top: 1px dashed #E5E7EB;
   display: flex;
   flex-direction: column;
   gap: 0.45rem;
@@ -678,12 +678,12 @@ $danger: #f87171;
 .app-history__status {
   font-weight: 700;
   text-transform: capitalize;
-  color: #f1f5f9;
+  color: #111111;
 }
 
 .app-history__note {
   margin: 0.15rem 0 0;
-  color: #94a3b8;
+  color: #6B7280;
   font-size: 0.82rem;
 }
 
@@ -706,13 +706,13 @@ $danger: #f87171;
   font-weight: 700;
   margin: 0 0 0.2rem;
   letter-spacing: -0.01em;
-  color: #f1f5f9;
+  color: #111111;
 }
 
 .job-panel__meta {
   margin: 0;
   font-size: 0.84rem;
-  color: #94a3b8;
+  color: #6B7280;
 }
 
 .job-panel__badges {
@@ -727,7 +727,7 @@ $danger: #f87171;
 .job-panel__desc {
   font-size: 0.9rem;
   line-height: 1.6;
-  color: #a8b3c5;
+  color: #374151;
   margin: 0.8rem 0 0;
   white-space: pre-line;
   display: -webkit-box;
@@ -738,7 +738,7 @@ $danger: #f87171;
 
 .job-panel__note {
   font-size: 0.84rem;
-  color: #94a3b8;
+  color: #6B7280;
   margin: 0.6rem 0 0;
 }
 
@@ -746,7 +746,7 @@ $danger: #f87171;
   margin: 0.8rem 0 0;
   padding-left: 1.2rem;
   font-size: 0.88rem;
-  color: #a8b3c5;
+  color: #374151;
 
   li { margin-bottom: 0.3rem; }
 }
@@ -758,7 +758,7 @@ $danger: #f87171;
   gap: 1rem;
   margin-top: 1rem;
   padding-top: 0.9rem;
-  border-top: 1px solid rgba(148, 163, 184, 0.12);
+  border-top: 1px solid #E5E7EB;
   flex-wrap: wrap;
 }
 
