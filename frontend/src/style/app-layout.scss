@@ -2,8 +2,8 @@
 
 .app-shell {
   min-height: 100vh;
-  background: #05070d;
-  color: #f1f5f9;
+  background: #F8F9FA;
+  color: #111111;
   font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
   position: relative;
 }
@@ -14,9 +14,7 @@
   inset: 0;
   z-index: 0;
   pointer-events: none;
-  background:
-    radial-gradient(42rem 30rem at 12% -6%, rgba(139, 92, 246, 0.14), transparent 62%),
-    radial-gradient(38rem 28rem at 88% 108%, rgba(16, 185, 129, 0.09), transparent 60%);
+  background: none;
 }
 
 .app-main {
@@ -37,15 +35,15 @@
   align-items: center;
   gap: 1rem;
   padding: 0.85rem 1.75rem;
-  background: rgba(5, 7, 13, 0.78);
+  background: rgba(255, 255, 255, 0.9);
   backdrop-filter: blur(12px);
-  border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+  border-bottom: 1px solid #E5E7EB;
 }
 
 .app-header__menu {
   display: none;
   background: transparent;
-  border: 1px solid rgba(148, 163, 184, 0.2);
+  border: 1px solid #E5E7EB;
   border-radius: 0.6rem;
   padding: 0.55rem 0.6rem;
   cursor: pointer;
@@ -58,7 +56,7 @@
   display: block;
   width: 18px;
   height: 2px;
-  background: #f1f5f9;
+  background: #111111;
   border-radius: 2px;
 }
 
@@ -70,17 +68,18 @@
   gap: 0.6rem;
   padding: 0.6rem 1rem;
   border-radius: 0.75rem;
-  background: rgba(17, 26, 46, 0.8);
-  border: 1px solid rgba(148, 163, 184, 0.14);
+  background: #FFFFFF;
+  border: 1px solid #D1D5DB;
   transition: border-color 0.15s ease-out;
 }
 
 .app-header__search:focus-within {
-  border-color: rgba(139, 92, 246, 0.5);
+  border-color: #111111;
+  box-shadow: 0 0 0 3px rgba(17, 17, 17, 0.1);
 }
 
 .app-header__search-icon {
-  color: #64748b;
+  color: #9CA3AF;
   font-size: 1.05rem;
   line-height: 1;
 }
@@ -91,13 +90,13 @@
   background: transparent;
   border: none;
   outline: none;
-  color: #f1f5f9;
+  color: #111111;
   font: inherit;
   font-size: 0.9rem;
 }
 
 .app-header__search input::placeholder {
-  color: #64748b;
+  color: #9CA3AF;
 }
 
 .app-header__user {
@@ -106,6 +105,8 @@
   gap: 0.65rem;
   margin-left: auto;
   min-width: 0;
+  background: #F3F4F6;
+  border-radius: 999px;
 }
 
 .app-header__avatar {
@@ -117,15 +118,15 @@
   justify-content: center;
   font-weight: 800;
   font-size: 1rem;
-  color: #f1f5f9;
-  background: linear-gradient(135deg, #7c3aed, #8b5cf6);
+  color: #FFFFFF;
+  background: #111111;
   flex-shrink: 0;
 }
 
 .app-header__user-name {
   font-size: 0.92rem;
   font-weight: 700;
-  color: #f1f5f9;
+  color: #111111;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -164,9 +165,9 @@
   align-items: center;
   justify-content: center;
   font-size: 1.5rem;
-  color: #c084fc;
-  background: rgba(139, 92, 246, 0.14);
-  border: 1px solid rgba(139, 92, 246, 0.3);
+  color: #111111;
+  background: #F3F4F6;
+  border: 1px solid #E5E7EB;
   flex-shrink: 0;
 }
 
@@ -175,14 +176,14 @@
   font-size: 1.65rem;
   font-weight: 800;
   letter-spacing: -0.02em;
-  color: #f1f5f9;
+  color: #111111;
   line-height: 1.2;
 }
 
 .page-header__subtitle {
   margin: 0.3rem 0 0;
   font-size: 0.92rem;
-  color: #94a3b8;
+  color: #6B7280;
   line-height: 1.5;
 }
 

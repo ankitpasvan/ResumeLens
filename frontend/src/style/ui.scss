@@ -26,11 +26,11 @@
 .ui-btn--lg { padding: 0.9rem 1.8rem; font-size: 1rem; }
 
 .ui-btn--primary {
-  background: linear-gradient(135deg, var(--violet) 0%, var(--violet-deep) 100%);
+  background: #111111;
   color: #fff;
   box-shadow: var(--shadow-glow);
 }
-.ui-btn--primary:hover:not(:disabled) { transform: translateY(-1px); filter: brightness(1.08); }
+.ui-btn--primary:hover:not(:disabled) { background: #262626; transform: translateY(-1px); }
 .ui-btn--primary:active:not(:disabled) { transform: translateY(0); }
 
 .ui-btn--secondary {
@@ -38,17 +38,17 @@
   border-color: var(--border-strong);
   color: var(--text);
 }
-.ui-btn--secondary:hover:not(:disabled) { border-color: var(--violet); color: #fff; }
+.ui-btn--secondary:hover:not(:disabled) { border-color: var(--violet); background: #F3F4F6; color: var(--text); }
 
 .ui-btn--ghost { background: transparent; color: var(--muted); }
-.ui-btn--ghost:hover:not(:disabled) { color: var(--text); background: rgba(148, 163, 184, 0.08); }
+.ui-btn--ghost:hover:not(:disabled) { color: var(--text); background: #F3F4F6; }
 
 .ui-btn--danger {
-  background: rgba(248, 113, 113, 0.1);
-  border-color: rgba(248, 113, 113, 0.4);
+  background: rgba(239, 68, 68, 0.1);
+  border-color: rgba(239, 68, 68, 0.4);
   color: var(--danger);
 }
-.ui-btn--danger:hover:not(:disabled) { background: rgba(248, 113, 113, 0.18); }
+.ui-btn--danger:hover:not(:disabled) { background: rgba(239, 68, 68, 0.18); }
 
 .ui-btn--block { width: 100%; }
 
@@ -56,8 +56,8 @@
   display: inline-block;
   width: 1em;
   height: 1em;
-  border: 2px solid rgba(255, 255, 255, 0.3);
-  border-top-color: #fff;
+  border: 2px solid rgba(107, 114, 128, 0.25);
+  border-top-color: currentColor;
   border-radius: 50%;
   animation: ui-spin 0.7s linear infinite;
   flex-shrink: 0;
@@ -65,14 +65,13 @@
 @keyframes ui-spin { to { transform: rotate(360deg); } }
 
 .ui-card {
-  background: rgba(13, 21, 38, 0.6);
+  background: #FFFFFF;
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
-  backdrop-filter: blur(12px);
   box-shadow: var(--shadow-card);
   padding: 1.5rem;
 }
-.ui-card--flat { background: var(--bg-panel); backdrop-filter: none; }
+.ui-card--flat { background: var(--bg-panel); }
 .ui-card__title { margin: 0 0 0.35rem; font-size: 1.05rem; font-weight: 700; color: var(--text); }
 .ui-card__sub { margin: 0 0 1rem; font-size: 0.88rem; color: var(--muted); }
 
@@ -88,13 +87,13 @@
   border-radius: 999px;
   border: 1px solid var(--border-strong);
   color: var(--muted);
-  background: rgba(148, 163, 184, 0.08);
+  background: #F3F4F6;
   white-space: nowrap;
 }
-.ui-badge--violet { color: var(--violet-glow); border-color: rgba(139, 92, 246, 0.4); background: rgba(139, 92, 246, 0.1); }
+.ui-badge--violet { color: var(--violet-glow); border-color: #E5E7EB; background: #F3F4F6; }
 .ui-badge--emerald { color: var(--emerald-glow); border-color: rgba(16, 185, 129, 0.4); background: rgba(16, 185, 129, 0.1); }
-.ui-badge--warning { color: var(--warning); border-color: rgba(251, 191, 36, 0.4); background: rgba(251, 191, 36, 0.1); }
-.ui-badge--danger { color: var(--danger); border-color: rgba(248, 113, 113, 0.4); background: rgba(248, 113, 113, 0.1); }
+.ui-badge--warning { color: var(--warning); border-color: rgba(245, 158, 11, 0.4); background: rgba(245, 158, 11, 0.1); }
+.ui-badge--danger { color: var(--danger); border-color: rgba(239, 68, 68, 0.4); background: rgba(239, 68, 68, 0.1); }
 
 .ui-section-head { text-align: center; max-width: 640px; margin: 0 auto 3rem; }
 .ui-section-head--left { text-align: left; margin: 0 0 2rem; }
@@ -122,7 +121,7 @@
   padding: 3.5rem 1.5rem;
   border: 1px dashed var(--border-strong);
   border-radius: var(--radius-lg);
-  background: rgba(13, 21, 38, 0.4);
+  background: #F9FAFB;
 }
 .ui-empty__glyph { font-size: 2rem; margin-bottom: 0.75rem; }
 .ui-empty__title { margin: 0 0 0.4rem; font-size: 1.05rem; font-weight: 700; color: var(--text); }
@@ -130,7 +129,7 @@
 
 .ui-score-ring { display: inline-flex; flex-direction: column; align-items: center; gap: 0.4rem; }
 .ui-score-ring svg { transform: rotate(-90deg); }
-.ui-score-ring__track { fill: none; stroke: rgba(148, 163, 184, 0.18); }
+.ui-score-ring__track { fill: none; stroke: #E5E7EB; }
 .ui-score-ring__fill { fill: none; stroke-linecap: round; transition: stroke-dashoffset 1s ease; }
 .ui-score-ring__label { font-size: 0.74rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
 
