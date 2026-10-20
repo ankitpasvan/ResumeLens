@@ -1,21 +1,18 @@
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
 
-$bg-dark: #090a0f;
-$card-bg: #10141d;
-$card-border: #1e2638;
-$input-bg: #161c28;
-$input-border: #232c40;
-$text-primary: #f3f4f6;
-$text-muted: #8491a5;
-$accent-pink: #f43f5e;
-$accent-pink-hover: #e11d48;
+$card-bg: rgba(13, 21, 38, 0.6);
+$card-border: rgba(148, 163, 184, 0.14);
+$input-bg: #111a2e;
+$input-border: rgba(148, 163, 184, 0.14);
+$text-primary: #f1f5f9;
+$text-muted: #94a3b8;
+$accent-violet: #8b5cf6;
+$accent-violet-deep: #7c3aed;
 $accent-purple: #c084fc;
 $danger: #f87171;
 
 .resumes-page {
   width: 100%;
-  min-height: 100vh;
-  background-color: $bg-dark;
   color: $text-primary;
   font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
 
@@ -38,10 +35,11 @@ $danger: #f87171;
     justify-content: center;
 
     &.primary-button {
-      background: linear-gradient(135deg, $accent-pink 0%, #d946ef 100%);
+      background: linear-gradient(135deg, $accent-violet-deep 0%, $accent-violet 100%);
       color: #fff;
+      box-shadow: 0 6px 20px rgba(139, 92, 246, 0.3);
       &:hover:not(:disabled) { filter: brightness(1.1); }
-      &:disabled { opacity: 0.45; cursor: not-allowed; }
+      &:disabled { opacity: 0.45; cursor: not-allowed; box-shadow: none; }
       &:active:not(:disabled) { transform: scale(0.97); }
     }
 
@@ -49,7 +47,7 @@ $danger: #f87171;
       background: transparent;
       border: 1px solid $input-border;
       color: $text-primary;
-      &:hover:not(:disabled) { border-color: $accent-pink; color: #fff; }
+      &:hover:not(:disabled) { border-color: $accent-violet; color: #fff; }
       &:disabled { opacity: 0.45; cursor: not-allowed; }
     }
 
@@ -75,28 +73,6 @@ $danger: #f87171;
   }
   .spinner-lg { width: 2.2rem; height: 2.2rem; border-width: 3px; }
   @keyframes resumes-spin { to { transform: rotate(360deg); } }
-}
-
-.resumes-container {
-  max-width: 1080px;
-  margin: 0 auto;
-  padding: 2rem 1.25rem 4rem;
-}
-
-.resumes-header {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 1rem;
-  margin-bottom: 1.75rem;
-
-  h1 {
-    font-size: 1.9rem;
-    font-weight: 800;
-    letter-spacing: -0.02em;
-    margin: 0 0 0.35rem 0;
-  }
-  p { margin: 0; font-size: 0.95rem; }
 }
 
 .resumes-card {
@@ -156,7 +132,7 @@ $danger: #f87171;
   outline: none;
   transition: border-color 0.15s ease;
 
-  &:focus { border-color: $accent-pink; }
+  &:focus { border-color: $accent-violet; }
   &::placeholder { color: $text-muted; }
 }
 
@@ -170,8 +146,8 @@ $danger: #f87171;
   margin-bottom: 1.1rem;
 
   &:hover, &.dropzone-active {
-    border-color: $accent-pink;
-    background: rgba(244, 63, 94, 0.04);
+    border-color: $accent-violet;
+    background: rgba(139, 92, 246, 0.05);
   }
   &.dropzone-filled { border-style: solid; }
 
@@ -216,7 +192,7 @@ $danger: #f87171;
   resize: vertical;
   transition: border-color 0.15s ease;
 
-  &:focus { border-color: $accent-pink; }
+  &:focus { border-color: $accent-violet; }
   &::placeholder { color: $text-muted; }
 }
 
@@ -276,7 +252,7 @@ $danger: #f87171;
   flex-direction: column;
   gap: 1rem;
 
-  &.resume-card-primary { border-color: rgba(244, 63, 94, 0.45); }
+  &.resume-card-primary { border-color: rgba(139, 92, 246, 0.45); }
 
   .resume-card-head {
     display: flex;
@@ -308,9 +284,9 @@ $danger: #f87171;
     white-space: nowrap;
 
     &.badge-primary {
-      background: rgba(244, 63, 94, 0.12);
-      border-color: rgba(244, 63, 94, 0.5);
-      color: $accent-pink;
+      background: rgba(139, 92, 246, 0.12);
+      border-color: rgba(139, 92, 246, 0.5);
+      color: $accent-violet;
     }
   }
 
@@ -341,11 +317,19 @@ $danger: #f87171;
 }
 
 @media (max-width: 640px) {
-  .resumes-container { padding: 1.5rem 1rem 3rem; }
-  .resumes-header {
-    flex-direction: column;
-    align-items: flex-start;
-    h1 { font-size: 1.6rem; }
-  }
   .resumes-card { padding: 1.1rem; }
+  .resume-card { padding: 1.1rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .resumes-page .button,
+  .resumes-page .dropzone,
+  .resumes-page .resumes-input,
+  .resumes-page .resumes-textarea {
+    transition: none;
+  }
+
+  .resumes-page .spinner {
+    animation-duration: 1.6s;
+  }
 }

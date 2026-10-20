@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../../style/resumes.scss";
-import Navbar from "../Navbar";
+import AppLayout from "../layout/AppLayout";
+import PageHeader from "../layout/PageHeader";
 import { useResumes } from "../../features/resumes/hooks/useResumes";
 
 const MAX_FILE_BYTES = 3 * 1024 * 1024; // matches backend multer limit
@@ -29,15 +30,15 @@ const ResumeCard = ({
   const [confirming, setConfirming] = useState(false);
 
   return (
-    <article className={`resume-card ${resume.isPrimary ? "resume-card-primary" : ""}`}>
+    <article className={`resume-card pg-panel ${resume.isPrimary ? "resume-card-primary" : ""}`}>
       <div className="resume-card-head">
         <div>
           <h3 className="resume-name">{resume.name}</h3>
           <p className="muted small">Added {formatDate(resume.createdAt)}</p>
         </div>
         <div className="resume-badges">
-          {resume.isPrimary && <span className="badge badge-primary">Primary</span>}
-          <span className="badge">{resume.source === "upload" ? "PDF" : "Pasted"}</span>
+          {resume.isPrimary && <span className="pg-badge pg-badge--violet">Primary</span>}
+          <span className="pg-badge pg-badge--slate">{resume.source === "upload" ? "PDF" : "Pasted"}</span>
         </div>
       </div>
 
@@ -170,24 +171,21 @@ const Resumes = () => {
   };
 
   return (
-    <main className="resumes-page">
-      <Navbar />
-      <div className="resumes-container">
-        <header className="resumes-header">
-          <div>
-            <h1>Resumes</h1>
-            <p className="muted">
-              Store your resumes once, then reuse them for ATS analysis, job matching and interview prep.
-            </p>
-          </div>
+    <AppLayout>
+      <div className="resumes-page">
+        <PageHeader
+          glyph="▤"
+          title="Resumes"
+          subtitle="Store your resumes once, then reuse them for ATS analysis, job matching and interview prep."
+        >
           {resumes.length > 0 && (
             <span className="muted small">
               {resumes.length} saved{resumes.some((r) => r.isPrimary) ? " · 1 primary" : ""}
             </span>
           )}
-        </header>
+        </PageHeader>
 
-        <section className="resumes-card">
+        <section className="resumes-card pg-panel">
           <div className="resumes-tabs">
             <button type="button" className={`tab ${mode === "upload" ? "tab-active" : ""}`} onClick={() => setMode("upload")}>
               Upload PDF
@@ -297,7 +295,7 @@ const Resumes = () => {
           )}
         </section>
       </div>
-    </main>
+    </AppLayout>
   );
 };
 
