@@ -1,6 +1,6 @@
 /* ── Dashboard (redesigned) ───────────────────────────────────────────────────
-   Matches the landing page: abyss base, violet primary, emerald secondary,
-   Plus Jakarta Sans, 1rem radii, glass panels. */
+   Clean light theme: off-white base, near-black primary, emerald secondary,
+   Plus Jakarta Sans, 1rem radii, white panels with soft shadows. */
 
 .dash {
   display: flex;
@@ -16,15 +16,15 @@
   justify-content: center;
   gap: 1rem;
   min-height: 40vh;
-  color: #94a3b8;
+  color: #6B7280;
 }
 
 .dash__retry {
   padding: 0.6rem 1.4rem;
   border-radius: 0.7rem;
-  border: 1px solid rgba(139, 92, 246, 0.4);
-  background: rgba(139, 92, 246, 0.12);
-  color: #f1f5f9;
+  border: 1px solid #D1D5DB;
+  background: #FFFFFF;
+  color: #111111;
   font-weight: 700;
   font-size: 0.9rem;
   cursor: pointer;
@@ -32,7 +32,7 @@
 }
 
 .dash__retry:hover {
-  background: rgba(139, 92, 246, 0.22);
+  background: #F3F4F6;
 }
 
 .dash-hero {
@@ -42,11 +42,9 @@
   gap: 2rem;
   padding: 2.25rem 2rem;
   border-radius: 1.25rem;
-  background:
-    radial-gradient(28rem 18rem at 85% 20%, rgba(139, 92, 246, 0.16), transparent 65%),
-    rgba(13, 21, 38, 0.6);
-  border: 1px solid rgba(148, 163, 184, 0.14);
-  backdrop-filter: blur(8px);
+  background: #FFFFFF;
+  border: 1px solid #E5E7EB;
+  box-shadow: 0 10px 30px rgba(17, 24, 39, 0.07);
   position: relative;
   overflow: hidden;
 }
@@ -57,7 +55,7 @@
   font-weight: 800;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: #a855f7;
+  color: #6B7280;
   display: flex;
   align-items: center;
   gap: 0.4rem;
@@ -69,14 +67,14 @@
   font-weight: 800;
   letter-spacing: -0.02em;
   line-height: 1.15;
-  color: #f1f5f9;
+  color: #111111;
 }
 
 .dash-hero__desc {
   margin: 0 0 1.5rem;
   font-size: 1rem;
   line-height: 1.6;
-  color: #94a3b8;
+  color: #6B7280;
   max-width: 32rem;
 }
 
@@ -86,18 +84,19 @@
   gap: 0.6rem;
   padding: 0.85rem 1.6rem;
   border-radius: 0.8rem;
-  background: linear-gradient(135deg, #7c3aed, #8b5cf6);
+  background: #111111;
   color: #fff;
   font-weight: 700;
   font-size: 0.95rem;
   text-decoration: none;
-  box-shadow: 0 8px 28px rgba(139, 92, 246, 0.35);
-  transition: transform 0.15s ease-out, box-shadow 0.15s ease-out;
+  box-shadow: 0 10px 30px rgba(17, 24, 39, 0.07);
+  transition: transform 0.15s ease-out, box-shadow 0.15s ease-out, background 0.15s ease-out;
 }
 
 .dash-hero__cta:hover {
+  background: #262626;
   transform: translateY(-1px);
-  box-shadow: 0 12px 34px rgba(139, 92, 246, 0.45);
+  box-shadow: 0 12px 30px rgba(17, 24, 39, 0.12);
 }
 
 .dash-hero__visual {
@@ -111,23 +110,23 @@
   gap: 0.75rem;
   padding: 1.5rem 2rem;
   border-radius: 1rem;
-  background: rgba(5, 7, 13, 0.5);
-  border: 1px solid rgba(148, 163, 184, 0.12);
+  background: #F9FAFB;
+  border: 1px solid #E5E7EB;
 }
 
 .dash-hero__score-label {
   font-size: 0.82rem;
   font-weight: 600;
-  color: #94a3b8;
+  color: #6B7280;
 }
 
 .dash-hero__score--empty {
-  color: #64748b;
+  color: #9CA3AF;
 }
 
 .dash-hero__score-glyph {
   font-size: 2.5rem;
-  color: #a855f7;
+  color: #111111;
 }
 
 .dash-metrics {
@@ -142,14 +141,15 @@
   align-items: flex-start;
   padding: 1.25rem;
   border-radius: 1rem;
-  background: rgba(13, 21, 38, 0.6);
-  border: 1px solid rgba(148, 163, 184, 0.14);
+  background: #FFFFFF;
+  border: 1px solid #E5E7EB;
+  box-shadow: 0 10px 30px rgba(17, 24, 39, 0.07);
   text-decoration: none;
   transition: border-color 0.15s ease-out, transform 0.15s ease-out;
 }
 
 .metric-card:hover {
-  border-color: rgba(139, 92, 246, 0.35);
+  border-color: #D1D5DB;
   transform: translateY(-2px);
 }
 
@@ -161,9 +161,9 @@
   align-items: center;
   justify-content: center;
   font-size: 1.2rem;
-  color: #a855f7;
-  background: rgba(139, 92, 246, 0.12);
-  border: 1px solid rgba(139, 92, 246, 0.22);
+  color: #111111;
+  background: #F3F4F6;
+  border: 1px solid #E5E7EB;
   flex-shrink: 0;
 }
 
@@ -177,26 +177,26 @@
 .metric-card__label {
   font-size: 0.82rem;
   font-weight: 600;
-  color: #94a3b8;
+  color: #6B7280;
 }
 
 .metric-card__value {
   font-size: 1.7rem;
   font-weight: 800;
   letter-spacing: -0.02em;
-  color: #f1f5f9;
+  color: #111111;
   line-height: 1.2;
 }
 
 .metric-card__suffix {
   font-size: 0.95rem;
   font-weight: 600;
-  color: #64748b;
+  color: #9CA3AF;
 }
 
 .metric-card__sub {
   font-size: 0.78rem;
-  color: #34d399;
+  color: #059669;
 }
 
 .dash-grid {
@@ -209,9 +209,9 @@
 .dash-panel {
   padding: 1.4rem;
   border-radius: 1rem;
-  background: rgba(13, 21, 38, 0.6);
-  border: 1px solid rgba(148, 163, 184, 0.14);
-  backdrop-filter: blur(8px);
+  background: #FFFFFF;
+  border: 1px solid #E5E7EB;
+  box-shadow: 0 10px 30px rgba(17, 24, 39, 0.07);
 }
 
 .dash-panel__head {
@@ -227,26 +227,26 @@
   font-size: 1.02rem;
   font-weight: 800;
   letter-spacing: -0.01em;
-  color: #f1f5f9;
+  color: #111111;
   display: flex;
   align-items: center;
   gap: 0.5rem;
 }
 
 .dash-panel__title span[aria-hidden] {
-  color: #a855f7;
+  color: #111111;
 }
 
 .dash-panel__sub {
   margin: 0 0 1rem;
   font-size: 0.84rem;
-  color: #94a3b8;
+  color: #6B7280;
 }
 
 .dash-panel__link {
   font-size: 0.82rem;
   font-weight: 600;
-  color: #a855f7;
+  color: #111111;
   text-decoration: none;
 }
 
@@ -257,7 +257,7 @@
 .dash-panel__empty {
   margin: 0;
   font-size: 0.88rem;
-  color: #94a3b8;
+  color: #6B7280;
   line-height: 1.6;
 }
 
@@ -272,8 +272,8 @@
 }
 
 .dash-badge--good {
-  color: #34d399;
-  background: rgba(16, 185, 129, 0.12);
+  color: #059669;
+  background: rgba(16, 185, 129, 0.1);
   border: 1px solid rgba(16, 185, 129, 0.3);
 }
 
@@ -281,7 +281,7 @@
   width: 0.45rem;
   height: 0.45rem;
   border-radius: 50%;
-  background: #34d399;
+  background: #10B981;
 }
 
 .dash-health {
@@ -301,20 +301,20 @@
   margin: 0;
   font-size: 0.8rem;
   font-weight: 600;
-  color: #94a3b8;
+  color: #6B7280;
 }
 
 .dash-health__date {
   margin: 0;
   font-size: 0.9rem;
   font-weight: 700;
-  color: #f1f5f9;
+  color: #111111;
 }
 
 .dash-health__link {
   font-size: 0.84rem;
   font-weight: 600;
-  color: #a855f7;
+  color: #111111;
   text-decoration: none;
   margin-top: 0.25rem;
 }
@@ -330,7 +330,7 @@
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
-  border-top: 1px solid rgba(148, 163, 184, 0.1);
+  border-top: 1px solid #E5E7EB;
   padding-top: 0.9rem;
 }
 
@@ -340,7 +340,7 @@
   gap: 0.7rem;
   font-size: 0.86rem;
   font-weight: 600;
-  color: #f1f5f9;
+  color: #111111;
   text-decoration: none;
   padding: 0.4rem 0.5rem;
   border-radius: 0.6rem;
@@ -348,14 +348,14 @@
 }
 
 .dash-mini-row:hover {
-  background: rgba(148, 163, 184, 0.07);
+  background: #F3F4F6;
 }
 
 .dash-mini-row__date {
   margin-left: auto;
   font-size: 0.78rem;
   font-weight: 500;
-  color: #64748b;
+  color: #9CA3AF;
 }
 
 .dash-steps {
@@ -379,8 +379,8 @@
 }
 
 .dash-step:hover {
-  background: rgba(139, 92, 246, 0.07);
-  border-color: rgba(139, 92, 246, 0.2);
+  background: #F3F4F6;
+  border-color: #E5E7EB;
 }
 
 .dash-step__num {
@@ -392,8 +392,8 @@
   justify-content: center;
   font-size: 0.85rem;
   font-weight: 800;
-  color: #a855f7;
-  border: 1.5px solid rgba(168, 85, 247, 0.5);
+  color: #111111;
+  border: 1.5px solid #111111;
   flex-shrink: 0;
 }
 
@@ -408,17 +408,17 @@
 .dash-step__title {
   font-size: 0.9rem;
   font-weight: 700;
-  color: #f1f5f9;
+  color: #111111;
 }
 
 .dash-step__desc {
   font-size: 0.8rem;
-  color: #94a3b8;
+  color: #6B7280;
   line-height: 1.45;
 }
 
 .dash-step__arrow {
-  color: #64748b;
+  color: #9CA3AF;
   font-size: 1.1rem;
   flex-shrink: 0;
 }
@@ -439,7 +439,7 @@
   top: 0.5rem;
   bottom: 0.5rem;
   width: 2px;
-  background: rgba(168, 85, 247, 0.25);
+  background: #E5E7EB;
 }
 
 .dash-activity__item {
@@ -454,7 +454,7 @@
   width: 0.55rem;
   height: 0.55rem;
   border-radius: 50%;
-  background: #a855f7;
+  background: #111111;
   margin-top: 0.35rem;
   margin-left: 1.4rem;
   flex-shrink: 0;
@@ -470,8 +470,8 @@
   align-items: center;
   justify-content: center;
   font-size: 0.95rem;
-  color: #a855f7;
-  background: rgba(139, 92, 246, 0.1);
+  color: #111111;
+  background: #F3F4F6;
   flex-shrink: 0;
 }
 
@@ -486,22 +486,22 @@
 .dash-activity__title {
   font-size: 0.88rem;
   font-weight: 700;
-  color: #f1f5f9;
+  color: #111111;
   text-decoration: none;
 }
 
 .dash-activity__title:hover {
-  color: #c084fc;
+  color: #111111;
 }
 
 .dash-activity__desc {
   font-size: 0.8rem;
-  color: #94a3b8;
+  color: #6B7280;
 }
 
 .dash-activity__time {
   font-size: 0.75rem;
-  color: #64748b;
+  color: #9CA3AF;
   flex-shrink: 0;
   white-space: nowrap;
 }
