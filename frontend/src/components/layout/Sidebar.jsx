@@ -63,17 +63,6 @@ const Sidebar = ({ mobileOpen, onClose }) => {
           ))}
         </nav>
 
-        <div className="sidebar-cta">
-          <span className="sidebar-cta__glyph" aria-hidden="true">✦</span>
-          <p className="sidebar-cta__title">Improve your ATS score</p>
-          <p className="sidebar-cta__text">
-            Analyze your resume and fix what recruiters&apos; systems flag.
-          </p>
-          <Link to="/ats" className="sidebar-cta__button" onClick={closeMobile}>
-            Analyze resume
-          </Link>
-        </div>
-
         <div className="sidebar-footer">
           <div className="sidebar-user">
             <span className="sidebar-user__avatar" aria-hidden="true">
