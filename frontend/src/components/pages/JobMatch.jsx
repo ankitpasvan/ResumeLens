@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import "../../style/matching.scss";
-import Navbar from "../Navbar";
+import AppLayout from "../layout/AppLayout";
+import PageHeader from "../layout/PageHeader";
+import ScoreRing from "../ui/ScoreRing";
 import { useResumes } from "../../features/resumes/hooks/useResumes";
 import { useMatching } from "../../features/matching/hooks/useMatching";
 
-import { saveJob, listSavedJobs } from "../../features/jobs/services/jobs.api";
+import { saveJob, listSavedJobs, getJob } from "../../features/jobs/services/jobs.api";
 
 
 const formatDate = (iso) => {
@@ -22,33 +24,6 @@ const scoreTone = (score) => {
   if (score >= 50) return "tone-good";
   if (score >= 30) return "tone-fair";
   return "tone-low";
-};
-
-// SVG score ring.
-const ScoreRing = ({ score }) => {
-  const r = 54;
-  const c = 2 * Math.PI * r;
-  const filled = (Math.min(100, Math.max(0, score)) / 100) * c;
-  return (
-    <div className={`score-ring ${scoreTone(score)}`}>
-      <svg viewBox="0 0 140 140" width="140" height="140" aria-hidden="true">
-        <circle cx="70" cy="70" r={r} className="ring-track" />
-        <circle
-          cx="70"
-          cy="70"
-          r={r}
-          className="ring-fill"
-          strokeDasharray={`${filled} ${c}`}
-          strokeLinecap="round"
-          transform="rotate(-90 70 70)"
-        />
-      </svg>
-      <div className="ring-label">
-        <span className="ring-score">{score}</span>
-        <span className="ring-caption">match score</span>
-      </div>
-    </div>
-  );
 };
 
 const BreakdownBar = ({ item }) => {
@@ -80,9 +55,9 @@ const MatchResult = ({ match }) => {
   if (!match) return null;
   const breakdown = match.breakdown || [];
   return (
-    <section className="match-result" aria-live="polite">
+    <section className="match-result pg-panel" aria-live="polite">
       <div className="result-top">
-        <ScoreRing score={match.matchScore} />
+        <ScoreRing score={match.matchScore} size={140} stroke={12} label="Match score" />
         <div className="result-meta">
           <h2 className="result-title">{match.jobTitle}</h2>
           <p className="muted small">
@@ -178,6 +153,7 @@ const MatchResult = ({ match }) => {
 };
 
 const JobMatch = () => {
+  const location = useLocation();
   const { resumes, loading: resumesLoading, fetchResumes } = useResumes();
   const {
     matches,
@@ -210,6 +186,26 @@ const JobMatch = () => {
       })
       .catch(() => {});
     fetchMatches().catch(() => {});
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Prefill the form when arriving from the Dashboard with a job id in the
+  // router state (Dashboard recommendation cards link here with
+  // state={{ jobId }}). Fetches the real job and fills title + description.
+  useEffect(() => {
+    const jobId = location.state?.jobId;
+    if (!jobId) return;
+    let cancelled = false;
+    getJob(jobId)
+      .then((job) => {
+        if (cancelled || !job) return;
+        setJobTitle(job.title || "");
+        setJobDescription(job.description || "");
+      })
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -286,23 +282,19 @@ const JobMatch = () => {
   };
 
   return (
-    <div className="match-page">
-      <Navbar />
-      <main className="match-container">
-        <header className="page-head">
-          <div>
-            <h1>Job Match</h1>
-            <p className="muted">
-              See how well a resume fits a job posting — with an explainable
-              score, skill gaps, and concrete next steps.
-            </p>
-          </div>
+    <AppLayout>
+      <div className="match-page">
+        <PageHeader
+          glyph="◎"
+          title="Job Match"
+          subtitle="See how well a resume fits a job posting — with an explainable score, skill gaps, and concrete next steps."
+        >
           {viewId && (
             <button type="button" className="button ghost-button" onClick={onNewMatch}>
               New match
             </button>
           )}
-        </header>
+        </PageHeader>
 
         {error && (
           <p className="form-error" role="alert">
@@ -311,7 +303,7 @@ const JobMatch = () => {
         )}
 
         <div className="match-grid">
-          <section className="panel match-form-panel">
+          <section className="panel pg-panel match-form-panel">
             <h2 className="panel-title">Run a match</h2>
             <form onSubmit={onSubmit} className="match-form">
               <label className="field">
@@ -437,7 +429,7 @@ const JobMatch = () => {
                 <MatchResult match={current} />
               </>
             ) : (
-              <section className="panel result-empty">
+              <section className="panel pg-panel result-empty">
                 <h2 className="panel-title">Your result appears here</h2>
                 <p className="muted">
                   Pick a resume, paste a job description, and run the match.
@@ -448,8 +440,8 @@ const JobMatch = () => {
             )}
           </div>
         </div>
-      </main>
-    </div>
+      </div>
+    </AppLayout>
   );
 };
 
