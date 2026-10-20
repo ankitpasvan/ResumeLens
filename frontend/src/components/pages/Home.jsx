@@ -1,7 +1,8 @@
 import { useState, useRef, useEffect } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import '../../../src/style/home.scss'
-import Navbar from '../Navbar'
+import AppLayout from '../layout/AppLayout'
+import PageHeader from '../layout/PageHeader'
 import { useInterview } from '../interviewhook/useInterview.js'
 
 const formatDate = (iso) => {
@@ -141,22 +142,13 @@ const Home = () => {
   }
 
   return (
-    <main className="home">
-      <Navbar />
-
-      {/* Page Header */}
-      <header className="page-header">
-        <h1>
-          Create Your Custom <span className="gradient-text">Interview Plan</span>
-        </h1>
-        <p>Let our AI analyze the job requirements and your unique profile to build a winning strategy.</p>
-        <div className="header-badge">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-            <circle cx="12" cy="12" r="10" />
-            <path d="M12 8v8M8 12h8" />
-          </svg>
-        </div>
-      </header>
+    <AppLayout>
+      <div className="home">
+      <PageHeader
+        glyph="✦"
+        title="Interview Prep"
+        subtitle="Let our AI analyze the job requirements and your unique profile to build a winning strategy."
+      />
 
       {/* Main Card Container */}
       <div className="card-container">
@@ -253,7 +245,7 @@ const Home = () => {
         </div>
 
         {error && (
-          <p style={{ color: '#f87171', fontSize: '0.9rem', margin: '0 0 1rem 0', textAlign: 'center' }}>
+          <p className="gen-error" role="alert">
             {error}
           </p>
         )}
@@ -281,7 +273,8 @@ const Home = () => {
         <a href="#terms">Terms of Service</a>
         <a href="#help">Help Center</a>
       </footer>
-    </main>
+      </div>
+    </AppLayout>
   )
 }
 
