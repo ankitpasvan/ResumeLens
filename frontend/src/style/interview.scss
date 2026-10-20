@@ -1,20 +1,20 @@
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
 
 // ── Palette Variables ────────────────────────────────────────────────────────
-$board-bg: rgba(13, 21, 38, 0.6);
-$panel-border: rgba(148, 163, 184, 0.14);
-$card-bg: #111a2e;
-$card-hover-border: rgba(139, 92, 246, 0.35);
+$board-bg: #FFFFFF;
+$panel-border: #E5E7EB;
+$card-bg: #FFFFFF;
+$card-hover-border: #D1D5DB;
 
-$text-light: #f1f5f9;
-$text-secondary: #94a3b8;
-$text-muted: #64748b;
+$text-light: #111111;
+$text-secondary: #6B7280;
+$text-muted: #9CA3AF;
 
-$accent-violet: #8b5cf6;
-$accent-violet-deep: #7c3aed;
+$accent-violet: #111111;
+$accent-violet-deep: #111111;
 $accent-blue: #3b82f6;
 $accent-green: #10b981;
-$accent-purple: #a855f7;
+$accent-purple: #111111;
 
 * {
   box-sizing: border-box;
@@ -34,7 +34,7 @@ $accent-purple: #a855f7;
   .spinner {
     width: 36px;
     height: 36px;
-    border: 3px solid rgba(139, 92, 246, 0.15);
+    border: 3px solid rgba(17, 17, 17, 0.12);
     border-top-color: $accent-violet;
     border-radius: 50%;
     animation: spin 0.7s linear infinite;
@@ -56,7 +56,7 @@ $accent-purple: #a855f7;
   border-radius: 1.25rem;
   padding: 2.5rem;
   text-align: center;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 10px 30px rgba(17, 24, 39, 0.07);
 
   .error-icon-large {
     font-size: 3rem;
@@ -91,10 +91,10 @@ $accent-purple: #a855f7;
       transition: all 0.2s ease;
 
       &-primary {
-        background: linear-gradient(135deg, #7c3aed, #8b5cf6);
+        background: #111111;
         color: white;
         &:hover {
-          opacity: 0.95;
+          background: #262626;
           transform: translateY(-1px);
         }
       }
@@ -105,7 +105,7 @@ $accent-purple: #a855f7;
         color: $text-secondary;
         &:hover {
           color: $text-light;
-          border-color: #334155;
+          border-color: #D1D5DB;
         }
       }
     }
@@ -126,7 +126,7 @@ $accent-purple: #a855f7;
     border-radius: 1.5rem;
     display: grid;
     grid-template-columns: 260px 1px 1fr 1px 280px;
-    box-shadow: 0 24px 50px -10px rgba(0, 0, 0, 0.85);
+    box-shadow: 0 10px 30px rgba(17, 24, 39, 0.07);
     overflow: hidden;
 
     &__divider {
@@ -146,7 +146,7 @@ $accent-purple: #a855f7;
         align-items: center;
         gap: 0.6rem;
         padding-bottom: 1.5rem;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+        border-bottom: 1px solid $panel-border;
         margin-bottom: 1.5rem;
 
         .brand-dot {
@@ -154,16 +154,13 @@ $accent-purple: #a855f7;
           height: 8px;
           border-radius: 50%;
           background-color: $accent-violet;
-          box-shadow: 0 0 10px $accent-violet;
         }
 
         .brand-title {
           font-size: 0.95rem;
           font-weight: 700;
           letter-spacing: -0.01em;
-          background: linear-gradient(135deg, #f8fafc, #94a3b8);
-          -webkit-background-clip: text;
-          -webkit-text-fill-color: transparent;
+          color: $text-light;
         }
       }
 
@@ -202,32 +199,32 @@ $accent-purple: #a855f7;
           font-weight: 700;
           padding: 0.15rem 0.45rem;
           border-radius: 9999px;
-          background: rgba(255, 255, 255, 0.06);
+          background: #F3F4F6;
           color: $text-secondary;
         }
 
         &:hover {
           color: $text-light;
-          border-color: #2b364a;
-          background-color: #1a202d;
+          border-color: #D1D5DB;
+          background-color: #F3F4F6;
         }
 
         &--active {
-          background-color: rgba(139, 92, 246, 0.1);
-          border-color: rgba(139, 92, 246, 0.35);
-          color: #c084fc;
+          background-color: #F3F4F6;
+          border-color: #111111;
+          color: #111111;
           font-weight: 600;
 
           .nav-button__count {
-            background-color: rgba(139, 92, 246, 0.2);
-            color: #c084fc;
+            background-color: #E5E7EB;
+            color: #111111;
           }
         }
       }
 
       .nav-footer-actions {
         padding-top: 1.5rem;
-        border-top: 1px solid rgba(255, 255, 255, 0.06);
+        border-top: 1px solid $panel-border;
 
         .button-ghost {
           width: 100%;
@@ -243,7 +240,7 @@ $accent-purple: #a855f7;
 
           &:hover {
             color: $text-light;
-            border-color: #3b475d;
+            border-color: #9CA3AF;
           }
         }
       }
@@ -259,7 +256,7 @@ $accent-purple: #a855f7;
         width: 6px;
       }
       &::-webkit-scrollbar-thumb {
-        background: #1e2638;
+        background: #D1D5DB;
         border-radius: 4px;
       }
 
@@ -269,7 +266,7 @@ $accent-purple: #a855f7;
 
       .section-spacer {
         height: 2.5rem;
-        border-bottom: 1px dashed rgba(255, 255, 255, 0.08);
+        border-bottom: 1px dashed #E5E7EB;
         margin-bottom: 2.5rem;
       }
 
@@ -281,7 +278,7 @@ $accent-purple: #a855f7;
           gap: 1.25rem;
           padding-bottom: 1.25rem;
           margin-bottom: 1.75rem;
-          border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+          border-bottom: 1px solid $panel-border;
 
           .head-info {
             h3 {
@@ -308,22 +305,22 @@ $accent-purple: #a855f7;
             .count-pill {
               font-size: 0.74rem;
               font-weight: 700;
-              color: #c084fc;
-              background-color: rgba(139, 92, 246, 0.1);
-              border: 1px solid rgba(139, 92, 246, 0.25);
+              color: #111111;
+              background-color: #F3F4F6;
+              border: 1px solid #E5E7EB;
               padding: 0.25rem 0.65rem;
               border-radius: 9999px;
 
               &--behavioral {
-                color: #60a5fa;
+                color: #1D4ED8;
                 background-color: rgba(59, 130, 246, 0.1);
                 border-color: rgba(59, 130, 246, 0.25);
               }
 
               &--roadmap {
-                color: #c084fc;
-                background-color: rgba(192, 132, 252, 0.1);
-                border-color: rgba(192, 132, 252, 0.25);
+                color: #111111;
+                background-color: #F3F4F6;
+                border-color: #E5E7EB;
               }
             }
 
@@ -340,7 +337,7 @@ $accent-purple: #a855f7;
 
               &:hover {
                 color: $text-light;
-                border-color: #3b475d;
+                border-color: #9CA3AF;
               }
             }
           }
@@ -352,7 +349,7 @@ $accent-purple: #a855f7;
         text-align: center;
         color: $text-muted;
         font-size: 0.88rem;
-        background: rgba(21, 26, 36, 0.3);
+        background: #F9FAFB;
         border: 1px dashed $panel-border;
         border-radius: 0.75rem;
       }
@@ -365,20 +362,20 @@ $accent-purple: #a855f7;
       }
 
       .q-accordion {
-        background-color: rgba(21, 26, 36, 0.65);
+        background-color: #FFFFFF;
         border: 1px solid $panel-border;
         border-radius: 0.85rem;
         overflow: hidden;
         transition: all 0.2s ease;
 
         &:hover {
-          border-color: #2d3a52;
+          border-color: #D1D5DB;
         }
 
         &--expanded {
-          border-color: #3b4866;
-          background-color: rgba(21, 26, 36, 0.85);
-          box-shadow: 0 8px 24px -6px rgba(0, 0, 0, 0.4);
+          border-color: #9CA3AF;
+          background-color: #F9FAFB;
+          box-shadow: 0 8px 24px -6px rgba(17, 24, 39, 0.08);
         }
 
         &__header {
@@ -393,9 +390,9 @@ $accent-purple: #a855f7;
         &__badge {
           font-size: 0.74rem;
           font-weight: 700;
-          color: #c084fc;
-          background-color: rgba(139, 92, 246, 0.12);
-          border: 1px solid rgba(139, 92, 246, 0.25);
+          color: #111111;
+          background-color: #F3F4F6;
+          border: 1px solid #E5E7EB;
           padding: 0.2rem 0.5rem;
           border-radius: 0.4rem;
           flex-shrink: 0;
@@ -418,7 +415,7 @@ $accent-purple: #a855f7;
         }
 
         .copy-btn {
-          background: rgba(255, 255, 255, 0.05);
+          background: #F9FAFB;
           border: 1px solid $panel-border;
           color: $text-secondary;
           font-size: 0.72rem;
@@ -430,13 +427,13 @@ $accent-purple: #a855f7;
 
           &:hover {
             color: $text-light;
-            background: rgba(255, 255, 255, 0.1);
+            background: #F3F4F6;
           }
 
           &--copied {
-            color: #4ade80;
-            border-color: rgba(74, 222, 128, 0.4);
-            background: rgba(74, 222, 128, 0.1);
+            color: #059669;
+            border-color: rgba(16, 185, 129, 0.4);
+            background: rgba(16, 185, 129, 0.1);
           }
         }
 
@@ -448,8 +445,8 @@ $accent-purple: #a855f7;
 
         &__body {
           padding: 1.25rem 1.4rem;
-          border-top: 1px solid rgba(255, 255, 255, 0.05);
-          background-color: rgba(11, 14, 20, 0.55);
+          border-top: 1px solid $panel-border;
+          background-color: #F9FAFB;
           display: flex;
           flex-direction: column;
           gap: 1.15rem;
@@ -475,7 +472,7 @@ $accent-purple: #a855f7;
             p {
               margin: 0;
               font-size: 0.88rem;
-              color: #cbd5e1;
+              color: #374151;
               line-height: 1.65;
             }
 
@@ -512,12 +509,12 @@ $accent-purple: #a855f7;
 
           &.intention-tag {
             background-color: rgba(59, 130, 246, 0.15);
-            color: #93c5fd;
+            color: #1D4ED8;
           }
 
           &.answer-tag {
             background-color: rgba(16, 185, 129, 0.15);
-            color: #6ee7b7;
+            color: #059669;
           }
         }
       }
@@ -530,14 +527,14 @@ $accent-purple: #a855f7;
       }
 
       .roadmap-card {
-        background-color: rgba(21, 26, 36, 0.65);
+        background-color: #FFFFFF;
         border: 1px solid $panel-border;
         border-radius: 0.85rem;
         padding: 1.35rem 1.5rem;
         transition: all 0.2s ease;
 
         &:hover {
-          border-color: #2d3a52;
+          border-color: #D1D5DB;
         }
 
         &--completed {
@@ -559,9 +556,9 @@ $accent-purple: #a855f7;
         &__day {
           font-size: 0.75rem;
           font-weight: 700;
-          color: #c084fc;
-          background-color: rgba(192, 132, 252, 0.12);
-          border: 1px solid rgba(192, 132, 252, 0.25);
+          color: #111111;
+          background-color: #F3F4F6;
+          border: 1px solid #E5E7EB;
           padding: 0.2rem 0.6rem;
           border-radius: 0.4rem;
         }
@@ -570,7 +567,7 @@ $accent-purple: #a855f7;
           font-size: 0.7rem;
           font-weight: 600;
           color: $text-muted;
-          background: rgba(255, 255, 255, 0.05);
+          background: #F3F4F6;
           padding: 0.18rem 0.5rem;
           border-radius: 9999px;
         }
@@ -607,23 +604,23 @@ $accent-purple: #a855f7;
             align-items: flex-start;
             gap: 0.75rem;
             padding: 0.65rem 0.85rem;
-            background: rgba(11, 14, 20, 0.45);
-            border: 1px solid rgba(255, 255, 255, 0.04);
+            background: #F9FAFB;
+            border: 1px solid #E5E7EB;
             border-radius: 0.55rem;
             cursor: pointer;
             user-select: none;
             transition: all 0.15s ease;
 
             &:hover {
-              border-color: rgba(255, 255, 255, 0.1);
-              background: rgba(11, 14, 20, 0.65);
+              border-color: #D1D5DB;
+              background: #F3F4F6;
             }
 
             .task-checkbox {
               width: 18px;
               height: 18px;
               border-radius: 0.3rem;
-              border: 1.5px solid #3b475d;
+              border: 1.5px solid #D1D5DB;
               display: flex;
               align-items: center;
               justify-content: center;
@@ -681,7 +678,7 @@ $accent-purple: #a855f7;
         border-radius: 1rem;
         padding: 1.4rem;
         text-align: center;
-        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+        box-shadow: 0 10px 30px rgba(17, 24, 39, 0.07);
 
         &__label {
           font-size: 0.78rem;
@@ -744,12 +741,12 @@ $accent-purple: #a855f7;
           align-items: center;
           justify-content: space-between;
           padding-bottom: 0.5rem;
-          border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+          border-bottom: 1px solid $panel-border;
 
           .skill-count {
             font-size: 0.7rem;
             color: $text-muted;
-            background: rgba(255, 255, 255, 0.06);
+            background: #F3F4F6;
             padding: 0.12rem 0.45rem;
             border-radius: 9999px;
           }
@@ -781,40 +778,37 @@ $accent-purple: #a855f7;
           }
 
           &:hover {
-            border-color: #35435b;
+            border-color: #D1D5DB;
             transform: translateY(-1px);
           }
 
           &--high {
             border-color: rgba(239, 68, 68, 0.35);
             background: rgba(239, 68, 68, 0.06);
-            color: #fca5a5;
+            color: #DC2626;
 
             .severity-dot {
               background-color: #ef4444;
-              box-shadow: 0 0 6px #ef4444;
             }
           }
 
           &--medium {
             border-color: rgba(245, 158, 11, 0.35);
             background: rgba(245, 158, 11, 0.06);
-            color: #fcd34d;
+            color: #B45309;
 
             .severity-dot {
               background-color: #f59e0b;
-              box-shadow: 0 0 6px #f59e0b;
             }
           }
 
           &--low {
             border-color: rgba(59, 130, 246, 0.35);
             background: rgba(59, 130, 246, 0.06);
-            color: #93c5fd;
+            color: #1D4ED8;
 
             .severity-dot {
               background-color: #3b82f6;
-              box-shadow: 0 0 6px #3b82f6;
             }
           }
         }
@@ -848,8 +842,8 @@ $accent-purple: #a855f7;
 
           &:hover {
             color: $text-light;
-            border-color: #3b4866;
-            background: #1d2432;
+            border-color: #9CA3AF;
+            background: #F3F4F6;
           }
         }
       }
@@ -923,7 +917,7 @@ $accent-purple: #a855f7;
   font-size: 1.05rem;
   border: 2px solid $accent-violet;
   color: $accent-purple;
-  background: rgba(139, 92, 246, 0.1);
+  background: #F3F4F6;
   flex-shrink: 0;
 }
 
@@ -946,8 +940,8 @@ $accent-purple: #a855f7;
   font-size: 0.74rem;
   font-weight: 700;
   color: $accent-purple;
-  background-color: rgba(139, 92, 246, 0.1);
-  border: 1px solid rgba(139, 92, 246, 0.28);
+  background-color: #F3F4F6;
+  border: 1px solid #E5E7EB;
   padding: 0.25rem 0.65rem;
   border-radius: 9999px;
   white-space: nowrap;
