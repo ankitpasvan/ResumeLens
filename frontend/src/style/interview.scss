@@ -1,18 +1,17 @@
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
 
 // ── Palette Variables ────────────────────────────────────────────────────────
-$canvas-bg: #090a0f;
-$board-bg: #0f131a;
-$panel-border: #1e2638;
-$card-bg: #151a24;
-$card-hover-border: #2c384e;
+$board-bg: rgba(13, 21, 38, 0.6);
+$panel-border: rgba(148, 163, 184, 0.14);
+$card-bg: #111a2e;
+$card-hover-border: rgba(139, 92, 246, 0.35);
 
-$text-light: #f8fafc;
+$text-light: #f1f5f9;
 $text-secondary: #94a3b8;
-$text-muted: #5e6d82;
+$text-muted: #64748b;
 
-$accent-pink: #f43f5e;
-$accent-pink-hover: #e11d48;
+$accent-violet: #8b5cf6;
+$accent-violet-deep: #7c3aed;
 $accent-blue: #3b82f6;
 $accent-green: #10b981;
 $accent-purple: #a855f7;
@@ -23,8 +22,7 @@ $accent-purple: #a855f7;
 
 .interview-loading {
   width: 100%;
-  min-height: 100vh;
-  background-color: $canvas-bg;
+  min-height: 40vh;
   color: $text-secondary;
   display: flex;
   flex-direction: column;
@@ -36,8 +34,8 @@ $accent-purple: #a855f7;
   .spinner {
     width: 36px;
     height: 36px;
-    border: 3px solid rgba(244, 63, 94, 0.15);
-    border-top-color: $accent-pink;
+    border: 3px solid rgba(139, 92, 246, 0.15);
+    border-top-color: $accent-violet;
     border-radius: 50%;
     animation: spin 0.7s linear infinite;
   }
@@ -93,7 +91,7 @@ $accent-purple: #a855f7;
       transition: all 0.2s ease;
 
       &-primary {
-        background: linear-gradient(135deg, #f43f5e, #e11d48);
+        background: linear-gradient(135deg, #7c3aed, #8b5cf6);
         color: white;
         &:hover {
           opacity: 0.95;
@@ -117,18 +115,11 @@ $accent-purple: #a855f7;
 // ── Main Viewport Wrapper ────────────────────────────────────────────────────
 .interview-viewport {
   width: 100%;
-  min-height: 100vh;
-  background-color: $canvas-bg;
   font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
   color: $text-light;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 2rem 1.25rem;
 
   .interview-board {
     width: 100%;
-    max-width: 1320px;
     min-height: 820px;
     background-color: $board-bg;
     border: 1px solid $panel-border;
@@ -162,8 +153,8 @@ $accent-purple: #a855f7;
           width: 8px;
           height: 8px;
           border-radius: 50%;
-          background-color: $accent-pink;
-          box-shadow: 0 0 10px $accent-pink;
+          background-color: $accent-violet;
+          box-shadow: 0 0 10px $accent-violet;
         }
 
         .brand-title {
@@ -222,14 +213,14 @@ $accent-purple: #a855f7;
         }
 
         &--active {
-          background-color: rgba(244, 63, 94, 0.1);
-          border-color: rgba(244, 63, 94, 0.35);
-          color: #fb7185;
+          background-color: rgba(139, 92, 246, 0.1);
+          border-color: rgba(139, 92, 246, 0.35);
+          color: #c084fc;
           font-weight: 600;
 
           .nav-button__count {
-            background-color: rgba(244, 63, 94, 0.2);
-            color: #fb7185;
+            background-color: rgba(139, 92, 246, 0.2);
+            color: #c084fc;
           }
         }
       }
@@ -317,9 +308,9 @@ $accent-purple: #a855f7;
             .count-pill {
               font-size: 0.74rem;
               font-weight: 700;
-              color: #fb7185;
-              background-color: rgba(244, 63, 94, 0.1);
-              border: 1px solid rgba(244, 63, 94, 0.25);
+              color: #c084fc;
+              background-color: rgba(139, 92, 246, 0.1);
+              border: 1px solid rgba(139, 92, 246, 0.25);
               padding: 0.25rem 0.65rem;
               border-radius: 9999px;
 
@@ -402,9 +393,9 @@ $accent-purple: #a855f7;
         &__badge {
           font-size: 0.74rem;
           font-weight: 700;
-          color: #fb7185;
-          background-color: rgba(244, 63, 94, 0.12);
-          border: 1px solid rgba(244, 63, 94, 0.25);
+          color: #c084fc;
+          background-color: rgba(139, 92, 246, 0.12);
+          border: 1px solid rgba(139, 92, 246, 0.25);
           padding: 0.2rem 0.5rem;
           border-radius: 0.4rem;
           flex-shrink: 0;
@@ -869,8 +860,6 @@ $accent-purple: #a855f7;
 // ── Responsive Adjustments ───────────────────────────────────────────────────
 @media (max-width: 1100px) {
   .interview-viewport {
-    padding: 1.25rem 0.75rem;
-
     .interview-board {
       grid-template-columns: 1fr;
       min-height: auto;
@@ -904,5 +893,92 @@ $accent-purple: #a855f7;
         border-top: 1px solid $panel-border;
       }
     }
+  }
+}
+// ── Report header (match score + PDF download) ──────────────────────────────
+.report-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-bottom: 1.25rem;
+}
+
+.report-head__main {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  min-width: 0;
+}
+
+.report-score {
+  width: 3.4rem;
+  height: 3.4rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 1.05rem;
+  border: 2px solid $accent-violet;
+  color: $accent-purple;
+  background: rgba(139, 92, 246, 0.1);
+  flex-shrink: 0;
+}
+
+.report-head__title {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  color: $text-light;
+}
+
+.report-head__sub {
+  margin: 0.15rem 0 0 0;
+  color: $text-secondary;
+  font-size: 0.88rem;
+}
+
+// Count pill sits directly in the content panel header.
+.interview-viewport .interview-board__center .content-panel__head > .count-pill {
+  font-size: 0.74rem;
+  font-weight: 700;
+  color: $accent-purple;
+  background-color: rgba(139, 92, 246, 0.1);
+  border: 1px solid rgba(139, 92, 246, 0.28);
+  padding: 0.25rem 0.65rem;
+  border-radius: 9999px;
+  white-space: nowrap;
+}
+
+// Road map task list (moved from inline styles in interview.jsx).
+.interview-viewport .interview-board__center .roadmap-card__tasks {
+  margin: 0.5rem 0 0 1.1rem;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  font-size: 0.88rem;
+  color: $text-secondary;
+  line-height: 1.55;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .interview-viewport .interview-board__left .nav-button,
+  .interview-viewport .interview-board__center .q-accordion,
+  .interview-viewport .interview-board__center .roadmap-card,
+  .interview-viewport .interview-board__right .skill-chip,
+  .interview-error-card .error-actions .button {
+    transition: none;
+  }
+
+  .interview-viewport .interview-board__right .skill-chip:hover {
+    transform: none;
+  }
+
+  .interview-loading .spinner {
+    animation-duration: 1.4s;
   }
 }

@@ -1,7 +1,8 @@
 import { useState } from 'react'
 import '../../style/interview.scss'
 import { useInterview } from '../interviewhook/useInterview.js'
-import Navbar from '../Navbar'
+import AppLayout from '../layout/AppLayout'
+import PageHeader from '../layout/PageHeader'
 
 const SECTIONS = [
   { id: 'technical', label: 'Technical questions' },
@@ -45,7 +46,7 @@ const RoadMapCard = ({ plan }) => (
       <h4 className="roadmap-card__focus">{plan.focus}</h4>
     </div>
     {Array.isArray(plan.tasks) ? (
-      <ul style={{ margin: '0.5rem 0 0 1.1rem', padding: 0, display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
+      <ul className="roadmap-card__tasks">
         {plan.tasks.map((t, i) => (
           <li key={i}>{t}</li>
         ))}
@@ -62,10 +63,12 @@ const Interview = () => {
 
   if (loading || !report) {
     return (
-      <main className="interview-loading">
-        <div className="spinner" />
-        <p>Loading your customized interview plan...</p>
-      </main>
+      <AppLayout>
+        <div className="interview-loading">
+          <div className="spinner" />
+          <p>Loading your customized interview plan...</p>
+        </div>
+      </AppLayout>
     )
   }
 
@@ -75,47 +78,31 @@ const Interview = () => {
   const skillGaps = report.skillGaps || []
 
   return (
-    <main style={{ minHeight: '100vh' }}>
-      <Navbar />
+    <AppLayout>
+      <div className="interview-page">
+        <PageHeader
+          glyph="✦"
+          title="Interview"
+          subtitle="Your customized interview plan."
+        />
 
-      <div className="interview-viewport">
+        <div className="interview-viewport">
         {/* Report header: match score + PDF download */}
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            gap: '1rem',
-            flexWrap: 'wrap',
-            marginBottom: '1.25rem',
-          }}
-        >
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.9rem' }}>
-            <div
-              style={{
-                width: '3.4rem',
-                height: '3.4rem',
-                borderRadius: '50%',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontWeight: 800,
-                border: '2px solid #f43f5e',
-                color: '#f43f5e',
-              }}
-            >
+        <div className="report-head pg-panel">
+          <div className="report-head__main">
+            <div className="report-score" aria-hidden="true">
               {report.matchScore ?? '–'}
             </div>
             <div>
-              <h2 style={{ margin: 0, fontSize: '1.25rem' }}>Your Interview Plan</h2>
-              <p style={{ margin: '0.15rem 0 0 0', color: '#8491a5', fontSize: '0.88rem' }}>
+              <h2 className="report-head__title">Your Interview Plan</h2>
+              <p className="report-head__sub">
                 Match score: {report.matchScore ?? '–'}/100
               </p>
             </div>
           </div>
           <button
             type="button"
-            className="button button-primary"
+            className="pg-btn pg-btn--primary"
             onClick={() => getResumePdf(report._id)}
           >
             Download resume PDF
@@ -222,8 +209,9 @@ const Interview = () => {
             </div>
           </aside>
         </div>
+        </div>
       </div>
-    </main>
+    </AppLayout>
   )
 }
 
