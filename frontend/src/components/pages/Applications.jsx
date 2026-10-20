@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import "../../style/jobs.scss";
-import Navbar from "../Navbar";
-// import { useJobs } from "../../features/jobs/hooks/useJobs";
+import AppLayout from "../layout/AppLayout";
+import PageHeader from "../layout/PageHeader";
 import { APPLICATION_STATUSES } from "../../features/jobs/services/jobs.api";
 import { useJobs } from "../../features/jobs/hooks/useJobs";
 
@@ -14,6 +14,18 @@ const STATUS_LABELS = {
   rejected: "Rejected",
 };
 
+// Badge colour per status, mapped from the real status strings.
+const STATUS_BADGES = {
+  saved: "pg-badge--slate",
+  applied: "pg-badge--green",
+  assessment: "pg-badge--amber",
+  interview: "pg-badge--violet",
+  offer: "pg-badge--green",
+  rejected: "pg-badge--red",
+};
+
+const PAGE_SIZE = 8;
+
 const formatDate = (iso) => {
   if (!iso) return "—";
   return new Date(iso).toLocaleDateString(undefined, {
@@ -21,14 +33,6 @@ const formatDate = (iso) => {
     month: "short",
     day: "numeric",
   });
-};
-
-const nextStatuses = (status) => {
-  const order = ["saved", "applied", "assessment", "interview", "offer"];
-  if (status === "rejected" || status === "offer") return [];
-  const idx = order.indexOf(status);
-  const next = idx >= 0 ? order.slice(idx + 1, idx + 2) : [];
-  return [...next, "rejected"];
 };
 
 const EditNotesModal = ({ application, saving, onClose, onSave }) => {
@@ -104,69 +108,129 @@ const EditNotesModal = ({ application, saving, onClose, onSave }) => {
   );
 };
 
-const ApplicationCard = ({ application, onMove, onEdit, onDelete }) => {
-  const [showHistory, setShowHistory] = useState(false);
+const ApplicationRow = ({ application, onMove, onEdit, onDelete }) => {
+  const [expanded, setExpanded] = useState(false);
   const history = application.statusHistory || [];
+  const hasDetails =
+    Boolean(application.nextStep) || Boolean(application.notes) || history.length > 1;
+  const initial = (application.company || application.jobTitle || "?")
+    .trim()
+    .charAt(0)
+    .toUpperCase();
 
   return (
-    <article className="app-card">
-      <div className="app-card-top">
-        <h4>{application.jobTitle}</h4>
-        {application.matchScore != null && (
-          <span className="score-badge">{application.matchScore}%</span>
-        )}
-      </div>
-      {application.company && <p className="muted small">{application.company}</p>}
-      {application.nextStep && (
-        <p className="next-step">
-          <span className="next-step-label">Next:</span> {application.nextStep}
-          {application.nextStepDate && (
-            <span className="muted"> · {formatDate(application.nextStepDate)}</span>
-          )}
-        </p>
+    <>
+      <tr>
+        <td>
+          <div className="pg-cell-main">
+            <span className="pg-cell-avatar" aria-hidden="true">
+              {initial}
+            </span>
+            <div>
+              <div className="pg-cell-title">{application.jobTitle}</div>
+              {application.matchScore != null ? (
+                <div className="pg-cell-sub">{application.matchScore}% match score</div>
+              ) : application.nextStep ? (
+                <div className="pg-cell-sub">Next: {application.nextStep}</div>
+              ) : null}
+            </div>
+          </div>
+        </td>
+        <td>
+          <span className="pg-cell-muted">{application.company || "—"}</span>
+        </td>
+        <td>
+          <span className={`pg-badge ${STATUS_BADGES[application.status] || "pg-badge--slate"}`}>
+            {STATUS_LABELS[application.status] || application.status}
+          </span>
+        </td>
+        <td>
+          <span className="pg-cell-muted">{formatDate(application.createdAt)}</span>
+        </td>
+        <td>
+          <div className="pg-actions">
+            <select
+              className="pg-select pg-actions__select"
+              value={application.status}
+              onChange={(e) => {
+                if (e.target.value !== application.status) {
+                  onMove(application, e.target.value);
+                }
+              }}
+              aria-label={`Change status for ${application.jobTitle}`}
+            >
+              {APPLICATION_STATUSES.map((s) => (
+                <option key={s} value={s}>
+                  {STATUS_LABELS[s]}
+                </option>
+              ))}
+            </select>
+            <button
+              type="button"
+              className="pg-btn pg-btn--ghost pg-btn--sm"
+              onClick={() => onEdit(application)}
+            >
+              Details
+            </button>
+            {hasDetails && (
+              <button
+                type="button"
+                className="pg-btn pg-btn--ghost pg-btn--sm"
+                onClick={() => setExpanded((v) => !v)}
+                aria-expanded={expanded}
+              >
+                {expanded
+                  ? "Hide"
+                  : history.length > 1
+                    ? `Timeline (${history.length})`
+                    : "More"}
+              </button>
+            )}
+            <button
+              type="button"
+              className="pg-btn pg-btn--danger pg-btn--sm"
+              onClick={() => onDelete(application)}
+            >
+              Delete
+            </button>
+          </div>
+        </td>
+      </tr>
+      {expanded && (
+        <tr className="app-detail-row">
+          <td colSpan={5}>
+            <div className="app-detail">
+              {application.nextStep && (
+                <p className="app-detail__next">
+                  <span className="app-detail__next-label">Next step:</span>{" "}
+                  {application.nextStep}
+                  {application.nextStepDate && (
+                    <span className="pg-cell-muted">
+                      {" "}
+                      · {formatDate(application.nextStepDate)}
+                    </span>
+                  )}
+                </p>
+              )}
+              {application.notes && <p className="app-detail__notes">{application.notes}</p>}
+              {history.length > 1 && (
+                <ul className="app-history">
+                  {history.map((h, i) => (
+                    <li key={i}>
+                      <span className="app-history__status">
+                        {STATUS_LABELS[h.status] || h.status}
+                      </span>
+                      <span className="pg-cell-muted"> · {formatDate(h.at)}</span>
+                      {h.note && <p className="app-history__note">{h.note}</p>}
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          </td>
+        </tr>
       )}
-      {application.notes && <p className="app-notes">{application.notes}</p>}
-
-      <div className="app-actions">
-        {nextStatuses(application.status).map((s) => (
-          <button
-            key={s}
-            type="button"
-            className={`button sm ${s === "rejected" ? "ghost-button" : "primary-button"}`}
-            onClick={() => onMove(application, s)}
-          >
-            → {STATUS_LABELS[s]}
-          </button>
-        ))}
-        <button type="button" className="link-btn" onClick={() => onEdit(application)}>
-          Details
-        </button>
-        <button type="button" className="link-btn danger" onClick={() => onDelete(application)}>
-          Delete
-        </button>
-      </div>
-
-      {history.length > 1 && (
-        <button
-          type="button"
-          className="link-btn history-toggle"
-          onClick={() => setShowHistory((v) => !v)}
-        >
-          {showHistory ? "Hide history" : `History (${history.length})`}
-        </button>
-      )}
-      {showHistory && (
-        <ul className="history-list">
-          {history.map((h, i) => (
-            <li key={i}>
-              <span className="history-status">{STATUS_LABELS[h.status] || h.status}</span>
-              <span className="muted small"> · {formatDate(h.at)}</span>
-              {h.note && <p className="muted small">{h.note}</p>}
-            </li>
-          ))}
-        </ul>
-      )}
-    </article>
+    </>
   );
 };
 
@@ -185,6 +249,9 @@ const Applications = () => {
 
   const [editing, setEditing] = useState(null);
   const [filter, setFilter] = useState("");
+  const [query, setQuery] = useState("");
+  const [sort, setSort] = useState("latest");
+  const [page, setPage] = useState(1);
 
   useEffect(() => {
     fetchApplications().catch(() => {});
@@ -197,10 +264,23 @@ const Applications = () => {
     return c;
   }, [applications]);
 
-  const visible = useMemo(
-    () => (filter ? applications.filter((a) => a.status === filter) : applications),
-    [applications, filter],
-  );
+  const filtered = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    const list = applications.filter((a) => {
+      if (filter && a.status !== filter) return false;
+      if (!q) return true;
+      return (
+        (a.jobTitle || "").toLowerCase().includes(q) ||
+        (a.company || "").toLowerCase().includes(q)
+      );
+    });
+    const time = (a) => (a.createdAt ? new Date(a.createdAt).getTime() : 0);
+    return [...list].sort((x, y) => (sort === "oldest" ? time(x) - time(y) : time(y) - time(x)));
+  }, [applications, filter, query, sort]);
+
+  const pageCount = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
+  const safePage = Math.min(page, pageCount);
+  const pageItems = filtered.slice((safePage - 1) * PAGE_SIZE, safePage * PAGE_SIZE);
 
   const handleMove = async (application, status) => {
     setError("");
@@ -233,38 +313,118 @@ const Applications = () => {
     (a) => a.status !== "rejected" && a.status !== "offer",
   ).length;
 
-  return (
-    <div className="jobs-page">
-      <Navbar />
-      <div className="jobs-container">
-        <header className="page-head">
-          <div>
-            <h1>Application tracker</h1>
-            <p className="muted">
-              {activeCount} active application{activeCount === 1 ? "" : "s"} in
-              your pipeline.
-            </p>
-          </div>
-          <div className="head-actions">
-            <select
-              value={filter}
-              onChange={(e) => setFilter(e.target.value)}
-              aria-label="Filter by status"
-            >
-              <option value="">All statuses</option>
-              {APPLICATION_STATUSES.map((s) => (
-                <option key={s} value={s}>
-                  {STATUS_LABELS[s]} ({counts[s] || 0})
-                </option>
-              ))}
-            </select>
-          </div>
-        </header>
+  const inProgressCount = (counts.assessment || 0) + (counts.interview || 0);
 
-        {error && <p className="banner banner-error">{error}</p>}
+  return (
+    <AppLayout>
+      <div className="jobs-page">
+        <PageHeader
+          glyph="✈"
+          title="Applications"
+          subtitle="Track your job applications and stay organized. Never miss a follow-up!"
+        />
+
+        {error && (
+          <p className="pg-alert pg-alert--error" role="alert">
+            {error}
+          </p>
+        )}
+
+        <section className="pg-stats" aria-label="Application summary">
+          <div className="pg-stat">
+            <span className="pg-stat__icon" aria-hidden="true">
+              ✈
+            </span>
+            <span className="pg-stat__body">
+              <span className="pg-stat__value">{applications.length}</span>
+              <span className="pg-stat__label">Total Applications</span>
+              <span className="pg-stat__sub">{activeCount} active in pipeline</span>
+            </span>
+          </div>
+          <div className="pg-stat">
+            <span className="pg-stat__icon pg-stat__icon--green" aria-hidden="true">
+              ✓
+            </span>
+            <span className="pg-stat__body">
+              <span className="pg-stat__value">{counts.applied || 0}</span>
+              <span className="pg-stat__label">Applied</span>
+              <span className="pg-stat__sub">{counts.saved || 0} saved for later</span>
+            </span>
+          </div>
+          <div className="pg-stat">
+            <span className="pg-stat__icon pg-stat__icon--amber" aria-hidden="true">
+              ◷
+            </span>
+            <span className="pg-stat__body">
+              <span className="pg-stat__value">{inProgressCount}</span>
+              <span className="pg-stat__label">In Progress</span>
+              <span className="pg-stat__sub">
+                Assessment {counts.assessment || 0} · Interview {counts.interview || 0}
+              </span>
+            </span>
+          </div>
+          <div className="pg-stat">
+            <span className="pg-stat__icon pg-stat__icon--red" aria-hidden="true">
+              ✕
+            </span>
+            <span className="pg-stat__body">
+              <span className="pg-stat__value">{counts.rejected || 0}</span>
+              <span className="pg-stat__label">Rejected</span>
+              <span className="pg-stat__sub">{counts.offer || 0} offers received</span>
+            </span>
+          </div>
+        </section>
+
+        <div className="pg-filterbar">
+          <label className="pg-search">
+            <span className="pg-search__icon" aria-hidden="true">
+              ⌕
+            </span>
+            <input
+              type="search"
+              value={query}
+              onChange={(e) => {
+                setQuery(e.target.value);
+                setPage(1);
+              }}
+              placeholder="Search by job title or company…"
+              aria-label="Search applications"
+            />
+          </label>
+          <select
+            className="pg-select"
+            value={filter}
+            onChange={(e) => {
+              setFilter(e.target.value);
+              setPage(1);
+            }}
+            aria-label="Filter by status"
+          >
+            <option value="">All Statuses</option>
+            {APPLICATION_STATUSES.map((s) => (
+              <option key={s} value={s}>
+                {STATUS_LABELS[s]} ({counts[s] || 0})
+              </option>
+            ))}
+          </select>
+          <select
+            className="pg-select"
+            value={sort}
+            onChange={(e) => {
+              setSort(e.target.value);
+              setPage(1);
+            }}
+            aria-label="Sort applications"
+          >
+            <option value="latest">Sort by: Latest</option>
+            <option value="oldest">Sort by: Oldest</option>
+          </select>
+        </div>
 
         {loading && applications.length === 0 ? (
-          <p className="muted">Loading applications…</p>
+          <div className="pg-loading" role="status">
+            <p>Loading applications…</p>
+          </div>
         ) : applications.length === 0 ? (
           <div className="empty">
             <h3>No applications yet</h3>
@@ -273,63 +433,91 @@ const Applications = () => {
               application to track it here.
             </p>
           </div>
-        ) : filter ? (
-          <div className="pipeline-list">
-            {visible.length === 0 ? (
-              <p className="muted">Nothing in this stage.</p>
-            ) : (
-              visible.map((a) => (
-                <ApplicationCard
-                  key={a._id}
-                  application={a}
-                  onMove={handleMove}
-                  onEdit={setEditing}
-                  onDelete={handleDelete}
-                />
-              ))
-            )}
+        ) : filtered.length === 0 ? (
+          <div className="empty">
+            <h3>Nothing matches</h3>
+            <p className="muted">
+              No applications match the current search and filters.
+            </p>
           </div>
         ) : (
-          <div className="pipeline">
-            {APPLICATION_STATUSES.map((status) => {
-              const items = applications.filter((a) => a.status === status);
-              return (
-                <section key={status} className={`pipeline-col col-${status}`}>
-                  <header className="pipeline-col-head">
-                    <h3>{STATUS_LABELS[status]}</h3>
-                    <span className="count">{items.length}</span>
-                  </header>
-                  <div className="pipeline-col-body">
-                    {items.length === 0 ? (
-                      <p className="muted small col-empty">—</p>
-                    ) : (
-                      items.map((a) => (
-                        <ApplicationCard
-                          key={a._id}
-                          application={a}
-                          onMove={handleMove}
-                          onEdit={setEditing}
-                          onDelete={handleDelete}
-                        />
-                      ))
-                    )}
-                  </div>
-                </section>
-              );
-            })}
-          </div>
+          <>
+            <div className="pg-table-wrap">
+              <table className="pg-table">
+                <thead>
+                  <tr>
+                    <th scope="col">Job Title</th>
+                    <th scope="col">Company</th>
+                    <th scope="col">Status</th>
+                    <th scope="col">Applied On</th>
+                    <th scope="col">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {pageItems.map((a) => (
+                    <ApplicationRow
+                      key={a._id}
+                      application={a}
+                      onMove={handleMove}
+                      onEdit={setEditing}
+                      onDelete={handleDelete}
+                    />
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            <div className="pg-pagination">
+              <span className="pg-pagination__info">
+                Showing {(safePage - 1) * PAGE_SIZE + 1} to{" "}
+                {Math.min(safePage * PAGE_SIZE, filtered.length)} of {filtered.length}{" "}
+                applications
+              </span>
+              <div className="pg-pagination__controls">
+                <button
+                  type="button"
+                  className="pg-page-btn"
+                  disabled={safePage <= 1}
+                  onClick={() => setPage(safePage - 1)}
+                  aria-label="Previous page"
+                >
+                  ‹
+                </button>
+                {Array.from({ length: pageCount }, (_, i) => i + 1).map((n) => (
+                  <button
+                    key={n}
+                    type="button"
+                    className={`pg-page-btn ${n === safePage ? "pg-page-btn--active" : ""}`}
+                    onClick={() => setPage(n)}
+                    aria-current={n === safePage ? "page" : undefined}
+                  >
+                    {n}
+                  </button>
+                ))}
+                <button
+                  type="button"
+                  className="pg-page-btn"
+                  disabled={safePage >= pageCount}
+                  onClick={() => setPage(safePage + 1)}
+                  aria-label="Next page"
+                >
+                  ›
+                </button>
+              </div>
+            </div>
+          </>
+        )}
+
+        {editing && (
+          <EditNotesModal
+            application={editing}
+            saving={saving}
+            onClose={() => setEditing(null)}
+            onSave={handleSaveDetails}
+          />
         )}
       </div>
-
-      {editing && (
-        <EditNotesModal
-          application={editing}
-          saving={saving}
-          onClose={() => setEditing(null)}
-          onSave={handleSaveDetails}
-        />
-      )}
-    </div>
+    </AppLayout>
   );
 };
 

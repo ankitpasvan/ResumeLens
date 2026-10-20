@@ -1,14 +1,16 @@
+
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
 
-$bg-dark: #090a0f;
-$card-bg: #10141d;
-$card-border: #1e2638;
-$input-bg: #161c28;
-$input-border: #232c40;
-$text-primary: #f3f4f6;
-$text-muted: #8491a5;
-$accent-pink: #f43f5e;
-$accent-pink-hover: #e11d48;
+$bg-dark: #05070d;
+$card-bg: rgba(13, 21, 38, 0.6);
+$card-border: rgba(148, 163, 184, 0.14);
+$input-bg: #111a2e;
+$input-border: rgba(148, 163, 184, 0.18);
+$text-primary: #f1f5f9;
+$text-muted: #94a3b8;
+/* Accent variables keep their historical names; values are the violet theme. */
+$accent-pink: #8b5cf6;
+$accent-pink-hover: #7c3aed;
 $accent-purple: #c084fc;
 $success: #34d399;
 $warning: #fbbf24;
@@ -16,13 +18,11 @@ $danger: #f87171;
 
 .ats-page {
   width: 100%;
-  min-height: 100vh;
-  background-color: $bg-dark;
   color: $text-primary;
   font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
 
   .gradient-text {
-    background: linear-gradient(135deg, #fb7185 0%, #e879f9 100%);
+    background: linear-gradient(135deg, #a855f7 0%, #8b5cf6 100%);
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -55,7 +55,7 @@ $danger: #f87171;
     justify-content: center;
 
     &.primary-button {
-      background: linear-gradient(135deg, $accent-pink 0%, #d946ef 100%);
+      background: linear-gradient(135deg, $accent-pink-hover 0%, $accent-pink 100%);
       color: #fff;
       &:hover:not(:disabled) { filter: brightness(1.1); }
       &:disabled { opacity: 0.45; cursor: not-allowed; }
@@ -360,7 +360,7 @@ $danger: #f87171;
   border-radius: 999px;
 }
 .verdict-excellent { color: $success; background: rgba(52, 211, 153, 0.12); border: 1px solid rgba(52, 211, 153, 0.4); }
-.verdict-good { color: #a3e635; background: rgba(163, 230, 53, 0.1); border: 1px solid rgba(163, 230, 53, 0.35); }
+.verdict-good { color: $success; background: rgba(52, 211, 153, 0.1); border: 1px solid rgba(52, 211, 153, 0.35); }
 .verdict-fair { color: $warning; background: rgba(251, 191, 36, 0.1); border: 1px solid rgba(251, 191, 36, 0.35); }
 .verdict-poor { color: $danger; background: rgba(248, 113, 113, 0.1); border: 1px solid rgba(248, 113, 113, 0.35); }
 
@@ -410,9 +410,9 @@ $danger: #f87171;
   border-radius: 999px;
 }
 .keyword-missing {
-  color: #fda4af;
-  background: rgba(244, 63, 94, 0.1);
-  border: 1px solid rgba(244, 63, 94, 0.4);
+  color: #fca5a5;
+  background: rgba(248, 113, 113, 0.1);
+  border: 1px solid rgba(248, 113, 113, 0.4);
 }
 
 .feedback-block { margin-top: 1.4rem; &:first-of-type { margin-top: 0.75rem; } }
@@ -489,7 +489,7 @@ $danger: #f87171;
   flex-shrink: 0;
   border: 2px solid;
   &.verdict-excellent { color: $success; border-color: $success; }
-  &.verdict-good { color: #a3e635; border-color: #a3e635; }
+  &.verdict-good { color: $success; border-color: $success; }
   &.verdict-fair { color: $warning; border-color: $warning; }
   &.verdict-poor { color: $danger; border-color: $danger; }
 }
@@ -497,3 +497,50 @@ $danger: #f87171;
 .history-meta { flex: 1; min-width: 0; }
 .history-title { margin: 0 0 0.25rem 0; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .history-arrow { color: $text-muted; font-size: 1.3rem; }
+
+/* ── History table (redesign additions) ─── */
+/* Score cell avatar tinted by the shared scoreVerdict classes. */
+.ats-score-avatar {
+  font-variant-numeric: tabular-nums;
+  &.verdict-excellent,
+  &.verdict-good {
+    color: #34d399;
+    background: rgba(16, 185, 129, 0.12);
+    border-color: rgba(16, 185, 129, 0.3);
+  }
+  &.verdict-fair {
+    color: #fbbf24;
+    background: rgba(251, 191, 36, 0.1);
+    border-color: rgba(251, 191, 36, 0.3);
+  }
+  &.verdict-poor {
+    color: #f87171;
+    background: rgba(248, 113, 113, 0.1);
+    border-color: rgba(248, 113, 113, 0.3);
+  }
+}
+
+.ats-jd-snippet { display: block; max-width: 24rem; }
+
+.ats-no-results {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.9rem;
+  text-align: center;
+  p { margin: 0; }
+}
+
+/* ── Reduced motion ─────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .score-ring .score-ring-fill,
+  .progress-bar .progress-fill,
+  .history-item,
+  .dropzone,
+  .ats-page .button {
+    transition: none;
+  }
+  .ats-page .spinner {
+    animation-duration: 2s;
+  }
+}
