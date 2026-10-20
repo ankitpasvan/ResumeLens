@@ -1,10 +1,10 @@
 // 2D SVG score ring (no WebGL, no deps). Tone colors the ring:
-// emerald ≥ 80, violet ≥ 60, warning ≥ 40, danger below.
+// emerald ≥ 80, near-black ≥ 60, warning ≥ 40, danger below.
 const TONE_COLORS = {
-  emerald: "#34d399",
-  violet: "#a855f7",
-  warning: "#fbbf24",
-  danger: "#f87171",
+  emerald: "#10B981",
+  violet: "#111111",
+  warning: "#F59E0B",
+  danger: "#EF4444",
 };
 
 const toneFor = (score) => {
@@ -55,7 +55,7 @@ const ScoreRing = ({ score = 0, size = 120, stroke = 10, label = "Score", tone }
           y="50%"
           dy="0.35em"
           textAnchor="middle"
-          fill="#f1f5f9"
+          fill="#111111"
           fontSize={size * 0.24}
           fontWeight="800"
           transform={`rotate(90 ${size / 2} ${size / 2})`}
