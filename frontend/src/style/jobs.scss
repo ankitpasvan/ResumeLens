@@ -8,8 +8,8 @@ $input-bg: #161c28;
 $input-border: #232c40;
 $text-primary: #f3f4f6;
 $text-muted: #8491a5;
-$accent-pink: #f43f5e;
-$accent-pink-hover: #e11d48;
+$accent-pink: #8b5cf6;
+$accent-pink-hover: #7c3aed;
 $accent-purple: #c084fc;
 $success: #34d399;
 $warning: #fbbf24;
@@ -536,4 +536,246 @@ $danger: #f87171;
   .pipeline { grid-template-columns: minmax(240px, 1fr); }
   .head-actions { width: 100%; }
   .head-actions .button { flex: 1; }
+}
+
+// ── Redesign additions (AppLayout shell + pg-* primitives) ──────────────────
+// Appended for the sidebar-layout redesign. Existing classes above are kept;
+// the rules below only neutralise the old full-page wrapper when the pages
+// render inside the shared AppLayout shell, recolour the legacy pink accent
+// to the violet theme, and style the new panel/table elements.
+
+// Inside AppLayout, the wrapper must not paint its own page background or
+// force viewport height — the shell already provides both.
+.app-content .jobs-page {
+  min-height: 0;
+  background: transparent;
+}
+
+// Violet accent overrides for the legacy jobs-page scoped controls (modal
+// form buttons, focus rings, tabs). Colours now match the app theme.
+.jobs-page {
+  .button.primary-button {
+    background: linear-gradient(135deg, #7c3aed, #8b5cf6);
+    &:hover:not(:disabled) {
+      background: linear-gradient(135deg, #7c3aed, #8b5cf6);
+      filter: brightness(1.1);
+    }
+  }
+
+  .button.ghost-button:hover:not(:disabled) {
+    border-color: rgba(139, 92, 246, 0.5);
+    color: #c084fc;
+  }
+
+  input:focus,
+  select:focus,
+  textarea:focus {
+    border-color: rgba(139, 92, 246, 0.55);
+  }
+
+  // Shared primitives inside the legacy wrapper: keep their own look instead
+  // of inheriting the old input/button styles.
+  .pg-search input {
+    background: transparent;
+    border: none;
+    padding: 0;
+    &:focus { border-color: transparent; }
+  }
+
+  .pg-select {
+    background-color: rgba(17, 26, 46, 0.8);
+    border-color: rgba(148, 163, 184, 0.14);
+  }
+
+  .check {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    font-size: 0.88rem;
+    color: #94a3b8;
+    cursor: pointer;
+    align-self: center;
+
+    input {
+      accent-color: #8b5cf6;
+      background: none;
+      border: none;
+      padding: 0;
+    }
+  }
+
+  .empty {
+    border-color: rgba(148, 163, 184, 0.2);
+    background: rgba(13, 21, 38, 0.45);
+  }
+}
+
+.tabs .tab.tab-active {
+  background: rgba(139, 92, 246, 0.14);
+}
+
+// Small variant for the shared button primitive (used in cards/table rows).
+.pg-btn--sm {
+  padding: 0.45rem 0.9rem;
+  font-size: 0.82rem;
+}
+
+// --- Applications table: row actions + expanded detail row ---
+
+.pg-actions {
+  display: flex;
+  gap: 0.45rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.pg-actions__select {
+  padding: 0.5rem 0.7rem;
+  font-size: 0.84rem;
+}
+
+.app-detail-row td {
+  background: rgba(148, 163, 184, 0.03);
+}
+
+.app-detail {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.app-detail__next {
+  margin: 0;
+  font-size: 0.88rem;
+  color: #f1f5f9;
+}
+
+.app-detail__next-label {
+  color: #fbbf24;
+  font-weight: 700;
+}
+
+.app-detail__notes {
+  margin: 0;
+  font-size: 0.88rem;
+  line-height: 1.6;
+  color: #a8b3c5;
+  white-space: pre-line;
+}
+
+.app-history {
+  list-style: none;
+  margin: 0;
+  padding: 0.6rem 0 0;
+  border-top: 1px dashed rgba(148, 163, 184, 0.18);
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+
+  li { font-size: 0.84rem; }
+}
+
+.app-history__status {
+  font-weight: 700;
+  text-transform: capitalize;
+  color: #f1f5f9;
+}
+
+.app-history__note {
+  margin: 0.15rem 0 0;
+  color: #94a3b8;
+  font-size: 0.82rem;
+}
+
+// --- Jobs: panel-based job cards ---
+
+.job-panel {
+  display: flex;
+  flex-direction: column;
+}
+
+.job-panel__top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.job-panel__title {
+  font-size: 1.08rem;
+  font-weight: 700;
+  margin: 0 0 0.2rem;
+  letter-spacing: -0.01em;
+  color: #f1f5f9;
+}
+
+.job-panel__meta {
+  margin: 0;
+  font-size: 0.84rem;
+  color: #94a3b8;
+}
+
+.job-panel__badges {
+  display: flex;
+  gap: 0.45rem;
+  flex-wrap: wrap;
+  margin-top: 0.8rem;
+
+  .pg-badge { text-transform: capitalize; }
+}
+
+.job-panel__desc {
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: #a8b3c5;
+  margin: 0.8rem 0 0;
+  white-space: pre-line;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.job-panel__note {
+  font-size: 0.84rem;
+  color: #94a3b8;
+  margin: 0.6rem 0 0;
+}
+
+.job-panel__req {
+  margin: 0.8rem 0 0;
+  padding-left: 1.2rem;
+  font-size: 0.88rem;
+  color: #a8b3c5;
+
+  li { margin-bottom: 0.3rem; }
+}
+
+.job-panel__foot {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 1rem;
+  padding-top: 0.9rem;
+  border-top: 1px solid rgba(148, 163, 184, 0.12);
+  flex-wrap: wrap;
+}
+
+.job-panel__actions {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+@media (max-width: 768px) {
+  .job-panel__foot { flex-direction: column; align-items: flex-start; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .jobs-page .button,
+  .tabs .tab {
+    transition: none;
+  }
 }

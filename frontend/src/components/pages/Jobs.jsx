@@ -1,13 +1,9 @@
-import { useEffect, useMemo, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import "../../style/jobs.scss";
-import Navbar from "../Navbar";
-// import { useJobs } from "../../features/jobs/hooks/useJobs";
-// purani line (line 5):
-// import { useJobs } from "../../features/jobs/hooks/useJobs";
-// nayi line:
+import AppLayout from "../layout/AppLayout";
+import PageHeader from "../layout/PageHeader";
 import { useJobs } from "../../features/jobs/hooks/useJobs";
-
 
 const JOB_TYPES = ["full-time", "part-time", "contract", "internship", "freelance"];
 const WORK_MODES = ["remote", "on-site", "hybrid"];
@@ -184,30 +180,32 @@ const JobCard = ({ job, savedIds, onSave, onEdit, onDelete, onStartApplication }
   const salary = formatSalary(job);
 
   return (
-    <article className="job-card">
-      <div className="job-card-top">
+    <article className="pg-panel job-panel">
+      <div className="job-panel__top">
         <div>
-          <h3 className="job-title">{job.title}</h3>
-          <p className="muted small">
+          <h3 className="job-panel__title">{job.title}</h3>
+          <p className="job-panel__meta">
             {job.company}
             {job.location ? ` · ${job.location}` : ""}
           </p>
         </div>
-        {job.status !== "open" && <span className="pill pill-muted">{job.status}</span>}
+        {job.status !== "open" && (
+          <span className="pg-badge pg-badge--slate">{job.status}</span>
+        )}
       </div>
 
-      <div className="chip-row">
-        <span className="chip">{job.jobType}</span>
-        <span className="chip">{job.workMode}</span>
-        {salary && <span className="chip chip-salary">{salary}</span>}
+      <div className="job-panel__badges">
+        <span className="pg-badge pg-badge--violet">{job.jobType}</span>
+        <span className="pg-badge pg-badge--slate">{job.workMode}</span>
+        {salary && <span className="pg-badge pg-badge--amber">{salary}</span>}
       </div>
 
-      <p className="job-desc">{job.description}</p>
+      <p className="job-panel__desc">{job.description}</p>
 
       {expanded && (
         <>
           {job.requirements?.length > 0 && (
-            <ul className="req-list">
+            <ul className="job-panel__req">
               {job.requirements.map((r, i) => (
                 <li key={i}>{r}</li>
               ))}
@@ -223,27 +221,47 @@ const JobCard = ({ job, savedIds, onSave, onEdit, onDelete, onStartApplication }
         </>
       )}
 
-      <div className="job-card-foot">
-        <span className="muted small">Posted {formatDate(job.createdAt)}</span>
-        <div className="job-actions">
-          <button type="button" className="link-btn" onClick={() => setExpanded((v) => !v)}>
+      <div className="job-panel__foot">
+        <span className="pg-cell-muted">Posted {formatDate(job.createdAt)}</span>
+        <div className="job-panel__actions">
+          <button
+            type="button"
+            className="pg-btn pg-btn--ghost pg-btn--sm"
+            onClick={() => setExpanded((v) => !v)}
+          >
             {expanded ? "Show less" : "Details"}
           </button>
           {job.isMine ? (
             <>
-              <button type="button" className="link-btn" onClick={() => onEdit(job)}>
+              <button
+                type="button"
+                className="pg-btn pg-btn--ghost pg-btn--sm"
+                onClick={() => onEdit(job)}
+              >
                 Edit
               </button>
-              <button type="button" className="link-btn danger" onClick={() => onDelete(job)}>
+              <button
+                type="button"
+                className="pg-btn pg-btn--danger pg-btn--sm"
+                onClick={() => onDelete(job)}
+              >
                 Delete
               </button>
             </>
           ) : isSaved ? (
-            <button type="button" className="button ghost-button sm" onClick={() => onStartApplication(job)}>
+            <button
+              type="button"
+              className="pg-btn pg-btn--primary pg-btn--sm"
+              onClick={() => onStartApplication(job)}
+            >
               Start application
             </button>
           ) : (
-            <button type="button" className="button ghost-button sm" onClick={() => onSave(job)}>
+            <button
+              type="button"
+              className="pg-btn pg-btn--ghost pg-btn--sm"
+              onClick={() => onSave(job)}
+            >
               Save job
             </button>
           )}
@@ -271,19 +289,36 @@ const Jobs = () => {
     addApplication,
   } = useJobs();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const qParam = searchParams.get("q") || "";
 
   const [tab, setTab] = useState("browse");
-  const [query, setQuery] = useState("");
+  const [query, setQuery] = useState(qParam);
   const [jobType, setJobType] = useState("");
   const [mineOnly, setMineOnly] = useState(false);
   const [showForm, setShowForm] = useState(false);
   const [editing, setEditing] = useState(null);
+  const lastQRef = useRef(qParam);
 
   useEffect(() => {
-    fetchJobs().catch(() => {});
+    fetchJobs(qParam ? { q: qParam } : {}).catch(() => {});
     fetchSavedJobs().catch(() => {});
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // The AppLayout top-bar search navigates to /jobs?q=... — keep the search
+  // box and the results in sync whenever that param changes.
+  useEffect(() => {
+    if (lastQRef.current === qParam) return;
+    lastQRef.current = qParam;
+    setQuery(qParam);
+    fetchJobs({
+      ...(qParam ? { q: qParam } : {}),
+      ...(jobType ? { jobType } : {}),
+      ...(mineOnly ? { mine: "1" } : {}),
+    }).catch(() => {});
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [qParam]);
 
   const applyFilters = () => {
     setError("");
@@ -374,32 +409,27 @@ const Jobs = () => {
       : EMPTY_FORM;
 
   return (
-    <div className="jobs-page">
-      <Navbar />
-      <div className="jobs-container">
-        <header className="page-head">
-          <div>
-            <h1>Jobs</h1>
-            <p className="muted">
-              Browse open roles, post your own, and save the ones worth pursuing.
-            </p>
-          </div>
-          <div className="head-actions">
-            <Link to="/applications" className="button ghost-button">
-              Application tracker
-            </Link>
-            <button
-              type="button"
-              className="button primary-button"
-              onClick={() => {
-                setEditing(null);
-                setShowForm(true);
-              }}
-            >
-              Post a job
-            </button>
-          </div>
-        </header>
+    <AppLayout>
+      <div className="jobs-page">
+        <PageHeader
+          glyph="▦"
+          title="Jobs"
+          subtitle="Browse open roles, post your own, and save the ones worth pursuing."
+        >
+          <Link to="/applications" className="pg-btn pg-btn--ghost">
+            Application tracker
+          </Link>
+          <button
+            type="button"
+            className="pg-btn pg-btn--primary"
+            onClick={() => {
+              setEditing(null);
+              setShowForm(true);
+            }}
+          >
+            + Post a job
+          </button>
+        </PageHeader>
 
         <div className="tabs">
           <button
@@ -418,19 +448,34 @@ const Jobs = () => {
           </button>
         </div>
 
-        {error && <p className="banner banner-error">{error}</p>}
+        {error && (
+          <p className="pg-alert pg-alert--error" role="alert">
+            {error}
+          </p>
+        )}
 
         {tab === "browse" && (
           <>
-            <div className="filters">
-              <input
-                className="filter-search"
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                onKeyDown={(e) => e.key === "Enter" && applyFilters()}
-                placeholder="Search title, company or skill…"
-              />
-              <select value={jobType} onChange={(e) => setJobType(e.target.value)}>
+            <div className="pg-filterbar">
+              <label className="pg-search">
+                <span className="pg-search__icon" aria-hidden="true">
+                  ⌕
+                </span>
+                <input
+                  type="search"
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                  onKeyDown={(e) => e.key === "Enter" && applyFilters()}
+                  placeholder="Search title, company or skill…"
+                  aria-label="Search jobs"
+                />
+              </label>
+              <select
+                className="pg-select"
+                value={jobType}
+                onChange={(e) => setJobType(e.target.value)}
+                aria-label="Filter by job type"
+              >
                 <option value="">All types</option>
                 {JOB_TYPES.map((t) => (
                   <option key={t} value={t}>{t}</option>
@@ -444,13 +489,15 @@ const Jobs = () => {
                 />
                 My postings
               </label>
-              <button type="button" className="button ghost-button" onClick={applyFilters}>
+              <button type="button" className="pg-btn pg-btn--ghost" onClick={applyFilters}>
                 Apply
               </button>
             </div>
 
             {loading && jobs.length === 0 ? (
-              <p className="muted">Loading jobs…</p>
+              <div className="pg-loading" role="status">
+                <p>Loading jobs…</p>
+              </div>
             ) : jobs.length === 0 ? (
               <div className="empty">
                 <h3>No jobs found</h3>
@@ -489,35 +536,35 @@ const Jobs = () => {
             ) : (
               <div className="job-list">
                 {savedJobs.map((s) => (
-                  <article key={s._id} className="job-card">
-                    <div className="job-card-top">
+                  <article key={s._id} className="pg-panel job-panel">
+                    <div className="job-panel__top">
                       <div>
-                        <h3 className="job-title">{s.jobTitle}</h3>
-                        {s.company && <p className="muted small">{s.company}</p>}
+                        <h3 className="job-panel__title">{s.jobTitle}</h3>
+                        {s.company && <p className="job-panel__meta">{s.company}</p>}
                       </div>
-                      <span className="muted small">Saved {formatDate(s.createdAt)}</span>
+                      <span className="pg-cell-muted">Saved {formatDate(s.createdAt)}</span>
                     </div>
                     {s.description && (
-                      <p className="job-desc">
+                      <p className="job-panel__desc">
                         {s.description.length > 300
                           ? `${s.description.slice(0, 300)}…`
                           : s.description}
                       </p>
                     )}
-                    {s.notes && <p className="muted small">Note: {s.notes}</p>}
-                    <div className="job-card-foot">
+                    {s.notes && <p className="job-panel__note">Note: {s.notes}</p>}
+                    <div className="job-panel__foot">
                       <span />
-                      <div className="job-actions">
+                      <div className="job-panel__actions">
                         <button
                           type="button"
-                          className="button primary-button sm"
+                          className="pg-btn pg-btn--primary pg-btn--sm"
                           onClick={() => startFromSaved(s)}
                         >
                           Start application
                         </button>
                         <button
                           type="button"
-                          className="link-btn danger"
+                          className="pg-btn pg-btn--danger pg-btn--sm"
                           onClick={() => removeSavedJob(s._id).catch(() => {})}
                         >
                           Remove
@@ -530,20 +577,20 @@ const Jobs = () => {
             )}
           </>
         )}
-      </div>
 
-      {showForm && (
-        <JobForm
-          initial={toFormInitial(editing)}
-          saving={saving}
-          onCancel={() => {
-            setShowForm(false);
-            setEditing(null);
-          }}
-          onSubmit={handleFormSubmit}
-        />
-      )}
-    </div>
+        {showForm && (
+          <JobForm
+            initial={toFormInitial(editing)}
+            saving={saving}
+            onCancel={() => {
+              setShowForm(false);
+              setEditing(null);
+            }}
+            onSubmit={handleFormSubmit}
+          />
+        )}
+      </div>
+    </AppLayout>
   );
 };
 
