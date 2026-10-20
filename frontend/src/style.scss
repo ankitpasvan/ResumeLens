@@ -22,12 +22,12 @@ body,
         Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue",
         sans-serif;
 
-    // Matches the per-page $bg-dark (#090a0f) so there is no color flash
-    // on short pages or during route transitions.
-    background-color: #090a0f;
-    color: #f3f4f6;
+    // Matches the light page background (#F8F9FA) so there is no color
+    // flash on short pages or during route transitions.
+    background-color: #F8F9FA;
+    color: #111111;
 }
 
 .highlight{
-    color:#ff2a5c;
+    color:#111111;
 }

@@ -1,77 +1,73 @@
 // ── ResumeLens Design Tokens ───────────────────────────────────────────────
-// Single source of truth for the cinematic identity (deep navy + violet +
-// emerald). Phase A: this file is a CONTRACT — existing pages are untouched,
-// so nothing visually changes yet. New work (landing, ui/ primitives) consumes
-// these tokens. Available both as SCSS variables and as CSS custom properties
-// on :root (for plain CSS and future Tailwind arbitrary values).
+// Single source of truth for the light theme (soft off-white surfaces,
+// near-black text, emerald accents). Available both as SCSS variables and as
+// CSS custom properties on :root (for plain CSS and future Tailwind
+// arbitrary values).
 
 // ——— Colors ———
-$bg-abyss: #05070d;
-$bg-navy: #0a0f1e;
-$bg-panel: #0d1526;
-$bg-input: #111a2e;
+$bg-abyss: #F8F9FA;
+$bg-navy: #F9FAFB;
+$bg-panel: #FFFFFF;
+$bg-input: #FFFFFF;
 
-$border: rgba(148, 163, 184, 0.14);
-$border-strong: rgba(148, 163, 184, 0.26);
+$border: #E5E7EB;
+$border-strong: #D1D5DB;
 
-$text: #f1f5f9;
-$muted: #94a3b8;
-$faint: #64748b;
+$text: #111111;
+$muted: #6B7280;
+$faint: #9CA3AF;
 
-$violet: #8b5cf6;
-$violet-deep: #7c3aed;
-$violet-glow: #a855f7;
+$violet: #111111;
+$violet-deep: #262626;
+$violet-glow: #111111;
 $emerald: #10b981;
-$emerald-glow: #34d399;
-$danger: #f87171;
-$warning: #fbbf24;
+$emerald-glow: #10B981;
+$danger: #EF4444;
+$warning: #F59E0B;
 
 :root {
-  --bg-abyss: #05070d;
-  --bg-navy: #0a0f1e;
-  --bg-panel: #0d1526;
-  --bg-input: #111a2e;
-  --border: rgba(148, 163, 184, 0.14);
-  --border-strong: rgba(148, 163, 184, 0.26);
-  --text: #f1f5f9;
-  --muted: #94a3b8;
-  --faint: #64748b;
-  --violet: #8b5cf6;
-  --violet-deep: #7c3aed;
-  --violet-glow: #a855f7;
+  --bg-abyss: #F8F9FA;
+  --bg-navy: #F9FAFB;
+  --bg-panel: #FFFFFF;
+  --bg-input: #FFFFFF;
+  --border: #E5E7EB;
+  --border-strong: #D1D5DB;
+  --text: #111111;
+  --muted: #6B7280;
+  --faint: #9CA3AF;
+  --violet: #111111;
+  --violet-deep: #262626;
+  --violet-glow: #111111;
   --emerald: #10b981;
-  --emerald-glow: #34d399;
-  --danger: #f87171;
-  --warning: #fbbf24;
+  --emerald-glow: #10B981;
+  --danger: #EF4444;
+  --warning: #F59E0B;
 
   --radius-sm: 0.5rem;
   --radius-md: 0.75rem;
   --radius-lg: 1rem;
   --radius-xl: 1.5rem;
 
-  --shadow-card: 0 20px 50px rgba(0, 0, 0, 0.45);
-  --shadow-glow: 0 8px 28px rgba(139, 92, 246, 0.35);
+  --shadow-card: 0 10px 30px rgba(17, 24, 39, 0.07);
+  --shadow-glow: 0 6px 20px rgba(17, 24, 39, 0.08);
 
   --font: 'Plus Jakarta Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
 
-  // Aurora nebula: violet light top-left, emerald light bottom-right,
-  // over the abyss base. Text always sits on solid panels above this.
-  --aurora: radial-gradient(42rem 30rem at 12% -6%, rgba(139, 92, 246, 0.22), transparent 62%),
-    radial-gradient(38rem 28rem at 88% 108%, rgba(16, 185, 129, 0.14), transparent 60%),
-    #05070d;
+  // Page background: a plain soft off-white. Text always sits on solid
+  // white panels above this.
+  --aurora: #F8F9FA;
 }
 
 // ——— Mixins ———
 @mixin glass-panel {
-  background: rgba(13, 21, 38, 0.6);
+  background: #FFFFFF;
   border: 1px solid $border;
   border-radius: 1rem;
-  backdrop-filter: blur(12px);
-  box-shadow: $shadow-card;
+  box-shadow: 0 10px 30px rgba(17, 24, 39, 0.07);
 }
 
 @mixin focus-ring {
-  outline: 2px solid $violet;
+  outline: 2px solid #111111;
   outline-offset: 2px;
 }
 
