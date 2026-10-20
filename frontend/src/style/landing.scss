@@ -171,16 +171,18 @@
 }
 .landing-step {
   background: #FFFFFF;
-  border: 1px solid #E5E7EB;
-  border-radius: 1rem; padding: 1.5rem;
-  box-shadow: 0 10px 30px rgba(17, 24, 39, 0.07);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg); padding: 1.5rem;
+  box-shadow: var(--shadow-card);
+  transition: transform 200ms ease, border-color 200ms ease;
 }
+.landing-step:hover { transform: translateY(-3px); border-color: #D1D5DB; }
 .landing-step__n {
   font-size: 0.78rem; font-weight: 800; letter-spacing: 0.08em;
   color: #111111; display: block; margin-bottom: 0.7rem;
 }
-.landing-step__title { margin: 0 0 0.45rem; font-size: 1rem; font-weight: 700; color: #111111; }
-.landing-step__desc { margin: 0; font-size: 0.88rem; line-height: 1.6; color: #6B7280; }
+.landing-step__title { margin: 0 0 0.5rem; font-size: 1.05rem; font-weight: 700; color: #111111; }
+.landing-step__desc { margin: 0; font-size: 0.9rem; line-height: 1.6; color: #6B7280; }
 
 /* Footer + CTA */
 .landing-footer { position: relative; z-index: 1; background: #F9FAFB; border-top: 1px solid #E5E7EB; }
@@ -232,4 +234,6 @@
   .landing-aurora__drift { animation: none; }
   .landing-feature { transition: none; }
   .landing-feature:hover { transform: none; }
+  .landing-step { transition: none; }
+  .landing-step:hover { transform: none; }
 }
