@@ -4,7 +4,9 @@
 
 // Single Google Fonts load for the whole app. Page-level SCSS files must NOT
 // repeat this @import (it was duplicated 6 times, refetching on every page).
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+// Batch 1: Inter replaces Plus Jakarta Sans to match the reference
+// (Vercel/Geist-adjacent sans stack); --font in _tokens.scss matches.
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
 * {
     margin: 0;
@@ -18,16 +20,50 @@ body,
     height: 100%;
     width: 100%;
 
-    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
         Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue",
         sans-serif;
 
-    // Matches the light page background (#F8F9FA) so there is no color
-    // flash on short pages or during route transitions.
-    background-color: #F8F9FA;
-    color: #111111;
+    // Dark only: black page background so there is no light flash on
+    // short pages or during route transitions.
+    background-color: #000000;
+    color: #FAFAFA;
 }
 
-.highlight{
-    color:#111111;
+a {
+    color: inherit;
+}
+
+::selection {
+    background: rgba(249, 115, 22, 0.35);
+    color: #FAFAFA;
+}
+
+// Shared form base — every input/select/textarea in the app inherits this
+// unless its page SCSS deliberately overrides it in a later batch.
+input,
+textarea,
+select {
+    font-family: inherit;
+    background-color: #131316;
+    color: #FAFAFA;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 8px;
+}
+
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+    outline: 2px solid #FB923C;
+    outline-offset: 0;
+    border-color: rgba(255, 255, 255, 0.14);
+}
+
+input::placeholder,
+textarea::placeholder {
+    color: rgba(255, 255, 255, 0.40);
+}
+
+.highlight {
+    color: #FB923C;
 }

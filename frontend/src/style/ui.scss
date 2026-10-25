@@ -1,7 +1,13 @@
-/* ── ResumeLens UI primitives ───────────────────────────────────────────────
-   Dependency-free (no framer-motion, no icon lib): all motion is CSS.
+/* ── ResumeLens UI primitives — DARK ONLY (Batch 1) ────────────────────────
+   Mintsite design language: black base, near-black panels, hairline
+   borders, ember gradient primary CTA, restrained motion.
    Every class is prefixed `ui-` so nothing collides with existing SCSS.
-   Imported once in main.jsx. Respects prefers-reduced-motion. */
+   Imported once in main.jsx. Respects prefers-reduced-motion.
+   NOTE: .primary-button / .ghost-button / .danger-button are ALSO defined
+   here so the legacy page classes get the new look. Page SCSS files still
+   define their own copies of those classes and load after this file, so
+   each page batch must remove its local copy — until then, those pages
+   keep their old button look. That is fixed page by page, not by this file. */
 
 .ui-btn {
   display: inline-flex;
@@ -10,11 +16,13 @@
   gap: 0.5rem;
   font-family: var(--font);
   font-weight: 600;
-  border-radius: var(--radius-md);
+  font-size: 0.92rem;
+  line-height: 1.4;
+  border-radius: 8px;
   border: 1px solid transparent;
   cursor: pointer;
   text-decoration: none;
-  transition: transform 150ms ease, box-shadow 150ms ease,
+  transition: transform 150ms ease, box-shadow 150ms ease, filter 150ms ease,
     background 150ms ease, border-color 150ms ease;
   white-space: nowrap;
 }
@@ -44,19 +52,89 @@
 .ui-btn--ghost:hover:not(:disabled) { color: var(--text); background: var(--hover); }
 
 .ui-btn--danger {
-  background: rgba(239, 68, 68, 0.1);
+  background: rgba(239, 68, 68, 0.12);
   border-color: rgba(239, 68, 68, 0.4);
-  color: var(--danger);
+  color: var(--danger-text);
 }
-.ui-btn--danger:hover:not(:disabled) { background: rgba(239, 68, 68, 0.18); }
+.ui-btn--danger:hover:not(:disabled) { background: rgba(239, 68, 68, 0.2); }
 
 .ui-btn--block { width: 100%; }
+
+/* Legacy page button classes — shared definition (see header note). */
+.primary-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  font-family: var(--font);
+  font-weight: 600;
+  font-size: 0.92rem;
+  line-height: 1.4;
+  padding: 0.72rem 1.4rem;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  text-decoration: none;
+  white-space: nowrap;
+  background: var(--primary-gradient);
+  color: var(--primary-gradient-text);
+  box-shadow: var(--shadow-glow);
+  transition: transform 150ms ease, filter 150ms ease, box-shadow 150ms ease;
+}
+.primary-button:hover:not(:disabled) { filter: brightness(1.08); transform: translateY(-1px); }
+.primary-button:active:not(:disabled) { filter: none; transform: translateY(0); }
+.primary-button:focus-visible { outline: 2px solid var(--accent-text); outline-offset: 2px; }
+.primary-button:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+.ghost-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  font-family: var(--font);
+  font-weight: 600;
+  font-size: 0.92rem;
+  line-height: 1.4;
+  padding: 0.72rem 1.4rem;
+  border-radius: 8px;
+  border: 1px solid var(--border-strong);
+  cursor: pointer;
+  text-decoration: none;
+  white-space: nowrap;
+  background: transparent;
+  color: var(--text);
+  transition: background 150ms ease, border-color 150ms ease;
+}
+.ghost-button:hover:not(:disabled) { border-color: var(--accent-text); background: var(--hover); }
+.ghost-button:focus-visible { outline: 2px solid var(--accent-text); outline-offset: 2px; }
+
+.danger-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  font-family: var(--font);
+  font-weight: 600;
+  font-size: 0.92rem;
+  line-height: 1.4;
+  padding: 0.72rem 1.4rem;
+  border-radius: 8px;
+  border: 1px solid rgba(239, 68, 68, 0.4);
+  cursor: pointer;
+  text-decoration: none;
+  white-space: nowrap;
+  background: rgba(239, 68, 68, 0.12);
+  color: var(--danger-text);
+  transition: background 150ms ease;
+}
+.danger-button:hover:not(:disabled) { background: rgba(239, 68, 68, 0.2); }
+.danger-button:focus-visible { outline: 2px solid var(--danger-text); outline-offset: 2px; }
 
 .ui-spinner {
   display: inline-block;
   width: 1em;
   height: 1em;
-  border: 2px solid rgba(107, 114, 128, 0.25);
+  border: 2px solid rgba(255, 255, 255, 0.25);
   border-top-color: currentColor;
   border-radius: 50%;
   animation: ui-spin 0.7s linear infinite;
@@ -67,10 +145,12 @@
 .ui-card {
   background: var(--bg-panel);
   border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-card);
+  border-radius: 12px;
+  box-shadow: none;
   padding: 1.5rem;
+  transition: border-color 150ms ease;
 }
+.ui-card:hover { border-color: var(--border-strong); }
 .ui-card--flat { background: var(--bg-panel); }
 .ui-card__title { margin: 0 0 0.35rem; font-size: 1.05rem; font-weight: 700; color: var(--text); }
 .ui-card__sub { margin: 0 0 1rem; font-size: 0.88rem; color: var(--muted); }
@@ -90,10 +170,10 @@
   background: var(--hover);
   white-space: nowrap;
 }
-.ui-badge--violet { color: var(--violet-glow); border-color: var(--border); background: var(--hover); }
+.ui-badge--violet { color: var(--accent-text); border-color: rgba(249, 115, 22, 0.4); background: rgba(249, 115, 22, 0.1); }
 .ui-badge--emerald { color: var(--emerald-glow); border-color: rgba(16, 185, 129, 0.4); background: rgba(16, 185, 129, 0.1); }
-.ui-badge--warning { color: var(--warning); border-color: rgba(245, 158, 11, 0.4); background: rgba(245, 158, 11, 0.1); }
-.ui-badge--danger { color: var(--danger); border-color: rgba(239, 68, 68, 0.4); background: rgba(239, 68, 68, 0.1); }
+.ui-badge--warning { color: var(--warning-text); border-color: rgba(245, 158, 11, 0.4); background: rgba(245, 158, 11, 0.1); }
+.ui-badge--danger { color: var(--danger-text); border-color: rgba(239, 68, 68, 0.4); background: rgba(239, 68, 68, 0.1); }
 
 .ui-section-head { text-align: center; max-width: 640px; margin: 0 auto 3rem; }
 .ui-section-head--left { text-align: left; margin: 0 0 2rem; }
@@ -120,8 +200,8 @@
   text-align: center;
   padding: 3.5rem 1.5rem;
   border: 1px dashed var(--border-strong);
-  border-radius: var(--radius-lg);
-  background: var(--bg-navy);
+  border-radius: 12px;
+  background: var(--bg-panel);
 }
 .ui-empty__glyph { font-size: 2rem; margin-bottom: 0.75rem; }
 .ui-empty__title { margin: 0 0 0.4rem; font-size: 1.05rem; font-weight: 700; color: var(--text); }
@@ -139,10 +219,10 @@
   to { opacity: 1; transform: translateY(0); }
 }
 
-/* ThemeToggle: used in AppLayout header, LandingNav and floating on
-   Login/Register. On GitHub main this class had NO styles at all despite
-   ThemeToggle.jsx pointing here — these are the missing shared styles,
-   tokenised so the toggle reads correctly in both themes. */
+/* ThemeToggle styles — kept in this batch only so existing header/nav/auth
+   usages do not go unstyled. The toggle JSX itself is removed in the final
+   JSX cleanup batch, together with these rules. CSS already ignores
+   data-theme, so the toggle cannot flip the page back to light. */
 .theme-toggle {
   display: inline-flex;
   align-items: center;
@@ -174,7 +254,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .ui-btn, .ui-score-ring__fill { transition: none; }
+  .ui-btn, .primary-button, .ghost-button, .danger-button, .ui-score-ring__fill { transition: none; }
   .ui-spinner { animation-duration: 1.4s; }
   .ui-enter { animation: none; }
 }

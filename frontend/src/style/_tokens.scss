@@ -1,147 +1,129 @@
-// ── ResumeLens Design Tokens ───────────────────────────────────────────────
-// Single source of truth for BOTH themes. The SCSS variables below hold the
-// light values (compile-time; used where a literal is unavoidable). The CSS
-// custom properties on :root carry the light theme at runtime, and the
-// [data-theme="dark"] block at the bottom overrides them — components that
-// read var(--…) flip instantly when the theme toggles, no reload needed.
+// ── ResumeLens Design Tokens — DARK ONLY ─────────────────────────────────
+// Full redesign, Batch 1. Mintsite-inspired single dark theme.
+// The old light/dark split is GONE: :root now carries the dark values, so
+// the page renders dark no matter what data-theme the old toggle wrote.
+// (Removing the toggle JSX / ThemeProvider is a later JSX batch; CSS no
+// longer reacts to it, so nothing can flip back to light in the meantime.)
+// Old token names are kept as dark-valued aliases so existing var(--…)
+// references in page SCSS automatically go dark instead of breaking.
 
-// ——— Colors ———
-$bg-abyss: #FAFAF9;
-$bg-navy: #F4F4F5;
-$bg-panel: #FFFFFF;
-$bg-input: #FFFFFF;
+// ——— Colors (dark only) ———
+$bg-abyss: #09090B;
+$bg-navy: #0A0A0B;
+$bg-panel: #0A0A0B;
+$bg-input: #131316;
 
-$border: #E7E5E4;
-$border-strong: #D4D4D8;
+$border: rgba(255, 255, 255, 0.08);
+$border-strong: rgba(255, 255, 255, 0.14);
 
-$text: #111113;
-$muted: #52525B;
-$faint: #9CA3AF;
+$text: #FAFAFA;
+$muted: rgba(255, 255, 255, 0.55);
+$faint: rgba(255, 255, 255, 0.40);
 
-$violet: #111111;
-$violet-deep: #262626;
-$violet-glow: #111111;
-$emerald: #10b981;
-$emerald-glow: #10B981;
+$violet: #FAFAFA;
+$violet-deep: #E4E4E7;
+$violet-glow: #FB923C;
+$emerald: #10B981;
+$emerald-glow: #34D399;
 $danger: #EF4444;
 $warning: #F59E0B;
 
-// ——— Phase 2A — Ember foundation ———
-// Added by the approved Mintsite-inspired design system ("ResumeLens Ember").
-// The existing $violet / --violet names are kept as compatibility aliases;
-// new code MUST use --accent-* and --ember-* instead. Phase 1 (this file
-// + ui.scss + button.scss) switches the shared buttons/cards to these
-// tokens, so applying Phase 1 DOES change visible appearance — that is
-// the redesign. Page SCSS files still hardcode their own values and are
-// migrated one file at a time in later phases.
-$accent: #EA580C;
-$accent-deep: #C2410C;
+// ——— Ember accent (Mintsite-style primary) ———
+$accent: #F97316;
+$accent-deep: #EA580C;
 $ember: #F97316;
 $ember-amber: #F59E0B;
 $ember-glow: #FB923C;
 
-// ——— Phase 2A — Breakpoint scale (replaces 11 ad-hoc widths) ———
-// New code MUST use these values (via the respond() mixin below) instead
-// of inventing a new max-width. Existing @media rules are NOT rewritten
-// in this file; they are migrated one file at a time in later phases.
+// ——— Breakpoint scale ———
 $bp-sm: 480px;
 $bp-md: 768px;
 $bp-lg: 1024px;
 $bp-xl: 1280px;
 
 :root {
-  color-scheme: light;
+  color-scheme: dark;
 
-  --bg-abyss: #FAFAF9;
-  --bg-navy: #F4F4F5;
-  --bg-panel: #FFFFFF;
-  --bg-input: #FFFFFF;
-  --border: #E7E5E4;
-  --border-strong: #D4D4D8;
-  --text: #111113;
-  --text-body: #3F3F46;
-  --muted: #52525B;
-  --faint: #9CA3AF;
-  --violet: #111111;
-  --violet-deep: #262626;
-  --violet-glow: #111111;
-  --emerald: #10b981;
-  --emerald-glow: #10B981;
+  // Page + surfaces (Mintsite: black base, near-black panels, hairline borders)
+  --bg: #000000;
+  --bg-abyss: #09090B;
+  --bg-navy: #0A0A0B;
+  --bg-panel: #0A0A0B;
+  --bg-raised: #131316;
+  --bg-input: #131316;
+  --border: rgba(255, 255, 255, 0.08);
+  --border-strong: rgba(255, 255, 255, 0.14);
+  --text: #FAFAFA;
+  --text-body: rgba(255, 255, 255, 0.70);
+  --muted: rgba(255, 255, 255, 0.55);
+  --faint: rgba(255, 255, 255, 0.40);
+  --violet: #FAFAFA;
+  --violet-deep: #E4E4E7;
+  --violet-glow: #FB923C;
+  --emerald: #10B981;
+  --emerald-glow: #34D399;
   --danger: #EF4444;
   --warning: #F59E0B;
 
-  // Interactive surfaces + primary action pair (bg/text flip in dark mode
-  // so the main button stays high-contrast in both themes).
-  --hover: #F4F4F5;
-  --primary-bg: #111111;
-  --primary-bg-hover: #262626;
-  --primary-text: #FFFFFF;
+  // Interactive surfaces + primary action pair
+  --hover: rgba(255, 255, 255, 0.06);
+  --hover-strong: rgba(255, 255, 255, 0.10);
+  --primary-bg: #F97316;
+  --primary-bg-hover: #EA580C;
+  --primary-text: #111111;
 
-  // Primary CTA pair (Phase 1): Mintsite-style ember gradient with dark
-  // text on top (dark text passes contrast on the orange gradient; white
-  // text does not). Same gradient in both themes.
+  // Primary CTA: ember gradient with dark text (white text fails contrast
+  // on this gradient; dark text passes). Same in every context.
   --primary-gradient: linear-gradient(135deg, #F97316 0%, #F59E0B 100%);
   --primary-gradient-text: #111111;
 
-  // Semantic TEXT colors (the base hues above stay literal for tints and
-  // fills; these are the readable-on-surface variants per theme).
-  --success-text: #059669;
-  --danger-text: #DC2626;
-  --warning-text: #B45309;
-  --info-text: #1D4ED8;
+  // Semantic TEXT colors (readable on dark surfaces)
+  --success-text: #34D399;
+  --danger-text: #F87171;
+  --warning-text: #FBBF24;
+  --info-text: #60A5FA;
 
-  --track: #E5E7EB;
-  --overlay: rgba(17, 24, 39, 0.45);
-  --focus-ring: 0 0 0 3px rgba(17, 17, 17, 0.1);
+  --track: #26262B;
+  --overlay: rgba(0, 0, 0, 0.62);
+  --focus-ring: 0 0 0 3px rgba(251, 146, 60, 0.35);
 
   --radius-sm: 0.5rem;
   --radius-md: 0.75rem;
   --radius-lg: 1rem;
   --radius-xl: 1.5rem;
 
-  --shadow-card: 0 10px 30px rgba(17, 24, 39, 0.07);
-  // Phase 1: primary buttons glow in ember (lighter than the dark glow).
-  --shadow-glow: rgba(249, 115, 22, 0.25) 0px 10px 30px -8px, rgba(255, 255, 255, 0.4) 0px 1px 0px 0px inset;
+  // Dark cards: hairline border carries the card, shadow stays subtle.
+  --shadow-card: 0 10px 30px rgba(0, 0, 0, 0.45);
+  --shadow-glow: rgba(255, 138, 76, 0.55) 0px 10px 30px -8px, rgba(255, 255, 255, 0.4) 0px 1px 0px 0px inset;
+  --shadow-raised: 0 8px 24px rgba(0, 0, 0, 0.5);
+  --shadow-raised-hover: 0 14px 34px rgba(0, 0, 0, 0.6);
 
-  // Raised-card elevation (landing feature/step/preview cards): a touch
-  // stronger than --shadow-card so cards visibly lift off the page.
-  --shadow-raised: 0 8px 24px rgba(17, 24, 39, 0.10);
-  --shadow-raised-hover: 0 14px 34px rgba(17, 24, 39, 0.13);
+  // Mintsite-adjacent sans stack (Inter first, system fallback).
+  --font: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
 
-  --font: 'Plus Jakarta Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --aurora: #000000;
 
-  // Page background: a plain soft off-white. Text always sits on solid
-  // white panels above this.
-  --aurora: #FAFAF9;
-
-  // ── Phase 2A — Ember foundation, light theme ──
-  // Mintsite-derived, adapted to ResumeLens light (Phase 1: surfaces
-  // warmed to #FAFAF9 / #F4F4F5, borders to #E7E5E4).
-  // Radius note: --radius-sm (8px) and --radius-md (12px) already match the
-  // corrected Mintsite scale (the supplied radius.md value of
-  // 3.40282e+38px was an extraction artefact and is NOT used anywhere).
-  --surface-base: #FAFAF9;
-  --surface-muted: #F4F4F5;
-  --surface-raised: #FFFFFF;
-  --surface-strong: #111111;
-  --border-hairline: #E7E5E4;
-  --text-primary: #111113;
-  --text-secondary: #52525B;
-  --text-tertiary: #6B7280;
-  --accent: #EA580C;
-  --accent-deep: #C2410C;
-  --accent-text: #C2410C;
+  // Surface aliases (kept for page code that reads them)
+  --surface-base: #000000;
+  --surface-muted: #0A0A0B;
+  --surface-raised: rgba(255, 255, 255, 0.04);
+  --surface-strong: #131316;
+  --border-hairline: rgba(255, 255, 255, 0.08);
+  --text-primary: #FAFAFA;
+  --text-secondary: rgba(255, 255, 255, 0.70);
+  --text-tertiary: rgba(255, 255, 255, 0.55);
+  --accent: #F97316;
+  --accent-deep: #EA580C;
+  --accent-text: #FB923C;
   --ember: #F97316;
   --ember-amber: #F59E0B;
   --ember-gradient: linear-gradient(135deg, #F97316 0%, #F59E0B 100%);
-  --ember-glow: rgba(249, 115, 22, 0.25) 0px 10px 30px -8px, rgba(255, 255, 255, 0.4) 0px 1px 0px 0px inset;
-  --focus-ring-ember: 0 0 0 3px rgba(234, 88, 12, 0.25);
+  --ember-glow: rgba(255, 138, 76, 0.55) 0px 10px 30px -8px, rgba(255, 255, 255, 0.4) 0px 1px 0px 0px inset;
+  --focus-ring-ember: 0 0 0 3px rgba(251, 146, 60, 0.35);
   --radius-xs: 6px;
   --radius-pill: 999px;
 
-  // ── Phase 2A — Spacing scale ──
-  // Mintsite-supplied scale (space.1–space.8) extended with layout steps.
-  // Theme-independent: defined here once, inherited by dark theme.
+  // Spacing scale
   --space-1: 4px;
   --space-2: 6px;
   --space-3: 8px;
@@ -157,10 +139,7 @@ $bp-xl: 1280px;
   --space-13: 96px;
   --space-14: 120px;
 
-  // ── Phase 2A — UI typography scale ──
-  // Mintsite-supplied UI sizes (xs–3xl), plus the display size the supplied
-  // scale lacked (it topped at 36px, below the observed Mintsite hero).
-  // Display is for landing heroes only; app pages cap at H2.
+  // UI typography scale + display size (landing heroes only)
   --font-size-xs: 11px;
   --font-size-sm: 12px;
   --font-size-md: 13px;
@@ -172,92 +151,19 @@ $bp-xl: 1280px;
   --line-height-base: 24px;
 }
 
-// ── Dark theme ─────────────────────────────────────────────────────────────
-// Activated by data-theme="dark" on <html> (set pre-paint by the inline
-// script in index.html, then owned by ThemeProvider). Only the runtime
-// custom properties change; layout, spacing and typography are shared.
-[data-theme="dark"] {
-  color-scheme: dark;
-
-  --bg-abyss: #0A0A0B;
-  --bg-navy: #131316;
-  --bg-panel: #17171A;
-  --bg-input: #17171A;
-  --border: rgba(255, 255, 255, 0.08);
-  --border-strong: rgba(255, 255, 255, 0.14);
-  --text: #FAFAFA;
-  --text-body: #D4D4D8;
-  --muted: #A1A1AA;
-  --faint: #71717A;
-  --violet: #F3F4F6;
-  --violet-deep: #E5E7EB;
-  --violet-glow: #F3F4F6;
-
-  --hover: #1F1F23;
-  --primary-bg: #F3F4F6;
-  --primary-bg-hover: #E5E7EB;
-  --primary-text: #111111;
-
-  // Primary CTA pair (Phase 1): same ember gradient as light theme.
-  --primary-gradient: linear-gradient(135deg, #F97316 0%, #F59E0B 100%);
-  --primary-gradient-text: #111111;
-
-  --success-text: #34D399;
-  --danger-text: #F87171;
-  --warning-text: #FBBF24;
-  --info-text: #60A5FA;
-
-  --track: #26262B;
-  --overlay: rgba(0, 0, 0, 0.62);
-  --focus-ring: 0 0 0 3px rgba(243, 244, 246, 0.18);
-
-  --shadow-card: 0 10px 30px rgba(0, 0, 0, 0.45);
-  // Phase 1: primary buttons glow in ember, not black.
-  --shadow-glow: rgba(255, 138, 76, 0.55) 0px 10px 30px -8px, rgba(255, 255, 255, 0.4) 0px 1px 0px 0px inset;
-
-  --shadow-raised: 0 8px 24px rgba(0, 0, 0, 0.5);
-  --shadow-raised-hover: 0 14px 34px rgba(0, 0, 0, 0.6);
-
-  --aurora: #0A0A0B;
-
-  // ── Phase 2A — Ember foundation, dark theme ──
-  // Mintsite-derived surfaces (black base, 4% raised, 8% hairline border).
-  // Spacing and typography tokens are theme-independent and are inherited
-  // from :root above; they are deliberately NOT repeated here.
-  --surface-base: #000000;
-  --surface-muted: #0A0A0B;
-  --surface-raised: rgba(255, 255, 255, 0.04);
-  --surface-strong: #08090A;
-  --border-hairline: rgba(255, 255, 255, 0.08);
-  --text-primary: #FFFFFF;
-  --text-secondary: rgba(255, 255, 255, 0.65);
-  --text-tertiary: rgba(255, 255, 255, 0.60);
-  --accent: #F97316;
-  --accent-deep: #EA580C;
-  --accent-text: #FB923C;
-  --ember: #F97316;
-  --ember-amber: #F59E0B;
-  --ember-gradient: linear-gradient(135deg, #F97316 0%, #F59E0B 100%);
-  --ember-glow: rgba(255, 138, 76, 0.55) 0px 10px 30px -8px, rgba(255, 255, 255, 0.4) 0px 1px 0px 0px inset;
-  --focus-ring-ember: 0 0 0 3px rgba(251, 146, 60, 0.35);
-  --radius-xs: 6px;
-  --radius-pill: 999px;
-}
-
 // ——— Mixins ———
 @mixin glass-panel {
   background: var(--bg-panel);
-  border: 1px solid $border;
+  border: 1px solid var(--border);
   border-radius: 1rem;
   box-shadow: var(--shadow-card);
 }
 
 @mixin focus-ring {
-  outline: 2px solid #111111;
+  outline: 2px solid var(--accent-text);
   outline-offset: 2px;
 }
 
-// ——— Phase 2A — New mixins (unused until Phase 2B) ———
 @mixin respond($bp) {
   @media (max-width: $bp) {
     @content;
@@ -270,8 +176,6 @@ $bp-xl: 1280px;
 }
 
 // ——— Motion ———
-// Keep micro-interactions fast; ambient motion slow. All animation MUST be
-// disabled under prefers-reduced-motion (see ui.scss).
 $ease-out: cubic-bezier(0.22, 1, 0.36, 1);
 $dur-fast: 150ms;
 $dur-med: 250ms;
