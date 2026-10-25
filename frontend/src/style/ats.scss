@@ -1,16 +1,14 @@
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
-
-$bg-dark: #F8F9FA;
-$card-bg: #FFFFFF;
-$card-border: #E5E7EB;
-$input-bg: #FFFFFF;
-$input-border: #D1D5DB;
-$text-primary: #111111;
-$text-muted: #6B7280;
-/* Accent variables keep their historical names; values are the light theme. */
-$accent-pink: #111111;
-$accent-pink-hover: #262626;
-$accent-purple: #111111;
+$bg-dark: #000000;
+$card-bg: #0A0A0B;
+$card-border: rgba(255, 255, 255, 0.08);
+$input-bg: #131316;
+$input-border: rgba(255, 255, 255, 0.14);
+$text-primary: #FAFAFA;
+$text-muted: rgba(255, 255, 255, 0.55);
+/* Accent variables keep their historical names; values are now the dark ember set. */
+$accent-pink: #F97316;
+$accent-pink-hover: #EA580C;
+$accent-purple: #FB923C;
 $success: #10B981;
 $warning: #F59E0B;
 $danger: #EF4444;
@@ -18,10 +16,10 @@ $danger: #EF4444;
 .ats-page {
   width: 100%;
   color: $text-primary;
-  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  font-family: var(--font);
 
   .gradient-text {
-    background: linear-gradient(135deg, #111111 0%, #111111 100%);
+    background: var(--primary-gradient);
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -54,8 +52,9 @@ $danger: #EF4444;
     justify-content: center;
 
     &.primary-button {
-      background: linear-gradient(135deg, $accent-pink-hover 0%, $accent-pink 100%);
-      color: #fff;
+      background: var(--primary-gradient);
+      color: #111111;
+      box-shadow: var(--shadow-glow);
       &:hover:not(:disabled) { filter: brightness(1.1); }
       &:disabled { opacity: 0.45; cursor: not-allowed; }
       &:active:not(:disabled) { transform: scale(0.97); }
@@ -89,7 +88,7 @@ $danger: #EF4444;
   gap: 1rem;
   padding: 0.9rem 1.75rem;
   border-bottom: 1px solid $card-border;
-  background: #FFFFFF;
+  background: #0A0A0B;
   position: sticky;
   top: 0;
   z-index: 50;
@@ -112,9 +111,9 @@ $danger: #EF4444;
     font-weight: 600;
     padding: 0.5rem 0.9rem;
     border-radius: 0.6rem;
-    &:hover { color: $text-primary; background: #F3F4F6; }
+    &:hover { color: $text-primary; background: rgba(255, 255, 255, 0.06); }
   }
-  .navbar-link-active { color: $text-primary; background: #F3F4F6; }
+  .navbar-link-active { color: $text-primary; background: rgba(255, 255, 255, 0.06); }
 
   .navbar-user { display: flex; align-items: center; gap: 0.9rem; }
   .navbar-username { color: $text-muted; font-size: 0.88rem; font-weight: 600; }
@@ -169,7 +168,7 @@ $danger: #EF4444;
   border: 1px solid $card-border;
   border-radius: 1.1rem;
   padding: 1.75rem;
-  box-shadow: 0 10px 30px rgba(17, 24, 39, 0.07);
+  box-shadow: var(--shadow-card);
 
   h3 { margin: 0 0 0.4rem 0; font-size: 1.12rem; font-weight: 700; }
   h3 + .muted { margin: 0 0 1rem 0; }
@@ -210,7 +209,7 @@ $danger: #EF4444;
   cursor: pointer;
   transition: border-color 0.2s, background 0.2s;
 
-  &:hover, &.dropzone-active { border-color: $accent-pink; background: #F9FAFB; }
+  &:hover, &.dropzone-active { border-color: $accent-pink; background: rgba(255, 255, 255, 0.06); }
   &.dropzone-filled { border-style: solid; border-color: $accent-purple; }
 
   .dropzone-icon { font-size: 1.6rem; display: block; margin-bottom: 0.4rem; }
@@ -263,8 +262,8 @@ $danger: #EF4444;
   font-size: 0.92rem;
   padding: 0.9rem 1rem;
   resize: vertical;
-  &::placeholder { color: #9CA3AF; }
-  &:focus { outline: none; border-color: $accent-pink; box-shadow: 0 0 0 3px rgba(17, 17, 17, 0.1); }
+  &::placeholder { color: rgba(255, 255, 255, 0.40); }
+  &:focus { outline: none; border-color: $accent-pink; box-shadow: 0 0 0 3px rgba(251, 146, 60, 0.25); }
 }
 
 .ats-textarea-tall { min-height: 300px; }
@@ -280,7 +279,7 @@ $danger: #EF4444;
 .ats-analyze-btn { font-size: 1rem; padding: 0.85rem 1.75rem; }
 
 .ats-error {
-  color: #DC2626;
+  color: #F87171;
   background: rgba(239, 68, 68, 0.06);
   border: 1px solid rgba(239, 68, 68, 0.3);
   border-radius: 0.7rem;
@@ -324,7 +323,7 @@ $danger: #EF4444;
   transform: rotate(-90deg);
   .score-ring-track {
     fill: none;
-    stroke: #E5E7EB;
+    stroke: rgba(255, 255, 255, 0.08);
     stroke-width: 11;
   }
   .score-ring-fill {
@@ -357,10 +356,10 @@ $danger: #EF4444;
   padding: 0.25rem 0.8rem;
   border-radius: 999px;
 }
-.verdict-excellent { color: #059669; background: rgba(16, 185, 129, 0.12); border: 1px solid rgba(16, 185, 129, 0.35); }
-.verdict-good { color: #059669; background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); }
-.verdict-fair { color: #B45309; background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.35); }
-.verdict-poor { color: #DC2626; background: rgba(239, 68, 68, 0.08); border: 1px solid rgba(239, 68, 68, 0.35); }
+.verdict-excellent { color: #34D399; background: rgba(16, 185, 129, 0.12); border: 1px solid rgba(16, 185, 129, 0.35); }
+.verdict-good { color: #34D399; background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); }
+.verdict-fair { color: #FBBF24; background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.35); }
+.verdict-poor { color: #F87171; background: rgba(239, 68, 68, 0.08); border: 1px solid rgba(239, 68, 68, 0.35); }
 
 .breakdown-list { display: flex; flex-direction: column; gap: 1.15rem; margin-top: 1rem; }
 
@@ -386,13 +385,13 @@ $danger: #EF4444;
 
 .progress-bar {
   height: 0.55rem;
-  background: #E5E7EB;
+  background: rgba(255, 255, 255, 0.08);
   border-radius: 999px;
   overflow: hidden;
   .progress-fill {
     height: 100%;
     border-radius: 999px;
-    background: linear-gradient(90deg, $accent-pink, $accent-purple);
+    background: var(--primary-gradient);
     transition: width 0.8s ease;
   }
 }
@@ -408,7 +407,7 @@ $danger: #EF4444;
   border-radius: 999px;
 }
 .keyword-missing {
-  color: #DC2626;
+  color: #F87171;
   background: rgba(239, 68, 68, 0.08);
   border: 1px solid rgba(239, 68, 68, 0.35);
 }
@@ -454,9 +453,9 @@ $danger: #EF4444;
   border-radius: 999px;
   flex-shrink: 0;
 }
-.severity-high { color: #DC2626; background: rgba(239, 68, 68, 0.08); border: 1px solid rgba(239, 68, 68, 0.35); }
-.severity-medium { color: #B45309; background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.35); }
-.severity-low { color: #059669; background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.35); }
+.severity-high { color: #F87171; background: rgba(239, 68, 68, 0.08); border: 1px solid rgba(239, 68, 68, 0.35); }
+.severity-medium { color: #FBBF24; background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.35); }
+.severity-low { color: #34D399; background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.35); }
 
 /* ── History ────────────────────────────── */
 .history-list { display: flex; flex-direction: column; gap: 0.9rem; }
@@ -472,7 +471,7 @@ $danger: #EF4444;
   text-decoration: none;
   color: $text-primary;
   transition: border-color 0.2s, transform 0.2s;
-  &:hover { border-color: $accent-purple; transform: translateY(-1px); }
+  &:hover { border-color: rgba(255, 255, 255, 0.14); transform: translateY(-1px); }
 }
 
 .history-score {
@@ -486,10 +485,10 @@ $danger: #EF4444;
   font-size: 1.05rem;
   flex-shrink: 0;
   border: 2px solid;
-  &.verdict-excellent { color: #059669; border-color: $success; }
-  &.verdict-good { color: #059669; border-color: $success; }
-  &.verdict-fair { color: #B45309; border-color: $warning; }
-  &.verdict-poor { color: #DC2626; border-color: $danger; }
+  &.verdict-excellent { color: #34D399; border-color: $success; }
+  &.verdict-good { color: #34D399; border-color: $success; }
+  &.verdict-fair { color: #FBBF24; border-color: $warning; }
+  &.verdict-poor { color: #F87171; border-color: $danger; }
 }
 
 .history-meta { flex: 1; min-width: 0; }
@@ -502,17 +501,17 @@ $danger: #EF4444;
   font-variant-numeric: tabular-nums;
   &.verdict-excellent,
   &.verdict-good {
-    color: #059669;
+    color: #34D399;
     background: rgba(16, 185, 129, 0.12);
     border-color: rgba(16, 185, 129, 0.3);
   }
   &.verdict-fair {
-    color: #B45309;
+    color: #FBBF24;
     background: rgba(245, 158, 11, 0.1);
     border-color: rgba(245, 158, 11, 0.3);
   }
   &.verdict-poor {
-    color: #DC2626;
+    color: #F87171;
     background: rgba(239, 68, 68, 0.1);
     border-color: rgba(239, 68, 68, 0.3);
   }

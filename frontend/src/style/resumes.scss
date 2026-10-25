@@ -1,20 +1,18 @@
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
-
-$card-bg: #FFFFFF;
-$card-border: #E5E7EB;
-$input-bg: #FFFFFF;
-$input-border: #D1D5DB;
-$text-primary: #111111;
-$text-muted: #6B7280;
-$accent-violet: #111111;
-$accent-violet-deep: #262626;
-$accent-purple: #111111;
+$card-bg: #0A0A0B;
+$card-border: rgba(255, 255, 255, 0.08);
+$input-bg: #131316;
+$input-border: rgba(255, 255, 255, 0.14);
+$text-primary: #FAFAFA;
+$text-muted: rgba(255, 255, 255, 0.55);
+$accent-violet: #F97316;
+$accent-violet-deep: #EA580C;
+$accent-purple: #FB923C;
 $danger: #EF4444;
 
 .resumes-page {
   width: 100%;
   color: $text-primary;
-  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  font-family: var(--font);
 
   .muted { color: $text-muted; }
   .small { font-size: 0.82rem; }
@@ -35,9 +33,9 @@ $danger: #EF4444;
     justify-content: center;
 
     &.primary-button {
-      background: linear-gradient(135deg, $accent-violet-deep 0%, $accent-violet 100%);
-      color: #fff;
-      box-shadow: 0 10px 30px rgba(17, 24, 39, 0.07);
+      background: var(--primary-gradient);
+      color: #111111;
+      box-shadow: var(--shadow-glow);
       &:hover:not(:disabled) { filter: brightness(1.1); }
       &:disabled { opacity: 0.45; cursor: not-allowed; box-shadow: none; }
       &:active:not(:disabled) { transform: scale(0.97); }
@@ -47,18 +45,18 @@ $danger: #EF4444;
       background: transparent;
       border: 1px solid $input-border;
       color: $text-primary;
-      &:hover:not(:disabled) { border-color: $accent-violet; color: $text-primary; background: #F3F4F6; }
+      &:hover:not(:disabled) { border-color: $accent-violet; color: $text-primary; background: rgba(255, 255, 255, 0.06); }
       &:disabled { opacity: 0.45; cursor: not-allowed; }
     }
 
     &.danger-button {
       background: rgba(239, 68, 68, 0.08);
       border: 1px solid rgba(239, 68, 68, 0.35);
-      color: #DC2626;
+      color: #F87171;
       padding: 0.45rem 0.9rem;
     }
 
-    &.danger-text { color: #DC2626; }
+    &.danger-text { color: #F87171; }
   }
 
   .spinner {
@@ -86,7 +84,7 @@ $danger: #EF4444;
 .resumes-tabs {
   display: inline-flex;
   gap: 0.25rem;
-  background: #F3F4F6;
+  background: rgba(255, 255, 255, 0.06);
   border: 1px solid $input-border;
   border-radius: 0.7rem;
   padding: 0.25rem;
@@ -106,7 +104,7 @@ $danger: #EF4444;
     &.tab-active {
       background: $card-bg;
       color: $text-primary;
-      box-shadow: 0 1px 4px rgba(17, 24, 39, 0.08);
+      box-shadow: var(--shadow-card);
     }
   }
 }
@@ -132,8 +130,8 @@ $danger: #EF4444;
   outline: none;
   transition: border-color 0.15s ease;
 
-  &:focus { border-color: $accent-violet; box-shadow: 0 0 0 3px rgba(17, 17, 17, 0.1); }
-  &::placeholder { color: #9CA3AF; }
+  &:focus { border-color: $accent-violet; box-shadow: 0 0 0 3px rgba(251, 146, 60, 0.25); }
+  &::placeholder { color: rgba(255, 255, 255, 0.40); }
 }
 
 .dropzone {
@@ -147,7 +145,7 @@ $danger: #EF4444;
 
   &:hover, &.dropzone-active {
     border-color: $accent-violet;
-    background: #F9FAFB;
+    background: rgba(255, 255, 255, 0.06);
   }
   &.dropzone-filled { border-style: solid; }
 
@@ -192,12 +190,12 @@ $danger: #EF4444;
   resize: vertical;
   transition: border-color 0.15s ease;
 
-  &:focus { border-color: $accent-violet; box-shadow: 0 0 0 3px rgba(17, 17, 17, 0.1); }
-  &::placeholder { color: #9CA3AF; }
+  &:focus { border-color: $accent-violet; box-shadow: 0 0 0 3px rgba(251, 146, 60, 0.25); }
+  &::placeholder { color: rgba(255, 255, 255, 0.40); }
 }
 
 .resumes-error {
-  color: #DC2626;
+  color: #F87171;
   font-size: 0.88rem;
   font-weight: 500;
   margin: 0 0 1rem 0;
@@ -278,7 +276,7 @@ $danger: #EF4444;
     letter-spacing: 0.04em;
     padding: 0.28rem 0.6rem;
     border-radius: 999px;
-    background: #F3F4F6;
+    background: rgba(255, 255, 255, 0.06);
     border: 1px solid $input-border;
     color: $text-muted;
     white-space: nowrap;
@@ -286,14 +284,14 @@ $danger: #EF4444;
     &.badge-primary {
       background: rgba(16, 185, 129, 0.12);
       border-color: rgba(16, 185, 129, 0.35);
-      color: #059669;
+      color: #34D399;
     }
   }
 
   .resume-preview {
     margin: 0;
     padding: 0.85rem;
-    background: #F9FAFB;
+    background: #131316;
     border: 1px solid $input-border;
     border-radius: 0.7rem;
     font-size: 0.8rem;
