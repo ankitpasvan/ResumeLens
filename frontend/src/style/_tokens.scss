@@ -26,6 +26,28 @@ $emerald-glow: #10B981;
 $danger: #EF4444;
 $warning: #F59E0B;
 
+// ——— Phase 2A — Ember foundation (ADDITIVE ONLY) ———
+// Added by the approved Mintsite-inspired design system ("ResumeLens Ember").
+// NOTHING above this block changed value. The existing $violet / --violet
+// names are kept as compatibility aliases; new code MUST use --accent-* and
+// --ember-* instead. No component reads the new tokens yet, so applying this
+// file alone changes NO visible appearance. That is deliberate: Phase 2A
+// lays the foundation, Phase 2B switches components to it one at a time.
+$accent: #EA580C;
+$accent-deep: #C2410C;
+$ember: #F97316;
+$ember-amber: #F59E0B;
+$ember-glow: #FB923C;
+
+// ——— Phase 2A — Breakpoint scale (replaces 11 ad-hoc widths) ———
+// New code MUST use these values (via the respond() mixin below) instead
+// of inventing a new max-width. Existing @media rules are NOT rewritten
+// in this file; they are migrated one file at a time in later phases.
+$bp-sm: 480px;
+$bp-md: 768px;
+$bp-lg: 1024px;
+$bp-xl: 1280px;
+
 :root {
   color-scheme: light;
 
@@ -73,11 +95,73 @@ $warning: #F59E0B;
   --shadow-card: 0 10px 30px rgba(17, 24, 39, 0.07);
   --shadow-glow: 0 6px 20px rgba(17, 24, 39, 0.08);
 
+  // Raised-card elevation (landing feature/step/preview cards): a touch
+  // stronger than --shadow-card so cards visibly lift off the page.
+  --shadow-raised: 0 8px 24px rgba(17, 24, 39, 0.10);
+  --shadow-raised-hover: 0 14px 34px rgba(17, 24, 39, 0.13);
+
   --font: 'Plus Jakarta Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
 
   // Page background: a plain soft off-white. Text always sits on solid
   // white panels above this.
   --aurora: #F8F9FA;
+
+  // ── Phase 2A — Ember foundation, light theme ──
+  // Mintsite-derived, adapted to ResumeLens light. Surface values match the
+  // existing light tokens above (no visual change); the accent is new.
+  // Radius note: --radius-sm (8px) and --radius-md (12px) already match the
+  // corrected Mintsite scale (the supplied radius.md value of
+  // 3.40282e+38px was an extraction artefact and is NOT used anywhere).
+  --surface-base: #F8F9FA;
+  --surface-muted: #F9FAFB;
+  --surface-raised: #FFFFFF;
+  --surface-strong: #111111;
+  --border-hairline: #E5E7EB;
+  --text-primary: #111111;
+  --text-secondary: #52525B;
+  --text-tertiary: #6B7280;
+  --accent: #EA580C;
+  --accent-deep: #C2410C;
+  --accent-text: #C2410C;
+  --ember: #F97316;
+  --ember-amber: #F59E0B;
+  --ember-gradient: linear-gradient(135deg, #F97316 0%, #F59E0B 100%);
+  --ember-glow: rgba(249, 115, 22, 0.25) 0px 10px 30px -8px, rgba(255, 255, 255, 0.4) 0px 1px 0px 0px inset;
+  --focus-ring-ember: 0 0 0 3px rgba(234, 88, 12, 0.25);
+  --radius-xs: 6px;
+  --radius-pill: 999px;
+
+  // ── Phase 2A — Spacing scale ──
+  // Mintsite-supplied scale (space.1–space.8) extended with layout steps.
+  // Theme-independent: defined here once, inherited by dark theme.
+  --space-1: 4px;
+  --space-2: 6px;
+  --space-3: 8px;
+  --space-4: 10px;
+  --space-5: 12px;
+  --space-6: 14px;
+  --space-7: 16px;
+  --space-8: 20px;
+  --space-9: 24px;
+  --space-10: 32px;
+  --space-11: 48px;
+  --space-12: 64px;
+  --space-13: 96px;
+  --space-14: 120px;
+
+  // ── Phase 2A — UI typography scale ──
+  // Mintsite-supplied UI sizes (xs–3xl), plus the display size the supplied
+  // scale lacked (it topped at 36px, below the observed Mintsite hero).
+  // Display is for landing heroes only; app pages cap at H2.
+  --font-size-xs: 11px;
+  --font-size-sm: 12px;
+  --font-size-md: 13px;
+  --font-size-lg: 14px;
+  --font-size-xl: 15px;
+  --font-size-2xl: 16px;
+  --font-size-3xl: 17px;
+  --font-size-display: clamp(2.6rem, 5.5vw, 4.5rem);
+  --line-height-base: 24px;
 }
 
 // ── Dark theme ─────────────────────────────────────────────────────────────
@@ -118,7 +202,33 @@ $warning: #F59E0B;
   --shadow-card: 0 10px 30px rgba(0, 0, 0, 0.45);
   --shadow-glow: 0 6px 20px rgba(0, 0, 0, 0.5);
 
+  --shadow-raised: 0 8px 24px rgba(0, 0, 0, 0.5);
+  --shadow-raised-hover: 0 14px 34px rgba(0, 0, 0, 0.6);
+
   --aurora: #0F1115;
+
+  // ── Phase 2A — Ember foundation, dark theme ──
+  // Mintsite-derived surfaces (black base, 4% raised, 8% hairline border).
+  // Spacing and typography tokens are theme-independent and are inherited
+  // from :root above; they are deliberately NOT repeated here.
+  --surface-base: #000000;
+  --surface-muted: #0A0A0B;
+  --surface-raised: rgba(255, 255, 255, 0.04);
+  --surface-strong: #08090A;
+  --border-hairline: rgba(255, 255, 255, 0.08);
+  --text-primary: #FFFFFF;
+  --text-secondary: rgba(255, 255, 255, 0.65);
+  --text-tertiary: rgba(255, 255, 255, 0.60);
+  --accent: #F97316;
+  --accent-deep: #EA580C;
+  --accent-text: #FB923C;
+  --ember: #F97316;
+  --ember-amber: #F59E0B;
+  --ember-gradient: linear-gradient(135deg, #F97316 0%, #F59E0B 100%);
+  --ember-glow: rgba(255, 138, 76, 0.55) 0px 10px 30px -8px, rgba(255, 255, 255, 0.4) 0px 1px 0px 0px inset;
+  --focus-ring-ember: 0 0 0 3px rgba(251, 146, 60, 0.35);
+  --radius-xs: 6px;
+  --radius-pill: 999px;
 }
 
 // ——— Mixins ———
@@ -131,6 +241,18 @@ $warning: #F59E0B;
 
 @mixin focus-ring {
   outline: 2px solid #111111;
+  outline-offset: 2px;
+}
+
+// ——— Phase 2A — New mixins (unused until Phase 2B) ———
+@mixin respond($bp) {
+  @media (max-width: $bp) {
+    @content;
+  }
+}
+
+@mixin focus-ring-ember {
+  outline: 2px solid var(--accent-text);
   outline-offset: 2px;
 }
 
