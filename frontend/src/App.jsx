@@ -1,7 +1,7 @@
 import {RouterProvider} from "react-router-dom"
 import {router} from "./app.routes.jsx"
 import {AuthProvider} from "./features/auth/auth.context.jsx"
-import {ThemeProvider} from "./features/theme/theme.context.jsx"
+import {ThemeProvider} from "./features/theme/ThemeProvider.jsx"
 
 
 function App() {
