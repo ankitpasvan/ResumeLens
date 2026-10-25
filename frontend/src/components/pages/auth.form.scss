@@ -1,14 +1,23 @@
+/* ── Auth pages (Login / Register) — DARK ONLY (Batch 2 + layout fix) ──
+   Same Mintsite language as the landing page: black page, near-black card,
+   hairline border, ember gradient primary button, ember focus ring.
+   LAYOUT FIX: .auth-page is now a single column — brand on top, form card
+   below, both centred. Previously flex-direction defaulted to row, so the
+   brand and the card sat side by side. Class names, fields, validation
+   and form behaviour are unchanged; no JSX change was needed. */
 
 .auth-page {
   min-height: 100vh;
   width: 100%;
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
+  gap: 1.75rem;
   padding: 2rem 1rem;
-  background-color: #F8F9FA;
-  color: #374151;
-  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  background-color: #000000;
+  color: rgba(255, 255, 255, 0.70);
+  font-family: var(--font);
 
   .form-container {
     width: 100%;
@@ -16,11 +25,11 @@
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
-    background: #FFFFFF;
-    border: 1px solid #E5E7EB;
+    background: #0A0A0B;
+    border: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: 1rem;
     padding: 2rem;
-    box-shadow: 0 10px 30px rgba(17, 24, 39, 0.07);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
   }
 
   h1 {
@@ -29,7 +38,7 @@
     font-weight: 800;
     letter-spacing: -0.02em;
     text-align: center;
-    color: #111111;
+    color: #FAFAFA;
   }
 
   form {
@@ -39,7 +48,7 @@
   }
 
   a {
-    color: #111111;
+    color: #FB923C;
     text-decoration: none;
     font-weight: 600;
     text-underline-offset: 3px;
@@ -50,7 +59,7 @@
     margin: 0;
     text-align: center;
     font-size: 0.9rem;
-    color: #6B7280;
+    color: rgba(255, 255, 255, 0.55);
   }
 
   .input-group {
@@ -61,14 +70,14 @@
     label {
       font-size: 0.85rem;
       font-weight: 600;
-      color: #374151;
+      color: rgba(255, 255, 255, 0.70);
     }
 
     input {
-      border: 1px solid #D1D5DB;
+      border: 1px solid rgba(255, 255, 255, 0.08);
       outline: none;
-      background: #FFFFFF;
-      color: #111111;
+      background: #131316;
+      color: #FAFAFA;
       padding-inline: 1rem;
       padding-block: 0.75rem;
       border-radius: 0.75rem;
@@ -77,37 +86,40 @@
       width: 100%;
       box-sizing: border-box;
 
-      &::placeholder { color: #9CA3AF; }
+      &::placeholder { color: rgba(255, 255, 255, 0.40); }
       &:focus {
-        border-color: #111111;
-        box-shadow: 0 0 0 3px rgba(17, 17, 17, 0.1);
+        border-color: rgba(255, 255, 255, 0.14);
+        box-shadow: 0 0 0 3px rgba(251, 146, 60, 0.25);
       }
     }
   }
 
+  /* Local .button copy — rewritten to the shared gradient so auth buttons
+     cannot stay black even if the global button.scss is not re-applied. */
   .button {
     border: none;
     outline: none;
     padding: 0.8rem 1.25rem;
-    border-radius: 0.75rem;
+    border-radius: 8px;
     cursor: pointer;
     font-weight: 600;
     font-size: 0.92rem;
     font-family: inherit;
-    transition: all 0.2s ease-in-out;
+    transition: transform 150ms ease, filter 150ms ease, box-shadow 150ms ease;
 
     &.button-primary {
-      background: #111111;
-      color: #fff;
-      &:hover:not(:disabled) { background: #262626; }
-      &:disabled { opacity: 0.55; cursor: not-allowed; }
+      background: var(--primary-gradient);
+      color: var(--primary-gradient-text);
+      box-shadow: var(--shadow-glow);
+      &:hover:not(:disabled) { filter: brightness(1.08); transform: translateY(-1px); }
+      &:disabled { opacity: 0.55; cursor: not-allowed; transform: none; }
     }
   }
 
   .auth-error {
-    color: #DC2626;
-    background: rgba(239, 68, 68, 0.08);
-    border: 1px solid rgba(239, 68, 68, 0.25);
+    color: #F87171;
+    background: rgba(239, 68, 68, 0.12);
+    border: 1px solid rgba(239, 68, 68, 0.35);
     border-radius: 0.65rem;
     padding: 0.65rem 0.9rem;
     font-size: 0.9rem;
@@ -119,7 +131,8 @@
 @media (max-width: 480px) {
   .auth-page {
     padding: 1rem;
-    align-items: flex-start;
+    align-items: center;
+    justify-content: flex-start;
     padding-top: 4rem;
 
     .form-container { padding: 1.5rem; }
@@ -128,22 +141,24 @@
 .auth-brand {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 0.4rem;
-  margin-bottom: 1.75rem;
-  color: #111111;
+  margin-bottom: 0;
+  text-align: center;
+  color: #FAFAFA;
   text-decoration: none;
   font-weight: 800;
   font-size: 1.2rem;
   letter-spacing: -0.02em;
 
-  span { color: #111111; }
-  &:hover { color: #262626; }
+  span { color: #FB923C; }
+  &:hover { color: #FAFAFA; }
 }
 
 .auth-sub {
   margin: -1rem 0 0;
   font-size: 0.9rem;
-  color: #6B7280;
+  color: rgba(255, 255, 255, 0.55);
   text-align: center;
 }
 
@@ -152,7 +167,7 @@
   align-items: center;
   gap: 0.75rem;
   margin: 1.25rem 0;
-  color: #9CA3AF;
+  color: rgba(255, 255, 255, 0.40);
   font-size: 0.85rem;
 
   &::before,
@@ -160,7 +175,7 @@
     content: "";
     flex: 1;
     height: 1px;
-    background: #E5E7EB;
+    background: rgba(255, 255, 255, 0.08);
   }
 }
 
