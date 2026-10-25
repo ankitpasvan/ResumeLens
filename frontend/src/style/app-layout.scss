@@ -2,9 +2,9 @@
 
 .app-shell {
   min-height: 100vh;
-  background: #F8F9FA;
-  color: #111111;
-  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  background: #000000;
+  color: #FAFAFA;
+  font-family: var(--font);
   position: relative;
 }
 
@@ -35,15 +35,15 @@
   align-items: center;
   gap: 1rem;
   padding: 0.85rem 1.75rem;
-  background: rgba(255, 255, 255, 0.9);
+  background: rgba(0, 0, 0, 0.75);
   backdrop-filter: blur(12px);
-  border-bottom: 1px solid #E5E7EB;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .app-header__menu {
   display: none;
   background: transparent;
-  border: 1px solid #E5E7EB;
+  border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 0.6rem;
   padding: 0.55rem 0.6rem;
   cursor: pointer;
@@ -56,7 +56,7 @@
   display: block;
   width: 18px;
   height: 2px;
-  background: #111111;
+  background: #FAFAFA;
   border-radius: 2px;
 }
 
@@ -68,18 +68,18 @@
   gap: 0.6rem;
   padding: 0.6rem 1rem;
   border-radius: 0.75rem;
-  background: #FFFFFF;
-  border: 1px solid #D1D5DB;
+  background: #0A0A0B;
+  border: 1px solid rgba(255, 255, 255, 0.14);
   transition: border-color 0.15s ease-out;
 }
 
 .app-header__search:focus-within {
-  border-color: #111111;
-  box-shadow: 0 0 0 3px rgba(17, 17, 17, 0.1);
+  border-color: var(--accent-text);
+  box-shadow: 0 0 0 3px rgba(251, 146, 60, 0.25);
 }
 
 .app-header__search-icon {
-  color: #9CA3AF;
+  color: rgba(255, 255, 255, 0.40);
   font-size: 1.05rem;
   line-height: 1;
 }
@@ -90,13 +90,13 @@
   background: transparent;
   border: none;
   outline: none;
-  color: #111111;
+  color: #FAFAFA;
   font: inherit;
   font-size: 0.9rem;
 }
 
 .app-header__search input::placeholder {
-  color: #9CA3AF;
+  color: rgba(255, 255, 255, 0.40);
 }
 
 .app-header__user {
@@ -105,7 +105,7 @@
   gap: 0.65rem;
   margin-left: auto;
   min-width: 0;
-  background: #F3F4F6;
+  background: rgba(255, 255, 255, 0.06);
   border-radius: 999px;
 }
 
@@ -118,15 +118,15 @@
   justify-content: center;
   font-weight: 800;
   font-size: 1rem;
-  color: #FFFFFF;
-  background: #111111;
+  color: #0A0A0B;
+  background: var(--primary-gradient);
   flex-shrink: 0;
 }
 
 .app-header__user-name {
   font-size: 0.92rem;
   font-weight: 700;
-  color: #111111;
+  color: #FAFAFA;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -165,9 +165,9 @@
   align-items: center;
   justify-content: center;
   font-size: 1.5rem;
-  color: #111111;
-  background: #F3F4F6;
-  border: 1px solid #E5E7EB;
+  color: #FAFAFA;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   flex-shrink: 0;
 }
 
@@ -176,14 +176,14 @@
   font-size: 1.65rem;
   font-weight: 800;
   letter-spacing: -0.02em;
-  color: #111111;
+  color: #FAFAFA;
   line-height: 1.2;
 }
 
 .page-header__subtitle {
   margin: 0.3rem 0 0;
   font-size: 0.92rem;
-  color: #6B7280;
+  color: rgba(255, 255, 255, 0.55);
   line-height: 1.5;
 }
 

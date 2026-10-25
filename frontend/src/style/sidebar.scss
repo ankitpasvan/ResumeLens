@@ -1,5 +1,5 @@
 /* ── App sidebar (left navigation) ────────────────────────────────────────────
-   Clean light identity: white surface, near-black active states, subtle borders. */
+   Dark identity: near-black surface, white active states, hairline borders. */
 
 .app-sidebar {
   position: fixed;
@@ -10,8 +10,8 @@
   z-index: 60;
   display: flex;
   flex-direction: column;
-  background: #FFFFFF;
-  border-right: 1px solid #E5E7EB;
+  background: #0A0A0B;
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
   padding: 1.25rem 0.9rem;
   transition: transform 0.22s ease-out;
 }
@@ -21,7 +21,7 @@
   align-items: center;
   gap: 0.55rem;
   padding: 0.4rem 0.75rem 1.1rem;
-  color: #111111;
+  color: #FAFAFA;
   text-decoration: none;
   font-weight: 800;
   font-size: 1.2rem;
@@ -29,7 +29,7 @@
 }
 
 .sidebar-brand__mark {
-  color: #111111;
+  color: #FB923C;
   font-size: 1.35rem;
 }
 
@@ -42,7 +42,7 @@
   overflow-y: auto;
   padding-bottom: 0.5rem;
   scrollbar-width: thin;
-  scrollbar-color: rgba(17, 17, 17, 0.25) transparent;
+  scrollbar-color: rgba(255, 255, 255, 0.25) transparent;
 }
 
 .sidebar-nav::-webkit-scrollbar {
@@ -50,7 +50,7 @@
 }
 
 .sidebar-nav::-webkit-scrollbar-thumb {
-  background: rgba(17, 17, 17, 0.25);
+  background: rgba(255, 255, 255, 0.25);
   border-radius: 999px;
 }
 
@@ -64,7 +64,7 @@
   gap: 0.75rem;
   padding: 0.65rem 0.8rem;
   border-radius: 0.7rem;
-  color: #6B7280;
+  color: rgba(255, 255, 255, 0.55);
   text-decoration: none;
   font-size: 0.92rem;
   font-weight: 600;
@@ -73,30 +73,30 @@
 }
 
 .sidebar-link:hover {
-  color: #111111;
-  background: #F3F4F6;
+  color: #FAFAFA;
+  background: rgba(255, 255, 255, 0.06);
 }
 
 .sidebar-link--active {
-  color: #111111;
-  background: #F3F4F6;
-  border-color: #E5E7EB;
+  color: #FAFAFA;
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.08);
 }
 
 .sidebar-link__glyph {
   width: 1.4rem;
   text-align: center;
   font-size: 1rem;
-  color: #111111;
+  color: #FAFAFA;
   flex-shrink: 0;
 }
 
 .sidebar-link--active .sidebar-link__glyph {
-  color: #111111;
+  color: #FAFAFA;
 }
 
 .sidebar-footer {
-  border-top: 1px solid #E5E7EB;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
   padding: 0.85rem 0.3rem 0.15rem;
   display: flex;
   flex-direction: column;
@@ -120,13 +120,13 @@
   justify-content: center;
   font-weight: 800;
   font-size: 0.95rem;
-  color: #FFFFFF;
-  background: #111111;
+  color: #0A0A0B;
+  background: var(--primary-gradient);
   flex-shrink: 0;
 }
 
 .sidebar-user__name {
-  color: #111111;
+  color: #FAFAFA;
   font-size: 0.88rem;
   font-weight: 600;
   overflow: hidden;
@@ -141,9 +141,9 @@
   gap: 0.5rem;
   padding: 0.5rem 0.8rem;
   border-radius: 0.65rem;
-  border: 1px solid #E5E7EB;
+  border: 1px solid rgba(255, 255, 255, 0.08);
   background: transparent;
-  color: #6B7280;
+  color: rgba(255, 255, 255, 0.55);
   font-size: 0.86rem;
   font-weight: 600;
   cursor: pointer;
@@ -151,7 +151,7 @@
 }
 
 .sidebar-logout:hover {
-  color: #DC2626;
+  color: #F87171;
   border-color: rgba(239, 68, 68, 0.35);
   background: rgba(239, 68, 68, 0.06);
 }
@@ -174,7 +174,7 @@
     position: fixed;
     inset: 0;
     z-index: 55;
-    background: rgba(17, 24, 39, 0.45);
+    background: rgba(0, 0, 0, 0.62);
   }
 }
 
