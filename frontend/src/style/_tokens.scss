@@ -6,16 +6,16 @@
 // read var(--…) flip instantly when the theme toggles, no reload needed.
 
 // ——— Colors ———
-$bg-abyss: #F8F9FA;
-$bg-navy: #F9FAFB;
+$bg-abyss: #FAFAF9;
+$bg-navy: #F4F4F5;
 $bg-panel: #FFFFFF;
 $bg-input: #FFFFFF;
 
-$border: #E5E7EB;
-$border-strong: #D1D5DB;
+$border: #E7E5E4;
+$border-strong: #D4D4D8;
 
-$text: #111111;
-$muted: #6B7280;
+$text: #111113;
+$muted: #52525B;
 $faint: #9CA3AF;
 
 $violet: #111111;
@@ -26,13 +26,14 @@ $emerald-glow: #10B981;
 $danger: #EF4444;
 $warning: #F59E0B;
 
-// ——— Phase 2A — Ember foundation (ADDITIVE ONLY) ———
+// ——— Phase 2A — Ember foundation ———
 // Added by the approved Mintsite-inspired design system ("ResumeLens Ember").
-// NOTHING above this block changed value. The existing $violet / --violet
-// names are kept as compatibility aliases; new code MUST use --accent-* and
-// --ember-* instead. No component reads the new tokens yet, so applying this
-// file alone changes NO visible appearance. That is deliberate: Phase 2A
-// lays the foundation, Phase 2B switches components to it one at a time.
+// The existing $violet / --violet names are kept as compatibility aliases;
+// new code MUST use --accent-* and --ember-* instead. Phase 1 (this file
+// + ui.scss + button.scss) switches the shared buttons/cards to these
+// tokens, so applying Phase 1 DOES change visible appearance — that is
+// the redesign. Page SCSS files still hardcode their own values and are
+// migrated one file at a time in later phases.
 $accent: #EA580C;
 $accent-deep: #C2410C;
 $ember: #F97316;
@@ -51,15 +52,15 @@ $bp-xl: 1280px;
 :root {
   color-scheme: light;
 
-  --bg-abyss: #F8F9FA;
-  --bg-navy: #F9FAFB;
+  --bg-abyss: #FAFAF9;
+  --bg-navy: #F4F4F5;
   --bg-panel: #FFFFFF;
   --bg-input: #FFFFFF;
-  --border: #E5E7EB;
-  --border-strong: #D1D5DB;
-  --text: #111111;
-  --text-body: #374151;
-  --muted: #6B7280;
+  --border: #E7E5E4;
+  --border-strong: #D4D4D8;
+  --text: #111113;
+  --text-body: #3F3F46;
+  --muted: #52525B;
   --faint: #9CA3AF;
   --violet: #111111;
   --violet-deep: #262626;
@@ -71,10 +72,16 @@ $bp-xl: 1280px;
 
   // Interactive surfaces + primary action pair (bg/text flip in dark mode
   // so the main button stays high-contrast in both themes).
-  --hover: #F3F4F6;
+  --hover: #F4F4F5;
   --primary-bg: #111111;
   --primary-bg-hover: #262626;
   --primary-text: #FFFFFF;
+
+  // Primary CTA pair (Phase 1): Mintsite-style ember gradient with dark
+  // text on top (dark text passes contrast on the orange gradient; white
+  // text does not). Same gradient in both themes.
+  --primary-gradient: linear-gradient(135deg, #F97316 0%, #F59E0B 100%);
+  --primary-gradient-text: #111111;
 
   // Semantic TEXT colors (the base hues above stay literal for tints and
   // fills; these are the readable-on-surface variants per theme).
@@ -93,7 +100,8 @@ $bp-xl: 1280px;
   --radius-xl: 1.5rem;
 
   --shadow-card: 0 10px 30px rgba(17, 24, 39, 0.07);
-  --shadow-glow: 0 6px 20px rgba(17, 24, 39, 0.08);
+  // Phase 1: primary buttons glow in ember (lighter than the dark glow).
+  --shadow-glow: rgba(249, 115, 22, 0.25) 0px 10px 30px -8px, rgba(255, 255, 255, 0.4) 0px 1px 0px 0px inset;
 
   // Raised-card elevation (landing feature/step/preview cards): a touch
   // stronger than --shadow-card so cards visibly lift off the page.
@@ -104,20 +112,20 @@ $bp-xl: 1280px;
 
   // Page background: a plain soft off-white. Text always sits on solid
   // white panels above this.
-  --aurora: #F8F9FA;
+  --aurora: #FAFAF9;
 
   // ── Phase 2A — Ember foundation, light theme ──
-  // Mintsite-derived, adapted to ResumeLens light. Surface values match the
-  // existing light tokens above (no visual change); the accent is new.
+  // Mintsite-derived, adapted to ResumeLens light (Phase 1: surfaces
+  // warmed to #FAFAF9 / #F4F4F5, borders to #E7E5E4).
   // Radius note: --radius-sm (8px) and --radius-md (12px) already match the
   // corrected Mintsite scale (the supplied radius.md value of
   // 3.40282e+38px was an extraction artefact and is NOT used anywhere).
-  --surface-base: #F8F9FA;
-  --surface-muted: #F9FAFB;
+  --surface-base: #FAFAF9;
+  --surface-muted: #F4F4F5;
   --surface-raised: #FFFFFF;
   --surface-strong: #111111;
-  --border-hairline: #E5E7EB;
-  --text-primary: #111111;
+  --border-hairline: #E7E5E4;
+  --text-primary: #111113;
   --text-secondary: #52525B;
   --text-tertiary: #6B7280;
   --accent: #EA580C;
@@ -171,13 +179,13 @@ $bp-xl: 1280px;
 [data-theme="dark"] {
   color-scheme: dark;
 
-  --bg-abyss: #0F1115;
-  --bg-navy: #1F2430;
-  --bg-panel: #171A21;
-  --bg-input: #171A21;
-  --border: #303642;
-  --border-strong: #3D4454;
-  --text: #F3F4F6;
+  --bg-abyss: #0A0A0B;
+  --bg-navy: #131316;
+  --bg-panel: #17171A;
+  --bg-input: #17171A;
+  --border: rgba(255, 255, 255, 0.08);
+  --border-strong: rgba(255, 255, 255, 0.14);
+  --text: #FAFAFA;
   --text-body: #D4D4D8;
   --muted: #A1A1AA;
   --faint: #71717A;
@@ -185,27 +193,32 @@ $bp-xl: 1280px;
   --violet-deep: #E5E7EB;
   --violet-glow: #F3F4F6;
 
-  --hover: #232833;
+  --hover: #1F1F23;
   --primary-bg: #F3F4F6;
   --primary-bg-hover: #E5E7EB;
   --primary-text: #111111;
+
+  // Primary CTA pair (Phase 1): same ember gradient as light theme.
+  --primary-gradient: linear-gradient(135deg, #F97316 0%, #F59E0B 100%);
+  --primary-gradient-text: #111111;
 
   --success-text: #34D399;
   --danger-text: #F87171;
   --warning-text: #FBBF24;
   --info-text: #60A5FA;
 
-  --track: #2A2F3A;
+  --track: #26262B;
   --overlay: rgba(0, 0, 0, 0.62);
   --focus-ring: 0 0 0 3px rgba(243, 244, 246, 0.18);
 
   --shadow-card: 0 10px 30px rgba(0, 0, 0, 0.45);
-  --shadow-glow: 0 6px 20px rgba(0, 0, 0, 0.5);
+  // Phase 1: primary buttons glow in ember, not black.
+  --shadow-glow: rgba(255, 138, 76, 0.55) 0px 10px 30px -8px, rgba(255, 255, 255, 0.4) 0px 1px 0px 0px inset;
 
   --shadow-raised: 0 8px 24px rgba(0, 0, 0, 0.5);
   --shadow-raised-hover: 0 14px 34px rgba(0, 0, 0, 0.6);
 
-  --aurora: #0F1115;
+  --aurora: #0A0A0B;
 
   // ── Phase 2A — Ember foundation, dark theme ──
   // Mintsite-derived surfaces (black base, 4% raised, 8% hairline border).

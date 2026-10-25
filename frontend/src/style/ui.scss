@@ -18,7 +18,7 @@
     background 150ms ease, border-color 150ms ease;
   white-space: nowrap;
 }
-.ui-btn:focus-visible { outline: 2px solid var(--violet); outline-offset: 2px; }
+.ui-btn:focus-visible { outline: 2px solid var(--accent-text); outline-offset: 2px; }
 .ui-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
 
 .ui-btn--md { padding: 0.72rem 1.4rem; font-size: 0.92rem; }
@@ -26,22 +26,22 @@
 .ui-btn--lg { padding: 0.9rem 1.8rem; font-size: 1rem; }
 
 .ui-btn--primary {
-  background: #111111;
-  color: #fff;
+  background: var(--primary-gradient);
+  color: var(--primary-gradient-text);
   box-shadow: var(--shadow-glow);
 }
-.ui-btn--primary:hover:not(:disabled) { background: #262626; transform: translateY(-1px); }
-.ui-btn--primary:active:not(:disabled) { transform: translateY(0); }
+.ui-btn--primary:hover:not(:disabled) { filter: brightness(1.08); transform: translateY(-1px); }
+.ui-btn--primary:active:not(:disabled) { filter: none; transform: translateY(0); }
 
 .ui-btn--secondary {
   background: transparent;
   border-color: var(--border-strong);
   color: var(--text);
 }
-.ui-btn--secondary:hover:not(:disabled) { border-color: var(--violet); background: #F3F4F6; color: var(--text); }
+.ui-btn--secondary:hover:not(:disabled) { border-color: var(--accent-text); background: var(--hover); color: var(--text); }
 
 .ui-btn--ghost { background: transparent; color: var(--muted); }
-.ui-btn--ghost:hover:not(:disabled) { color: var(--text); background: #F3F4F6; }
+.ui-btn--ghost:hover:not(:disabled) { color: var(--text); background: var(--hover); }
 
 .ui-btn--danger {
   background: rgba(239, 68, 68, 0.1);
@@ -65,7 +65,7 @@
 @keyframes ui-spin { to { transform: rotate(360deg); } }
 
 .ui-card {
-  background: #FFFFFF;
+  background: var(--bg-panel);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-card);
@@ -87,10 +87,10 @@
   border-radius: 999px;
   border: 1px solid var(--border-strong);
   color: var(--muted);
-  background: #F3F4F6;
+  background: var(--hover);
   white-space: nowrap;
 }
-.ui-badge--violet { color: var(--violet-glow); border-color: #E5E7EB; background: #F3F4F6; }
+.ui-badge--violet { color: var(--violet-glow); border-color: var(--border); background: var(--hover); }
 .ui-badge--emerald { color: var(--emerald-glow); border-color: rgba(16, 185, 129, 0.4); background: rgba(16, 185, 129, 0.1); }
 .ui-badge--warning { color: var(--warning); border-color: rgba(245, 158, 11, 0.4); background: rgba(245, 158, 11, 0.1); }
 .ui-badge--danger { color: var(--danger); border-color: rgba(239, 68, 68, 0.4); background: rgba(239, 68, 68, 0.1); }
@@ -103,7 +103,7 @@
   font-weight: 700;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: var(--violet-glow);
+  color: var(--accent-text);
   margin-bottom: 0.8rem;
 }
 .ui-section-title {
@@ -121,7 +121,7 @@
   padding: 3.5rem 1.5rem;
   border: 1px dashed var(--border-strong);
   border-radius: var(--radius-lg);
-  background: #F9FAFB;
+  background: var(--bg-navy);
 }
 .ui-empty__glyph { font-size: 2rem; margin-bottom: 0.75rem; }
 .ui-empty__title { margin: 0 0 0.4rem; font-size: 1.05rem; font-weight: 700; color: var(--text); }
@@ -129,7 +129,7 @@
 
 .ui-score-ring { display: inline-flex; flex-direction: column; align-items: center; gap: 0.4rem; }
 .ui-score-ring svg { transform: rotate(-90deg); }
-.ui-score-ring__track { fill: none; stroke: #E5E7EB; }
+.ui-score-ring__track { fill: none; stroke: var(--track); }
 .ui-score-ring__fill { fill: none; stroke-linecap: round; transition: stroke-dashoffset 1s ease; }
 .ui-score-ring__label { font-size: 0.74rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
 
@@ -137,6 +137,35 @@
 @keyframes ui-enter {
   from { opacity: 0; transform: translateY(14px); }
   to { opacity: 1; transform: translateY(0); }
+}
+
+/* ThemeToggle: used in AppLayout header, LandingNav and floating on
+   Login/Register. On GitHub main this class had NO styles at all despite
+   ThemeToggle.jsx pointing here — these are the missing shared styles,
+   tokenised so the toggle reads correctly in both themes. */
+.theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.4rem;
+  height: 2.4rem;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: var(--bg-panel);
+  color: var(--text);
+  font-size: 1.05rem;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background 150ms ease, border-color 150ms ease, transform 150ms ease;
+}
+.theme-toggle:hover { background: var(--hover); transform: translateY(-1px); }
+.theme-toggle:focus-visible { outline: 2px solid var(--accent-text); outline-offset: 2px; }
+.theme-toggle--floating {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  z-index: 50;
+  box-shadow: var(--shadow-card);
 }
 
 @media (max-width: 640px) {
